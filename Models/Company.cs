@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BugTrackerMVC.Models
@@ -8,8 +9,10 @@ namespace BugTrackerMVC.Models
         public int Id { get; set; }
 
         [Required]
+        [DisplayName("Company Name")]
         public string? Name { get; set; }
 
+        [DisplayName("Company Description")]
         public string? Description { get; set; }
 
         public byte[]? ImageFileData { get; set; }

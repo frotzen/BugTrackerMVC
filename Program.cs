@@ -34,8 +34,9 @@ builder.Services.AddScoped<IEmailSender, EmailService>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 // ***** Only one of the next two lines can be used
+//          Use AddMvc() for better control
 //builder.Services.AddControllersWithViews();
-builder.Services.AddMvc();
+builder.Services.AddMvc(); 
 
 var app = builder.Build();
 

@@ -1,14 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace BugTrackerMVC.Models
 {
     public class Notification
     {
-        public int Id { get; set; }
+        public int Id { get; set; } // PK
 
-        public int ProjectId { get; set; }
-        public int TicketId { get; set; }
+        public int? ProjectId { get; set; }
+
+        public int? TicketId { get; set; }
 
         [Required]
         public string? Title { get; set; }
@@ -16,15 +17,17 @@ namespace BugTrackerMVC.Models
         [Required]
         public string? Message { get; set; }
 
+        [DataType(DataType.Date)]
+        [DisplayName("Date Created")]
         public DateTime Created { get; set; }
 
         [Required]
-        public string? SenderId { get; set; }
+        public string? SenderId { get; set; } // FK
 
         [Required]
-        public string? RecipientId { get; set; }
+        public string? RecipientId { get; set; } // FK
 
-        public int NotificationTypeId { get; set; }
+        public int NotificationTypeId { get; set; } // FK
 
         public bool HasBeenViewed { get; set; }
 
