@@ -34,7 +34,9 @@ namespace BugTrackerMVC.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
+            var applicationDbContext = _context.Projects.Include(p => p.Company)
+                                                        .Include(p => p.ProjectPriority);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -65,7 +67,8 @@ namespace BugTrackerMVC.Controllers
             //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
 
             // ToDo: call Project Service
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id");
+            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name");
+            //ViewData["ProjectPriorityId"] = new SelectList((System.Collections.IEnumerable)_projectService.GetProjectPriorities(), "Id", "Name");
             return View();
         }
 
@@ -79,11 +82,12 @@ namespace BugTrackerMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                //***** Method to get the companyId
                 int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
                 project.CompanyId = companyId;
                 project.Created = PostgresDate.Format(DateTime.Now);
 
-                if (project.ImageFormFile !=null)
+                if (project.ImageFormFile != null)
                 {
                     project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(project.ImageFormFile);
                     project.ImageFileType = project.ImageFormFile.ContentType;
@@ -113,7 +117,7 @@ namespace BugTrackerMVC.Controllers
             }
 
             // ToDo: use Project Service
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _projectService.GetProjectByIdAsync(id.Value); // read up on .value
 
             if (project == null)
             {
@@ -190,7 +194,7 @@ namespace BugTrackerMVC.Controllers
             return View(project);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Projects/ArchiveConfirmed/5
         [HttpPost, ActionName("Archive")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]

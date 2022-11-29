@@ -1,13 +1,21 @@
 ﻿using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
+//using X.PagedList;
 
 namespace BugTrackerMVC.Services
 {
     public class BTProjectService : IBTProjectService
     {
         private readonly ApplicationDbContext _context;
+
+        public BTProjectService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public async Task<List<Project>> GetAllProjectsByCompanyIdAsync(int companyId)
         {
             try
@@ -49,11 +57,12 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
-        public async Task<Project> GetProjectByIdAsync(int projectId) // incomplete getting green ramen
+        public async Task<Project> GetProjectByIdAsync(int projectId)
         {
             try
             {
-                Project project = await _context.Projects.FindAsync(projectId);
+                Project? project = new();
+                project = await _context.Projects.FindAsync(projectId);
                 return project;
             }
             catch (Exception)
@@ -101,9 +110,14 @@ namespace BugTrackerMVC.Services
             }
         }
 
-        public Task GetProjectPriorities(Project project)// incomplete: return int? multiple priorities?
+
+        // incomplete: returning the project priorities as a List?
+        //      locate in ProjectsController.cs GET: Create()
+        //  *** currently breaks projects controller
+        public async Task<IEnumerable> GetProjectPriorities()
         {
-            throw new NotImplementedException();
+            IEnumerable priorities = await _context.ProjectPriorities.ToListAsync();
+            return priorities;
         }
     }
 }

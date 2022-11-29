@@ -1,4 +1,5 @@
 ﻿using BugTrackerMVC.Models;
+using System.Collections;
 
 namespace BugTrackerMVC.Services.Interfaces
 {
@@ -9,7 +10,10 @@ namespace BugTrackerMVC.Services.Interfaces
         public Task<List<Project>> GetAllProjectsByCompanyIdAsync(int companyId);
         public Task<List<Project>> GetArchivedProjectsByCompanyIdAsync(int companyId);
         public Task AddProjectAsync(Project project);
-        public Task GetProjectPriorities(Project project);
+
+        // Todo: return List of project priorities?
+        public Task<IEnumerable> GetProjectPriorities();
+
         public Task<Project> GetProjectByIdAsync(int projectId);
         public Task UpdateProjectAsync(Project project);
         public Task ArchiveProjectAsync(Project project);

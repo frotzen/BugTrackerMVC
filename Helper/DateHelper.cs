@@ -1,5 +1,4 @@
 ﻿
-
 namespace BugTrackerMVC.Helper
 {
     public static class PostgresDate
