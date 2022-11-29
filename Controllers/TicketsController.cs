@@ -74,6 +74,10 @@ namespace BugTrackerMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Update time for Postgres so a cast of Date types isn't attempted
+                ticket.Created = DateTime.SpecifyKind(ticket.Created, DateTimeKind.Utc);
+                ticket.Updated = DateTime.SpecifyKind(ticket.Updated, DateTimeKind.Utc);
+
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -123,6 +127,11 @@ namespace BugTrackerMVC.Controllers
 
             if (ModelState.IsValid)
             {
+
+                // Update time for Postgres so a cast of Date types isn't attempted
+                ticket.Created = DateTime.SpecifyKind(ticket.Created, DateTimeKind.Utc);
+                ticket.Updated = DateTime.SpecifyKind(ticket.Updated, DateTimeKind.Utc);
+
                 try
                 {
                     _context.Update(ticket);

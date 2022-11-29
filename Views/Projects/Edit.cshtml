@@ -1,5 +1,8 @@
-﻿@model BugTrackerMVC.Models.Project
-
+﻿@using Microsoft.AspNetCore.Identity
+@using BugTrackerMVC.Services.Interfaces
+@model BugTrackerMVC.Models.Project
+@inject IFileService FileService
+@inject UserManager<BTUser> UserManager
 @{
     ViewData["Title"] = "Edit";
 }

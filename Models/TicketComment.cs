@@ -12,7 +12,7 @@ namespace BugTrackerMVC.Models
         [StringLength(2000)]
         public string? Comment { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         [DisplayName("Date Created")]
         public DateTime Created { get; set; }
 

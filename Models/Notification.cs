@@ -17,7 +17,7 @@ namespace BugTrackerMVC.Models
         [Required]
         public string? Message { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         [DisplayName("Date Created")]
         public DateTime Created { get; set; }
 

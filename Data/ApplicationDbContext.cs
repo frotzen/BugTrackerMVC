@@ -23,16 +23,5 @@ namespace BugTrackerMVC.Data
         public virtual DbSet<TicketStatus> TicketStatuses { get; set; } = default!;
         public virtual DbSet<ProjectPriority> ProjectPriorities { get; set; } = default!;
         public virtual DbSet<NotificationType> NotificationTypes { get; set; } = default!;
-
-
-
-        //public DbSet<Company> Company { get; set; }
-        //public DbSet<Invite> Invite { get; set; }
-        //public DbSet<Notification> Notification { get; set; }
-        //public DbSet<Project> Project { get; set; }
-        //public DbSet<Ticket> Ticket { get; set; }
-        //public DbSet<TicketComment> TicketComment { get; set; }
-        //public DbSet<TicketAttachment> TicketAttachment { get; set; }
-        //public DbSet<TicketHistory> TicketHistory { get; set; }
     }
 }

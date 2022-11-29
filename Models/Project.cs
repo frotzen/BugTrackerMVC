@@ -23,15 +23,15 @@ namespace BugTrackerMVC.Models
         public string? Description { get; set; }
 
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         [DisplayName("Project Creation Date")]
         public DateTime Created { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         [DisplayName("Project Start Date")]
         public DateTime StartDate { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         [DisplayName("Project End Date")]
         public DateTime EndDate { get; set; }
 

@@ -14,7 +14,7 @@ namespace BugTrackerMVC.Models
         [StringLength(5000)]
         public string? Description { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime Created { get; set; }
 
         [DisplayName("Previous Value")]

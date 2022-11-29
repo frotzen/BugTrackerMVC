@@ -1,8 +1,7 @@
-using BlogMVC.Services;
+using BugTrackerMVC.Services;
 using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
-using BugTrackerMVC.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -27,8 +26,9 @@ builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.Req
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // ***** Custom Services
-builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IEmailSender, EmailService>();
+builder.Services.AddScoped<IBTProjectService, BTProjectService>();
 
 // ***** MailSettings
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));

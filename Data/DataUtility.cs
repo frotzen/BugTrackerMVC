@@ -73,7 +73,7 @@ namespace BugTrackerMVC.Data
 
         }
 
-
+        // Seeding methods
         public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             //Seed Roles

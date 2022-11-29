@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace BlogMVC.Services
+namespace BugTrackerMVC.Services
 {
     public class EmailService : IEmailSender
     {
