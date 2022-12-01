@@ -34,10 +34,11 @@ namespace BugTrackerMVC.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Projects.Include(p => p.Company)
-                                                        .Include(p => p.ProjectPriority);
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
 
-            return View(await applicationDbContext.ToListAsync());
+            List<Project> projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
+
+            return View(projects);
         }
 
         // GET: Projects/Details/5
@@ -48,10 +49,8 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects
-                .Include(p => p.Company)
-                .Include(p => p.ProjectPriority)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
             if (project == null)
             {
                 return NotFound();
@@ -62,13 +61,13 @@ namespace BugTrackerMVC.Controllers
 
         // GET: Projects/Create
         [Authorize(Roles = "Admin, ProjectManager")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
 
             // ToDo: call Project Service
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name");
-            //ViewData["ProjectPriorityId"] = new SelectList((System.Collections.IEnumerable)_projectService.GetProjectPriorities(), "Id", "Name");
+            ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
+            
             return View();
         }
 
@@ -103,7 +102,7 @@ namespace BugTrackerMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name", project.ProjectPriorityId);
+            ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
             return View(project);
         }
 
@@ -116,8 +115,9 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
             // ToDo: use Project Service
-            var project = await _projectService.GetProjectByIdAsync(id.Value); // read up on .value
+            var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
 
             if (project == null)
             {
@@ -125,7 +125,7 @@ namespace BugTrackerMVC.Controllers
             }
 
             //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name", project.ProjectPriorityId);
+            ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
             return View(project);
         }
 
@@ -134,6 +134,7 @@ namespace BugTrackerMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,Name,Description,Created,StartDate,EndDate,ProjectPriorityId,ImageFileData,ImageFileType,Archived")] Project project)
         {
             if (id != project.Id)
@@ -144,9 +145,10 @@ namespace BugTrackerMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Update time for Postgres so a cast of Date types isn't attempted
-                project.Created = DateTime.SpecifyKind(project.Created, DateTimeKind.Utc);
-                project.StartDate = DateTime.SpecifyKind(project.StartDate, DateTimeKind.Utc);
-                project.EndDate = DateTime.SpecifyKind(project.EndDate, DateTimeKind.Utc);
+                project.Created = PostgresDate.Format(project.Created);
+                project.StartDate = PostgresDate.Format(project.StartDate);
+                project.EndDate = PostgresDate.Format(project.EndDate);
+
 
                 try
                 {
@@ -167,7 +169,7 @@ namespace BugTrackerMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
+            ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
             return View(project);
         }
 
@@ -205,8 +207,9 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
             // ToDo: use project service
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _projectService.GetProjectByIdAsync(id, companyId);
 
             if (project != null)
             {

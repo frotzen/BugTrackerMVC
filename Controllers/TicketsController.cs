@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
 using Microsoft.AspNetCore.Identity;
+using BugTrackerMVC.Helper;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -78,8 +79,8 @@ namespace BugTrackerMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Update time for Postgres so a cast of Date types isn't attempted
-                ticket.Created = DateTime.SpecifyKind(ticket.Created, DateTimeKind.Utc);
-                ticket.Updated = DateTime.SpecifyKind(ticket.Updated, DateTimeKind.Utc);
+                ticket.Created = PostgresDate.Format(DateTime.Now);
+                ticket.Updated = PostgresDate.Format(DateTime.Now);
 
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
@@ -138,8 +139,8 @@ namespace BugTrackerMVC.Controllers
             {
 
                 // Update time for Postgres so a cast of Date types isn't attempted
-                ticket.Created = DateTime.SpecifyKind(ticket.Created, DateTimeKind.Utc);
-                ticket.Updated = DateTime.SpecifyKind(ticket.Updated, DateTimeKind.Utc);
+                ticket.Created = PostgresDate.Format(ticket.Created);
+                ticket.Updated = PostgresDate.Format(ticket.Updated);
 
                 try
                 {

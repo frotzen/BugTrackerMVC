@@ -28,8 +28,8 @@ builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.Req
 // ***** Custom Services
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IEmailSender, EmailService>();
-builder.Services.AddScoped<IBTProjectService, BTProjectService>();
 builder.Services.AddScoped<IBTRolesService, BTRolesService>();
+builder.Services.AddScoped<IBTProjectService, BTProjectService>();
 
 // ***** MailSettings
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));

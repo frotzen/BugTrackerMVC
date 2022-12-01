@@ -1,20 +1,53 @@
 ﻿using BugTrackerMVC.Data;
+using BugTrackerMVC.Enums;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Collections;
-//using X.PagedList;
 
 namespace BugTrackerMVC.Services
 {
     public class BTProjectService : IBTProjectService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTRolesService _roleService;
 
-        public BTProjectService(ApplicationDbContext context)
+        public BTProjectService(ApplicationDbContext context, IBTRolesService roleService)
         {
             _context = context;
+            _roleService = roleService;
+        }
+
+        /****
+         **     Getters
+         ****/
+        public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
+        {
+            try
+            {
+                Project? project = new();
+                project = await _context.Projects
+                                        .Include(p => p.Company)
+                                        .Include(p => p.Members)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.Comments)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.Attachments)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.History)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketPriority)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketStatus)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketType)
+                                        .Include(p => p.ProjectPriority)
+                                        .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
+                return project!;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         public async Task<List<Project>> GetAllProjectsByCompanyIdAsync(int companyId)
         {
@@ -22,6 +55,10 @@ namespace BugTrackerMVC.Services
             {
                 List<Project> projects = await _context.Projects
                                         .Where(p => p.CompanyId == companyId)
+                                        .Include(p => p.Company)
+                                        .Include(p => p.ProjectPriority)
+                                        .Include(p => p.Tickets)
+                                        .Include(p => p.Members)
                                         .ToListAsync();
                 return projects;
             }
@@ -45,25 +82,44 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
-        public async Task AddProjectAsync(Project project)
+        public async Task<IEnumerable<ProjectPriority>> GetProjectPrioritiesAsync()
+        {
+            return await _context.ProjectPriorities.ToListAsync();
+        }
+
+        /* Project Manager Methods */
+        public async Task<BTUser> GetProjectManagerAsync(int projectId)
         {
             try
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
+                Project? project = await _context.Projects.Include(p => p.Members)
+                                                 .FirstOrDefaultAsync(p => p.Id == projectId);
+
+                foreach (BTUser member in project!.Members)
+                {
+                    if (await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+                    {
+                        return member;
+                    }
+                }
+                return null!;
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        public async Task<Project> GetProjectByIdAsync(int projectId)
+
+
+        /****
+         **     Setters
+         ****/
+        public async Task AddProjectAsync(Project project)
         {
             try
             {
-                Project? project = new();
-                project = await _context.Projects.FindAsync(projectId);
-                return project;
+                _context.Add(project);
+                await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
@@ -110,14 +166,100 @@ namespace BugTrackerMVC.Services
             }
         }
 
-
-        // incomplete: returning the project priorities as a List?
-        //      locate in ProjectsController.cs GET: Create()
-        //  *** currently breaks projects controller
-        public async Task<IEnumerable> GetProjectPriorities()
+        /* Project Manager methods */
+        public async Task<bool> AddProjectManagerAsync(BTUser member, int projectId)
         {
-            IEnumerable priorities = await _context.ProjectPriorities.ToListAsync();
-            return priorities;
+            // Adding a Project Manager will add them to this project only
+            try
+            {
+                BTUser? currentPM = await GetProjectManagerAsync(projectId);
+                BTUser? selectedPM = await _context.Users.FindAsync(member);
+
+                // Remove current ProjectManager
+                if (currentPM != null)
+                {
+                    await RemoveProjectManagerAsync(projectId);
+                }
+
+                // Add selected ProjectManager
+                try
+                {
+                    await AddMemberToProjectAsync(selectedPM!, projectId);
+                    return true;
+                }
+
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<bool> RemoveProjectManagerAsync(int projectId)
+        {
+            // Removing a Project Manager will remove them from this project only
+            try
+            {
+                BTUser? currentPM = await GetProjectManagerAsync(projectId);
+
+                if (currentPM != null)
+                {
+                    return await RemoveMemberFromProjectAsync(currentPM, projectId);
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /* Project Member methods */
+        public async Task<bool> AddMemberToProjectAsync(BTUser member, int projectId)
+        {
+            try
+            {
+                Project? project = await GetProjectByIdAsync(projectId, member.CompanyId);
+                bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+
+                if (!IsOnProject)
+                {
+                    project.Members.Add(member);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<bool> RemoveMemberFromProjectAsync(BTUser member, int projectId)
+        {
+            try
+            {
+                Project? project = await GetProjectByIdAsync(projectId, member.CompanyId);
+                bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+                if (IsOnProject)
+                {
+                    project.Members.Remove(member);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
