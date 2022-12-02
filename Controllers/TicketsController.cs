@@ -13,6 +13,8 @@ using BugTrackerMVC.Helper;
 using Microsoft.AspNetCore.Authorization;
 using BugTrackerMVC.Services;
 using BugTrackerMVC.Enums;
+using System.ComponentModel.Design;
+using BugTrackerMVC.Extensions;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -36,14 +38,11 @@ namespace BugTrackerMVC.Controllers
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser)
-                                                       .Include(t => t.Project)
-                                                       .Include(t => t.SubmitterUser)
-                                                       .Include(t => t.TicketPriority)
-                                                       .Include(t => t.TicketStatus)
-                                                       .Include(t => t.TicketType);
+            int companyId = User.Identity!.GetCompanyId();
 
-            return View(await applicationDbContext.ToListAsync());
+            List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyIdAsync(companyId);
+
+            return View(tickets);
         }
 
         // GET: Tickets/MyTickets
@@ -58,7 +57,7 @@ namespace BugTrackerMVC.Controllers
             if (User.IsInRole(nameof(BTRoles.Admin)))
             {
                 //  !!!!!!!*****  take another look at this  *****!!!!!!!
-                // call GetAllTickets from service
+                // call Get All Tickets from service
                 // 
                 tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
             }
@@ -82,7 +81,7 @@ namespace BugTrackerMVC.Controllers
             if (User.IsInRole(nameof(BTRoles.Admin)))
             {
                 //  !!!!!!!*****  take another look at this  *****!!!!!!!
-                // call GetAllTickets from service
+                // call Get All Archived Tickets from service
                 // 
                 tickets = await _ticketService.GetArchivedTicketsByDeveloperIdAsync(userId);
             }
@@ -97,9 +96,10 @@ namespace BugTrackerMVC.Controllers
         // Get: Tickets/AllTickets
         public async Task<IActionResult> AllTickets()
         {
-            //  int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            //  int companyId = User.Identity!.GetCompanyId();
             //  GetAllTicketsByDeveloperIdAsync(string userId)
             //
+
             string userId = (await _userManager.GetUserAsync(User)).Id;
             List<Ticket> tickets = new();
 
@@ -140,9 +140,17 @@ namespace BugTrackerMVC.Controllers
         public async Task<IActionResult> Create()
         {
             string userId = (await _userManager.GetUserAsync(User)).Id;
-            
-            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+            int companyId = User.Identity!.GetCompanyId();
+            List<Project> projects = new();
 
+            if (User.IsInRole(nameof(BTRoles.Admin)))
+            {
+                projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
+            }
+            else
+            {
+                projects = await _projectService.GetUserProjectsAsync(userId);
+            }
             // Param list 2nd & 3rd values are for actual dataValue & display dataText, respectively
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
@@ -174,7 +182,8 @@ namespace BugTrackerMVC.Controllers
                 ticket.Updated = PostgresDate.Format(DateTime.Now);
 
                 
-                ticket.TicketStatusId = (int)BTTicketStatuses.New;
+                ticket.TicketStatusId = (await _context.TicketStatuses
+                                .FirstOrDefaultAsync(s => s.Name  == nameof(BTTicketStatuses.New)))!.Id;
 
                 await _ticketService.AddTicketAsync(ticket);
 
@@ -250,7 +259,7 @@ namespace BugTrackerMVC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TicketExists(ticket.Id))
+                    if (!await TicketExists(ticket.Id))
                     {
                         return NotFound();
                     }
@@ -313,9 +322,10 @@ namespace BugTrackerMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TicketExists(int id)
+        private async Task<bool> TicketExists(int id)
         {
-          return _context.Tickets.Any(e => e.Id == id);
+            int companyId = User.Identity!.GetCompanyId();
+            return (await _ticketService.GetAllTicketsByCompanyIdAsync(companyId)).Any(e => e.Id == id);
         }
     }
 }

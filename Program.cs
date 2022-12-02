@@ -5,6 +5,7 @@ using BugTrackerMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using BugTrackerMVC.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,9 +22,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // ***** Change default to BTUser
 builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddDefaultUI()
-    .AddDefaultTokenProviders()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddClaimsPrincipalFactory<BTUserClaimsPrincipalFactory>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
 
 // ***** Custom Services
 builder.Services.AddScoped<IFileService, FileService>();

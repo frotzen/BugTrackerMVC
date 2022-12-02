@@ -14,6 +14,7 @@ using BugTrackerMVC.Helper;
 using BugTrackerMVC.Services;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using BugTrackerMVC.Enums;
+using BugTrackerMVC.Extensions;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -36,7 +37,7 @@ namespace BugTrackerMVC.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            int companyId = User.Identity!.GetCompanyId();
 
             List<Project> projects = await _projectService.GetAllProjectsByCompanyIdAsync(companyId);
 
@@ -47,7 +48,7 @@ namespace BugTrackerMVC.Controllers
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> AllProjects()
         {
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            int companyId = User.Identity!.GetCompanyId();
             List<Project> projects = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId));
 
             return View(projects);
@@ -57,7 +58,7 @@ namespace BugTrackerMVC.Controllers
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> ArchivedProjects()
         {
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            int companyId = User.Identity!.GetCompanyId();
             List<Project> projects = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId))
                                                            .Where(p => p.Archived == true).ToList();
 
@@ -68,7 +69,7 @@ namespace BugTrackerMVC.Controllers
         public async Task<IActionResult> MyProjects()
         {
             string userId = (await _userManager.GetUserAsync(User)).Id;
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            int companyId = User.Identity!.GetCompanyId();
             List<Project> projects = new();
 
             if(User.IsInRole(nameof(BTRoles.Admin)))
@@ -97,7 +98,7 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            int companyId = User.Identity!.GetCompanyId();
             var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
             if (project == null)
             {
@@ -130,7 +131,7 @@ namespace BugTrackerMVC.Controllers
             if (ModelState.IsValid)
             {
                 //***** Method to get the companyId
-                int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+                int companyId = User.Identity!.GetCompanyId();
                 project.CompanyId = companyId;
                 project.Created = PostgresDate.Format(DateTime.Now);
 
@@ -163,7 +164,7 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            int companyId = User.Identity!.GetCompanyId();
             // ToDo: use Project Service
             var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
 
@@ -255,7 +256,7 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
-            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            int companyId = User.Identity!.GetCompanyId();
             // ToDo: use project service
             var project = await _projectService.GetProjectByIdAsync(id, companyId);
 

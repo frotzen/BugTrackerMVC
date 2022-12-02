@@ -12,6 +12,13 @@
     <div class="col-8">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="SubmitterUserId" type="hidden" />
+            <input asp-for="DeveloperUserId" type="hidden" />
+            <input asp-for="ArchivedByProject" type="hidden" />
+            <input asp-for="TicketStatusId" type="hidden" />
+            <input asp-for="Archived" type="hidden" />
+            <input asp-for="Created" type="hidden" />
+            <input asp-for="Updated" type="hidden" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -67,9 +74,6 @@
                 <label asp-for="SubmitterUserId" class="control-label"></label>
                 <select asp-for="SubmitterUserId" class ="form-control" asp-items="ViewBag.SubmitterUserId"></select>
             </div>*@
-            <div>
-                <input type="hidden" asp-for="SubmitterUserId" />
-            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

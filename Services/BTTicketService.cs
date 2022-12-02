@@ -2,6 +2,7 @@
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace BugTrackerMVC.Services
 {
@@ -47,6 +48,28 @@ namespace BugTrackerMVC.Services
                                                      .Include(t => t.TicketStatus)
                                                      .Include(t => t.TicketType)
                                                      .ToListAsync();
+                return tickets;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<Ticket>> GetAllTicketsByCompanyIdAsync(int companyId)
+        {
+            try
+            {
+                List<Ticket> tickets = await _context.Tickets.Where(t => t.Project!.CompanyId == companyId)
+                                                             .Include(t => t.Project)
+                                                             .Include(t => t.TicketPriority)
+                                                             .Include(t => t.TicketType)
+                                                             .Include(t => t.TicketStatus)
+                                                             .Include(t => t.DeveloperUser)
+                                                             .Include(t => t.SubmitterUser)
+                                                             .ToListAsync();
+
                 return tickets;
             }
             catch (Exception)

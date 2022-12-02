@@ -97,7 +97,10 @@
                     {
                         <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
                     }
-                </td>
+                    else{
+                        <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+                    }
+            </td>
         </tr>
 }
     </tbody>
