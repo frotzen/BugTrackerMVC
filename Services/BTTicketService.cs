@@ -2,6 +2,7 @@
 using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
 
@@ -42,7 +43,7 @@ namespace BugTrackerMVC.Services
             try
             {
                 List<TicketType> ticketTypes = new();
-                List<TicketType> ticketTypes = await _context.TicketsTypes;
+                ticketTypes = await _context.TicketTypes.ToListAsync();
                 return ticketTypes; 
             }
             catch (Exception)
@@ -57,7 +58,7 @@ namespace BugTrackerMVC.Services
             try
             {
                 List<TicketPriority> priorities = new();
-                priorities = await _context.TicketPriorities;
+                priorities = await _context.TicketPriorities.ToListAsync();
                 return priorities;
             }
             catch (Exception)
