@@ -49,6 +49,31 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
+
+        public async Task<List<Project>> GetUserProjectsAsync(string userId)
+        {
+            try
+            {           // TRY TO MAKE THIS WORK!!!!!
+                /**ICollection<Project> companyProjects = new();
+                companyProjects = await GetAllProjectsByCompanyIdAsync(user.CompanyId);
+                return companyProjects.Where(p => p.Members.Contains(user));*/
+                List<Project>? projects = (await _context.Users
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.ProjectPriority)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Members)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Tickets)
+                                        .FirstOrDefaultAsync(u => u.Id == userId))?
+                                        .Projects.ToList();
+                return projects!;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         public async Task<List<Project>> GetAllProjectsByCompanyIdAsync(int companyId)
         {
             try

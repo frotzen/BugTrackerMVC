@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using BugTrackerMVC.Services.Interfaces;
 using BugTrackerMVC.Helper;
 using BugTrackerMVC.Services;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using BugTrackerMVC.Enums;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -40,6 +42,52 @@ namespace BugTrackerMVC.Controllers
 
             return View(projects);
         }
+
+        // GET: All Projects
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> AllProjects()
+        {
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            List<Project> projects = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId));
+
+            return View(projects);
+        }
+
+        // GET: Archived Projects
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> ArchivedProjects()
+        {
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            List<Project> projects = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId))
+                                                           .Where(p => p.Archived == true).ToList();
+
+            return View(projects);
+        }
+
+        // GET: Users Projects
+        public async Task<IActionResult> MyProjects()
+        {
+            string userId = (await _userManager.GetUserAsync(User)).Id;
+            int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            List<Project> projects = new();
+
+            if(User.IsInRole(nameof(BTRoles.Admin)))
+            {
+                // call GetAllProjects from service
+                projects = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId));
+
+            }
+            else
+            {
+                // Create a new service to get user projects
+                // and call the service for this.user's projects
+                projects = await _projectService.GetUserProjectsAsync(userId);
+            }
+            
+
+            return View(projects);
+        }
+
 
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -213,9 +261,6 @@ namespace BugTrackerMVC.Controllers
 
             if (project != null)
             {
-                // ToDo: use project Service (ArchiveProjectAsync())
-                // 1. set Archived property to "true"
-                // 2. send project to service for update
                 await _projectService.ArchiveProjectAsync(project);
             }            
 

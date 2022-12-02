@@ -23,12 +23,20 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            @*
+            <div class="form-group">
+                <span>ProjectName: <strong>@ViewData["ProjectName"]</strong></span>
+            </div>
+             <input asp-for="ProjectId" type="hidden" />
             <br />
             <div class="form-group">
-                Created <strong>@Model.Created</strong>
+                <span>Created: <strong>@Model.Created</strong></span><br />
+                <span>Last Upadted: <strong>@Model.Updated</strong></span>
             </div>
             <br />
-            @*<div class="form-group">
+            <input asp-for="Created" type="hidden" />
+            <input asp-for="Updated" type="hidden" />
+            <div class="form-group">
             <label asp-for="Created" class="control-label"></label>
             <input asp-for="Created" class="form-control" />
             <span asp-validation-for="Created" class="text-danger"></span>
@@ -52,11 +60,6 @@
             </span>
             <br /><br />
             <div class="form-group">
-                <label asp-for="ProjectId" class="control-label"></label>
-                <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
-                <span asp-validation-for="ProjectId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="TicketTypeId" class="control-label"></label>
                 <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
                 <span asp-validation-for="TicketTypeId" class="text-danger"></span>
@@ -71,15 +74,19 @@
                 <select asp-for="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId"></select>
                 <span asp-validation-for="TicketPriorityId" class="text-danger"></span>
             </div>
+            @*
             <div class="form-group">
                 <label asp-for="DeveloperUserId" class="control-label"></label>
                 <select asp-for="DeveloperUserId" class="form-control" asp-items="ViewBag.DeveloperUserId"></select>
                 <span asp-validation-for="DeveloperUserId" class="text-danger"></span>
-            </div>
+            </div>*@
             <br />
+            @*
             <div>
                 <p>Submitted by <strong>@Model.SubmitterUser</strong></p>
             </div>
+            <input type="hidden" asp-for="SubmitterUser"/>
+            *@
             @*<div class="form-group">
             <label asp-for="SubmitterUserId" class="control-label"></label>
             <select asp-for="SubmitterUserId" class="form-control" asp-items="ViewBag.SubmitterUserId"></select>

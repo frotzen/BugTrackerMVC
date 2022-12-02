@@ -7,45 +7,127 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
+using BugTrackerMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using BugTrackerMVC.Helper;
+using Microsoft.AspNetCore.Authorization;
+using BugTrackerMVC.Services;
+using BugTrackerMVC.Enums;
 
 namespace BugTrackerMVC.Controllers
 {
+    [Authorize]
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTProjectService _projectService;
+        private readonly IBTTicketService _ticketService;
 
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager)
+        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager,
+                                 IBTTicketService ticketService, IBTProjectService projectService)
         {
             _context = context;
             _userManager = userManager;
+            _projectService = projectService;
+            _ticketService = ticketService;
         }
 
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
+            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser)
+                                                       .Include(t => t.Project)
+                                                       .Include(t => t.SubmitterUser)
+                                                       .Include(t => t.TicketPriority)
+                                                       .Include(t => t.TicketStatus)
+                                                       .Include(t => t.TicketType);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Tickets/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Tickets/MyTickets
+        public async Task<IActionResult> MyTickets()
         {
-            if (id == null || _context.Tickets == null)
+            //  int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            //  GetAllTicketsByDeveloperIdAsync(string userId)
+            //
+            string userId = (await _userManager.GetUserAsync(User)).Id;
+            List<Ticket> tickets = new();
+
+            if (User.IsInRole(nameof(BTRoles.Admin)))
+            {
+                //  !!!!!!!*****  take another look at this  *****!!!!!!!
+                // call GetAllTickets from service
+                // 
+                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
+            }
+            else
+            {
+                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
+            }
+
+            return View(tickets);
+        }
+
+        // Get: Tickets/ArchivedTickets
+        public async Task<IActionResult> ArchivedTickets()
+        {
+            //  int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            //  GetAllTicketsByDeveloperIdAsync(string userId)
+            //
+            string userId = (await _userManager.GetUserAsync(User)).Id;
+            List<Ticket> tickets = new();
+
+            if (User.IsInRole(nameof(BTRoles.Admin)))
+            {
+                //  !!!!!!!*****  take another look at this  *****!!!!!!!
+                // call GetAllTickets from service
+                // 
+                tickets = await _ticketService.GetArchivedTicketsByDeveloperIdAsync(userId);
+            }
+            else
+            {
+                tickets = await _ticketService.GetArchivedTicketsByDeveloperIdAsync(userId);
+            }
+
+            return View(tickets);
+        }
+
+        // Get: Tickets/AllTickets
+        public async Task<IActionResult> AllTickets()
+        {
+            //  int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            //  GetAllTicketsByDeveloperIdAsync(string userId)
+            //
+            string userId = (await _userManager.GetUserAsync(User)).Id;
+            List<Ticket> tickets = new();
+
+            if (User.IsInRole(nameof(BTRoles.Admin)))
+            {
+                //  !!!!!!!*****  take another look at this  *****!!!!!!!
+                // call GetAllTickets from service
+                // 
+                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
+            }
+            else
+            {
+                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
+            }
+
+            return View(tickets);
+        }
+
+
+        // GET: Tickets/Details/5
+        public async Task<IActionResult> Details(int id)
+        {
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.DeveloperUser)
-                .Include(t => t.Project)
-                .Include(t => t.SubmitterUser)
-                .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus)
-                .Include(t => t.TicketType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
             if (ticket == null)
             {
                 return NotFound();
@@ -55,17 +137,23 @@ namespace BugTrackerMVC.Controllers
         }
 
         // GET: Tickets/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            string userId = (await _userManager.GetUserAsync(User)).Id;
+            
+            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+
             // Param list 2nd & 3rd values are for actual dataValue & display dataText, respectively
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
-            ViewData["DeveloperUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName");
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
-            ViewData["SubmitterUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName");
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name");
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name");
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name");
+
+            //ViewData["DeveloperUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName");
+            ViewData["ProjectId"] = new SelectList(projects, "Id", "Name");
+            ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name");
+            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name");
+
             return View();
         }
 
@@ -74,52 +162,66 @@ namespace BugTrackerMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,Created,Updated,Archived,ArchivedByProject,ProjectId,TicketTypeId,TicketStatusId,TicketPriorityId,DeveloperUserId,SubmitterUserId")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
+            ModelState.Remove("SubmitterUserId");
+            ticket.SubmitterUserId = _userManager.GetUserId(User);
+
             if (ModelState.IsValid)
             {
                 // Update time for Postgres so a cast of Date types isn't attempted
                 ticket.Created = PostgresDate.Format(DateTime.Now);
                 ticket.Updated = PostgresDate.Format(DateTime.Now);
 
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
+                
+                ticket.TicketStatusId = (int)BTTicketStatuses.New;
+
+                await _ticketService.AddTicketAsync(ticket);
+
                 return RedirectToAction(nameof(Index));
             }
             // Param list 2nd & 3rd values are for actual dataValue & display dataText, respectively
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
-            ViewData["DeveloperUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName", ticket.DeveloperUserId);
+
+            //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
             ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["SubmitterUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName", ticket.SubmitterUserId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name", ticket.TicketTypeId);
+            ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
+            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+
             return View(ticket);
         }
 
         // GET: Tickets/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FindAsync(id);
+            // call ticket service
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
+
             if (ticket == null)
             {
                 return NotFound();
             }
+
+            // SelectList(table, dataValue, dataText, selectvalue)
             // Param list 2nd & 3rd values are for actual dataValue & display dataText, respectively
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
-            ViewData["DeveloperUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName", ticket.DeveloperUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["SubmitterUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName", ticket.SubmitterUserId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name", ticket.TicketTypeId);
+
+            //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
+            //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
+            ViewData["SubmitterUserId"] = ticket.SubmitterUserId;
+            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+
             return View(ticket);
         }
 
@@ -138,14 +240,13 @@ namespace BugTrackerMVC.Controllers
             if (ModelState.IsValid)
             {
 
-                // Update time for Postgres so a cast of Date types isn't attempted
-                ticket.Created = PostgresDate.Format(ticket.Created);
-                ticket.Updated = PostgresDate.Format(ticket.Updated);
-
                 try
                 {
-                    _context.Update(ticket);
-                    await _context.SaveChangesAsync();
+                    // Format dates
+                    ticket.Created = PostgresDate.Format(ticket.Created);
+                    ticket.Updated = PostgresDate.Format(DateTime.Now);
+
+                    await _ticketService.UpdateTicketAsync(ticket);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -160,34 +261,30 @@ namespace BugTrackerMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             // Param list 2nd & 3rd values are for actual dataValue & display dataText, respectively
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
-            ViewData["DeveloperUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName", ticket.DeveloperUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["SubmitterUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName", ticket.SubmitterUserId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name", ticket.TicketTypeId);
+
+            //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
+            //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
+            //ViewData["SubmitterUserId"] = ticket.SubmitterUserId;
+            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
 
-        // GET: Tickets/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Tickets/Archive/5
+        public async Task<IActionResult> Archive(int id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.DeveloperUser)
-                .Include(t => t.Project)
-                .Include(t => t.SubmitterUser)
-                .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus)
-                .Include(t => t.TicketType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
+                
             if (ticket == null)
             {
                 return NotFound();
@@ -196,22 +293,23 @@ namespace BugTrackerMVC.Controllers
             return View(ticket);
         }
 
-        // POST: Tickets/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Tickets/Archive/5
+        [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ArchiveConfirmed(int id)
         {
             if (_context.Tickets == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Ticket'  is null.");
             }
-            var ticket = await _context.Tickets.FindAsync(id);
+
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
+
             if (ticket != null)
             {
-                _context.Tickets.Remove(ticket);
-            }
+                await _ticketService.ArchiveTicketAsync(ticket);
+            }            
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
