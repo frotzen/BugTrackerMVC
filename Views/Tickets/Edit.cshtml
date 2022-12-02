@@ -13,6 +13,11 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="SubmitterUserId" />
+            <input type="hidden" asp-for="ProjectId" />
+            <input type="hidden" asp-for="Created" />
+            <input type="hidden" asp-for="Updated" />
+
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -34,8 +39,7 @@
                 <span>Last Upadted: <strong>@Model.Updated</strong></span>
             </div>
             <br />
-            <input asp-for="Created" type="hidden" />
-            <input asp-for="Updated" type="hidden" />
+            
             <div class="form-group">
             <label asp-for="Created" class="control-label"></label>
             <input asp-for="Created" class="form-control" />
@@ -73,19 +77,17 @@
                 <label asp-for="TicketPriorityId" class="control-label"></label>
                 <select asp-for="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId"></select>
                 <span asp-validation-for="TicketPriorityId" class="text-danger"></span>
-            </div>
-            @*
+            </div>            
             <div class="form-group">
                 <label asp-for="DeveloperUserId" class="control-label"></label>
                 <select asp-for="DeveloperUserId" class="form-control" asp-items="ViewBag.DeveloperUserId"></select>
                 <span asp-validation-for="DeveloperUserId" class="text-danger"></span>
-            </div>*@
+            </div>
             <br />
             @*
             <div>
                 <p>Submitted by <strong>@Model.SubmitterUser</strong></p>
             </div>
-            <input type="hidden" asp-for="SubmitterUser"/>
             *@
             @*<div class="form-group">
             <label asp-for="SubmitterUserId" class="control-label"></label>

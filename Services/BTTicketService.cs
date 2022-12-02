@@ -1,8 +1,8 @@
 ﻿using BugTrackerMVC.Controllers;
 using BugTrackerMVC.Data;
+using BugTrackerMVC.Enums;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
 
@@ -15,6 +15,28 @@ namespace BugTrackerMVC.Services
         {
             _context = context;
         }
+
+        //**** For testing Admin accounts
+        public async Task<List<Ticket>> GetAllTicketsAsync()
+        {
+            try
+            {
+                return await _context.Tickets.Include(t => t.Project)
+                                             .Include(t => t.Project!.Members)
+                                             .Include(t => t.TicketPriority)
+                                             .Include(t => t.TicketType)
+                                             .Include(t => t.TicketStatus)
+                                             .Include(t => t.DeveloperUser)
+                                             .Include(t => t.SubmitterUser)                                            
+                                             .ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        //****
 
         public async Task<Ticket> GetTicketByIdAsync(int ticketId)
         {
@@ -67,6 +89,22 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
+
+        public async Task<List<TicketStatus>> GetTicketStatusesAsync()
+        {
+            try
+            {
+                List<TicketStatus> statuses = new();
+                statuses = await _context.TicketStatuses.ToListAsync();
+                return statuses;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<Ticket>> GetAllTicketsByDeveloperIdAsync(string userId)
         {
             try

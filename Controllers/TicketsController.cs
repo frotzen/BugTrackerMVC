@@ -96,8 +96,7 @@ namespace BugTrackerMVC.Controllers
         // Get: Tickets/AllTickets
         public async Task<IActionResult> AllTickets()
         {
-            //  int companyId = User.Identity!.GetCompanyId();
-            //  GetAllTicketsByDeveloperIdAsync(string userId)
+            int companyId = User.Identity!.GetCompanyId();
             //
 
             string userId = (await _userManager.GetUserAsync(User)).Id;
@@ -106,9 +105,16 @@ namespace BugTrackerMVC.Controllers
             if (User.IsInRole(nameof(BTRoles.Admin)))
             {
                 //  !!!!!!!*****  take another look at this  *****!!!!!!!
-                // call GetAllTickets from service
-                // 
-                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
+                // call GetAllTicketsAsync() from _ticketService for testing
+                //  put GetAllTicketsByCompanyIdAsyn(companyId) back when done
+
+                 tickets = await _ticketService.GetAllTicketsAsync();
+                //tickets = await _ticketService.GetAllTicketsByCompanyIdAsync(companyId);
+
+            }
+            else if(User.IsInRole(nameof(BTRoles.ProjectManager)))
+            {
+                tickets = await _ticketService.GetAllTicketsByCompanyIdAsync(companyId);
             }
             else
             {
@@ -158,9 +164,9 @@ namespace BugTrackerMVC.Controllers
             //ViewData["DeveloperUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName");
             ViewData["ProjectId"] = new SelectList(projects, "Id", "Name");
             ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName");
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name");
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name");
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name");
+            ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(await _ticketService.GetTicketTypesAsync(), "Id", "Name");
+            ViewData["TicketStatusId"] = new SelectList(await _ticketService.GetTicketStatusesAsync(), "Id", "Name");
 
             return View();
         }
@@ -198,9 +204,9 @@ namespace BugTrackerMVC.Controllers
             //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
             //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
             //ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
-            ViewData["TicketPriorityId"] = new SelectList(_ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
-            // ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_ticketService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
+            ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
+            // ViewData["TicketStatusId"] = new SelectList(await _ticketService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(await _ticketService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
             return View(ticket);
         }
@@ -226,12 +232,12 @@ namespace BugTrackerMVC.Controllers
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
 
-            //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
+            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
             //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
             ViewData["SubmitterUserId"] = ticket.SubmitterUserId;
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+            ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(await _ticketService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(await _ticketService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
             return View(ticket);
         }
@@ -277,12 +283,12 @@ namespace BugTrackerMVC.Controllers
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
 
-            //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
+            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
             //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
             //ViewData["SubmitterUserId"] = ticket.SubmitterUserId;
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+            ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(await _ticketService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(await _ticketService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
 
