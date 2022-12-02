@@ -172,19 +172,21 @@ namespace BugTrackerMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
-            ModelState.Remove("SubmitterUserId");
-            ticket.SubmitterUserId = _userManager.GetUserId(User);
+            ModelState.Remove("SubmitterUserId");            
 
             if (ModelState.IsValid)
             {
+                ticket.SubmitterUserId = _userManager.GetUserId(User);
+
                 // Update time for Postgres so a cast of Date types isn't attempted
                 ticket.Created = PostgresDate.Format(DateTime.Now);
                 ticket.Updated = PostgresDate.Format(DateTime.Now);
-
                 
+                // Set new ticket status to New using Enums
                 ticket.TicketStatusId = (await _context.TicketStatuses
                                 .FirstOrDefaultAsync(s => s.Name  == nameof(BTTicketStatuses.New)))!.Id;
 
+                // Add ticket
                 await _ticketService.AddTicketAsync(ticket);
 
                 return RedirectToAction(nameof(Index));
@@ -194,11 +196,11 @@ namespace BugTrackerMVC.Controllers
             //   using FullName for 3rd value displays full name for both types of users
 
             //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+            //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
+            //ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
+            ViewData["TicketPriorityId"] = new SelectList(_ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
+            // ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(_ticketService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
             return View(ticket);
         }

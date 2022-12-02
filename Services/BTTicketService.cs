@@ -1,4 +1,5 @@
-﻿using BugTrackerMVC.Data;
+﻿using BugTrackerMVC.Controllers;
+using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,35 @@ namespace BugTrackerMVC.Services
             }
         }
 
+        public async Task<List<TicketType>> GetTicketTypesAsync()
+        {
+            try
+            {
+                List<TicketType> ticketTypes = new();
+                List<TicketType> ticketTypes = await _context.TicketsTypes;
+                return ticketTypes; 
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<TicketPriority>> GetTicketPrioritiesAsync()
+        {
+            try
+            {
+                List<TicketPriority> priorities = new();
+                priorities = await _context.TicketPriorities;
+                return priorities;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         public async Task<List<Ticket>> GetAllTicketsByDeveloperIdAsync(string userId)
         {
             try
