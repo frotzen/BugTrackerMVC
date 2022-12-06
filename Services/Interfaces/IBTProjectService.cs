@@ -10,9 +10,10 @@ namespace BugTrackerMVC.Services.Interfaces
         // methods have to be implemented here for class intended to be a service
         
         /* Getters */
-        public Task<Project> GetProjectByIdAsync(int projectId, int companyId);
+        public Task<Project> GetProjectByIdAsync(int projectId);
         public Task<List<Project>> GetUserProjectsAsync(string userId);
         public Task<List<Project>> GetAllProjectsByCompanyIdAsync(int companyId);
+        public Task<List<Project>> GetAllUnassignedProjectsByCompanyIdAsync(int companyId);
         public Task<List<Project>> GetArchivedProjectsByCompanyIdAsync(int companyId);
         public Task<IEnumerable<ProjectPriority>> GetProjectPrioritiesAsync();
         public Task<BTUser> GetProjectManagerAsync(int projectId);

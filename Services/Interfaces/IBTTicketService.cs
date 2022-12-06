@@ -1,4 +1,5 @@
 ﻿using BugTrackerMVC.Models;
+using Microsoft.CodeAnalysis;
 
 namespace BugTrackerMVC.Services.Interfaces
 {
@@ -16,6 +17,7 @@ namespace BugTrackerMVC.Services.Interfaces
         public Task<List<TicketPriority>> GetTicketPrioritiesAsync();
         public Task<List<TicketStatus>> GetTicketStatusesAsync();
         public Task<List<Ticket>> GetAllTicketsByDeveloperIdAsync(string userId);
+        public Task<List<Ticket>> GetAllTicketsByProjectIdAsync(int projectId);
         public Task<List<Ticket>> GetAllTicketsByCompanyIdAsync(int companyId);
         public Task<List<Ticket>> GetArchivedTicketsByDeveloperIdAsync(string userId);
         public Task AddTicketAsync(Ticket ticket);

@@ -20,7 +20,7 @@ namespace BugTrackerMVC.Services
         /****
          **     Getters
          ****/
-        public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
+        public async Task<Project> GetProjectByIdAsync(int projectId)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace BugTrackerMVC.Services
                                         .Include(p => p.Tickets)
                                            .ThenInclude(c => c.TicketType)
                                         .Include(p => p.ProjectPriority)
-                                        .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
+                                        .FirstOrDefaultAsync(p => p.Id == projectId);
                 return project!;
             }
             catch (Exception)
@@ -89,6 +89,51 @@ namespace BugTrackerMVC.Services
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+        public async Task<List<Project>> GetAllUnassignedProjectsByCompanyIdAsync(int companyId)
+        {
+            try
+            {
+                // get all unassigned projects where Members has no PM
+                bool isMember = false;
+                List<Project>? projects = new();
+                List<Project>? projectList = await _context.Projects
+                                                            .Include(p => p.Members)
+                                                            .Include(p => p.Company)
+                                                            .Include(p => p.ProjectPriority)
+                                                            .Where(p => p.CompanyId == companyId)
+                                                            .ToListAsync();
+                foreach(var project in projectList)
+                {
+                    foreach(var member in project.Members)
+                    {
+                        if(await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+                        {
+                            isMember = true;
+                            break;
+                        }
+
+                    }
+
+                    if (isMember == true)
+                    {
+                        isMember = false;
+                        continue;
+                    }
+
+                    else
+                    {
+                        projects.Add(project);
+                    }
+                }
+
+                return projects;
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }
@@ -198,7 +243,7 @@ namespace BugTrackerMVC.Services
             try
             {
                 BTUser? currentPM = await GetProjectManagerAsync(projectId);
-                BTUser? selectedPM = await _context.Users.FindAsync(member);
+                BTUser? selectedPM = await _context.Users.FindAsync(member.Id);
 
                 // Remove current ProjectManager
                 if (currentPM != null)
@@ -250,7 +295,7 @@ namespace BugTrackerMVC.Services
         {
             try
             {
-                Project? project = await GetProjectByIdAsync(projectId, member.CompanyId);
+                Project? project = await GetProjectByIdAsync(projectId);
                 bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
 
                 if (!IsOnProject)
@@ -271,7 +316,7 @@ namespace BugTrackerMVC.Services
         {
             try
             {
-                Project? project = await GetProjectByIdAsync(projectId, member.CompanyId);
+                Project? project = await GetProjectByIdAsync(projectId);
                 bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
                 if (IsOnProject)
                 {

@@ -126,6 +126,27 @@ namespace BugTrackerMVC.Services
             }
         }
 
+        public async Task<List<Ticket>> GetAllTicketsByProjectIdAsync(int projectId)
+        {
+            try
+            {
+                List<Ticket> tickets = await _context.Tickets.Where(t => t.ProjectId == projectId)
+                                                     .Include(t => t.DeveloperUser)
+                                                     .Include(t => t.Project)
+                                                     .Include(t => t.SubmitterUser)
+                                                     .Include(t => t.TicketPriority)
+                                                     .Include(t => t.TicketStatus)
+                                                     .Include(t => t.TicketType)
+                                                     .ToListAsync();
+                return tickets;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<Ticket>> GetAllTicketsByCompanyIdAsync(int companyId)
         {
             try
