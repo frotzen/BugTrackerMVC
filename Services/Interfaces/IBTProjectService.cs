@@ -1,6 +1,4 @@
 ﻿using BugTrackerMVC.Models;
-using Org.BouncyCastle.Bcpg;
-using System.Collections;
 
 namespace BugTrackerMVC.Services.Interfaces
 {
@@ -15,7 +13,7 @@ namespace BugTrackerMVC.Services.Interfaces
         public Task<List<Project>> GetAllProjectsByCompanyIdAsync(int companyId);
         public Task<List<Project>> GetAllUnassignedProjectsByCompanyIdAsync(int companyId);
         public Task<List<Project>> GetArchivedProjectsByCompanyIdAsync(int companyId);
-        public Task<IEnumerable<ProjectPriority>> GetProjectPrioritiesAsync();
+        public Task<List<ProjectPriority>> GetProjectPrioritiesAsync();
         public Task<BTUser> GetProjectManagerAsync(int projectId);
 
         /* Setters */

@@ -11,9 +11,14 @@ namespace BugTrackerMVC.Services
     public class BTTicketService : IBTTicketService
     {
         private readonly ApplicationDbContext _context;
-        public BTTicketService(ApplicationDbContext context)
+        private readonly IBTRolesService _rolesService;
+        private readonly IBTProjectService _projectService;
+
+        public BTTicketService(ApplicationDbContext context, IBTRolesService roleService, IBTProjectService projectService)
         {
             _context = context;
+            _rolesService = roleService;
+            _projectService = projectService;
         }
 
         //**** For testing Admin accounts
@@ -97,6 +102,48 @@ namespace BugTrackerMVC.Services
                 List<TicketStatus> statuses = new();
                 statuses = await _context.TicketStatuses.ToListAsync();
                 return statuses;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<List<Ticket>> GetTicketsByUserIdAsync(string userId, int companyId)
+        {
+            BTUser? btUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            List<Ticket>? tickets = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId))
+                                                    .Where(p => p.Archived == false)
+                                                    .SelectMany(p => p.Tickets!)
+                                                    .Where(t => !(t.Archived | t.ArchivedByProject))
+                                                    .ToList();
+
+            try
+            {
+                if (await _rolesService.IsUserInRoleAsync(btUser!, nameof(BTRoles.Admin)))
+                {
+                    return tickets;
+                }
+                else if (await _rolesService.IsUserInRoleAsync(btUser!, nameof(BTRoles.Developer)))
+                {
+                    return tickets.Where(t => t.DeveloperUserId == userId || t.SubmitterUserId == userId).ToList();
+                }
+                else if (await _rolesService.IsUserInRoleAsync(btUser!, nameof(BTRoles.Submitter)))
+                {
+                    return tickets.Where(t => t.SubmitterUserId == userId).ToList();
+                }
+                else if (await _rolesService.IsUserInRoleAsync(btUser!, nameof(BTRoles.ProjectManager)))
+                {
+                    List<Ticket>? projectTickets = (await _projectService.GetUserProjectsAsync(userId))
+                                                    .SelectMany(t => t.Tickets!)
+                                                    .Where(t => t.Archived | t.ArchivedByProject)
+                                                    .ToList();
+                    List<Ticket>? submittedTickets = tickets.Where(t => t.SubmitterUserId == userId).ToList();
+                    return tickets = projectTickets.Concat(submittedTickets).ToList();
+                }
+
+                return tickets;
+
             }
             catch (Exception)
             {
@@ -191,12 +238,41 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
+         
+        public async Task AssignDeveloperAsync(Ticket ticket, string developerUserId)
+        {
+            try
+            {
+                ticket.DeveloperUserId = developerUserId;
+                _context.Tickets.Update(ticket);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         public async Task AddTicketAsync(Ticket ticket)
         {
             try
             {
                 _context.Add(ticket);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        
+        public async Task AddCommentAsync(TicketComment ticketComment)
+        {
+            try
+            {
+                _context.TicketComments.Add(ticketComment);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)

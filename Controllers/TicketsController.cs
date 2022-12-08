@@ -15,6 +15,7 @@ using BugTrackerMVC.Services;
 using BugTrackerMVC.Enums;
 using System.ComponentModel.Design;
 using BugTrackerMVC.Extensions;
+using BugTrackerMVC.Models.ViewModels;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -25,14 +26,17 @@ namespace BugTrackerMVC.Controllers
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
         private readonly IBTTicketService _ticketService;
+        private readonly IBTRolesService _rolesService;
 
         public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager,
-                                 IBTTicketService ticketService, IBTProjectService projectService)
+                                 IBTTicketService ticketService, IBTProjectService projectService,
+                                 IBTRolesService rolesService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _ticketService = ticketService;
+            _rolesService = rolesService;
         }
 
         // GET: Tickets
@@ -68,6 +72,24 @@ namespace BugTrackerMVC.Controllers
 
             return View(tickets);
         }
+        // GET: Tickets/UnassignedTickets
+        public async Task<IActionResult> UnassignedTickets()
+        {
+            //  int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
+            //  GetAllTicketsByDeveloperIdAsync(string userId)
+            //
+            int companyId = User.Identity!.GetCompanyId();
+            string userId = (await _userManager.GetUserAsync(User)).Id;
+            List<Ticket> tickets = new();
+
+            //  !!!!!!!*****  take another look at this  *****!!!!!!!
+            // call Get All Tickets from service
+            // 
+            tickets = await _ticketService.GetAllTicketsByCompanyIdAsync(companyId);
+            tickets = tickets.Where(t => t.DeveloperUserId == null).ToList();            
+
+            return View(tickets);
+        }
 
         // Get: Tickets/ArchivedTickets
         public async Task<IActionResult> ArchivedTickets()
@@ -75,6 +97,7 @@ namespace BugTrackerMVC.Controllers
             //  int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
             //  GetAllTicketsByDeveloperIdAsync(string userId)
             //
+
             string userId = (await _userManager.GetUserAsync(User)).Id;
             List<Ticket> tickets = new();
 
@@ -128,18 +151,24 @@ namespace BugTrackerMVC.Controllers
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int id)
         {
+            TicketDetailsViewModel viewModel = new();
+          
             if (id == null)
             {
                 return NotFound();
             }
 
-            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
-            if (ticket == null)
+            viewModel.Ticket = await _ticketService.GetTicketByIdAsync(id);
+            
+            if (viewModel.Ticket == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            viewModel.Project = await _projectService.GetProjectByIdAsync(viewModel.Ticket.ProjectId);
+            viewModel.TicketComments = await _context.TicketComments.Where(c => c.TicketId == id).ToListAsync();
+
+            return View(viewModel);
         }
 
         // GET: Tickets/Create
@@ -157,11 +186,15 @@ namespace BugTrackerMVC.Controllers
             {
                 projects = await _projectService.GetUserProjectsAsync(userId);
             }
+
             // Param list 2nd & 3rd values are for actual dataValue & display dataText, respectively
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
+            //   4th parameter is for displaying selected item, this is a new ticket, so not needed.
 
-            //ViewData["DeveloperUserId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName");
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Developer) , companyId);
+
+            ViewData["DeveloperUserId"] = new SelectList(developers, "Id", "FullName");
             ViewData["ProjectId"] = new SelectList(projects, "Id", "Name");
             ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name");
@@ -176,7 +209,7 @@ namespace BugTrackerMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,DeveloperUserId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
             ModelState.Remove("SubmitterUserId");            
 
@@ -201,7 +234,10 @@ namespace BugTrackerMVC.Controllers
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
 
-            //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
+            int companyId = User.Identity!.GetCompanyId();
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Developer), companyId);
+
+            ViewData["DeveloperUserId"] = new SelectList(developers, "Id", "FullName");
             //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
             //ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
             ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
@@ -227,12 +263,16 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
+            int companyId = User.Identity!.GetCompanyId();
+
             // SelectList(table, dataValue, dataText, selectvalue)
             // Param list 2nd & 3rd values are for actual dataValue & display dataText, respectively
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
 
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Developer), companyId);
+
+            ViewData["DeveloperUserId"] = new SelectList(developers, "Id", "FullName", ticket.DeveloperUserId);
             //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
             ViewData["SubmitterUserId"] = ticket.SubmitterUserId;
             ViewData["TicketPriorityId"] = new SelectList(await _ticketService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);

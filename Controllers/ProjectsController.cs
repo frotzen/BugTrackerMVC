@@ -15,8 +15,8 @@ using BugTrackerMVC.Services;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using BugTrackerMVC.Enums;
 using BugTrackerMVC.Extensions;
-using System.ComponentModel.Design;
 using BugTrackerMVC.Models.ViewModels;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -184,12 +184,23 @@ namespace BugTrackerMVC.Controllers
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Create()
         {
-            //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
+            List<BTUser> projectManagers = await _rolesService
+                    .GetUsersInRoleAsync(nameof(BTRoles.ProjectManager), User.Identity!.GetCompanyId());
 
+            AssignPMViewModel viewModel = new();
+            viewModel.PMList = new SelectList(projectManagers, "Id", "FullName");
+
+            //{
+            //    //Project = new(),
+            //    PMList = new SelectList(projectManagers, "Id", "FullName"),
+            //    //PMId = null
+            //};
+
+            //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             // ToDo: call Project Service
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
             
-            return View();
+            return View(viewModel);
         }
 
         // POST: Projects/Create
@@ -198,8 +209,10 @@ namespace BugTrackerMVC.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,StartDate,EndDate,ProjectPriorityId,ImageFormFile")] Project project)
+        public async Task<IActionResult> Create(AssignPMViewModel viewModel)
         {
+            Project project = viewModel.Project!;
+
             if (ModelState.IsValid)
             {
                 //***** Method to get the companyId
@@ -216,6 +229,17 @@ namespace BugTrackerMVC.Controllers
                 // format dates
                 project.StartDate = PostgresDate.Format(project.StartDate);
                 project.EndDate = PostgresDate.Format(project.EndDate);
+
+                // Add PM if one is selected
+                if (!string.IsNullOrEmpty(viewModel.PMId))
+                {
+                    BTUser newPM = await _userManager.FindByIdAsync(viewModel.PMId);
+                    await _projectService.AddProjectManagerAsync(newPM, project.Id);
+                }
+                else
+                {
+                    await _projectService.RemoveProjectManagerAsync(project.Id);
+                }
 
                 // use Project Service
                 await _projectService.AddProjectAsync(project);
@@ -237,18 +261,27 @@ namespace BugTrackerMVC.Controllers
             }
 
             int companyId = User.Identity!.GetCompanyId();
+            List<BTUser> projectManagers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.ProjectManager), companyId);
+            BTUser? currentPM = await _projectService.GetProjectManagerAsync(id.Value);
 
             // use Project Service
-            var project = await _projectService.GetProjectByIdAsync(id.Value);
+            AssignPMViewModel viewModel = new()
+            {
+                Project = await _projectService.GetProjectByIdAsync(id.Value),
+                PMList = new SelectList(projectManagers, "Id", "FullName", currentPM?.Id),
+                PMId = currentPM?.Id
+            };
 
-            if (project == null)
+            if (viewModel.Project == null)
             {
                 return NotFound();
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
-            return View(project);
+            ViewData["ProjectManagers"] = new SelectList(projectManagers, "Id", "Name");
+            ViewData["CurrentProjectManager"] = currentPM;
+
+            return View(viewModel);
         }
 
         // POST: Projects/Edit/5
@@ -257,8 +290,10 @@ namespace BugTrackerMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, ProjectManager")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,Name,Description,Created,StartDate,EndDate,ProjectPriorityId,ImageFileData,ImageFileType,Archived")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("ProjectPriorityId")] AssignPMViewModel viewModel)
         {
+            Project project = viewModel.Project!;
+
             if (id != project.Id)
             {
                 return NotFound();
@@ -271,11 +306,21 @@ namespace BugTrackerMVC.Controllers
                 project.StartDate = PostgresDate.Format(project.StartDate);
                 project.EndDate = PostgresDate.Format(project.EndDate);
 
-
+                
                 try
                 {
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
+                    if (!string.IsNullOrEmpty(viewModel.PMId))
+                    {
+                        BTUser newPM = await _userManager.FindByIdAsync(viewModel.PMId);
+                        await _projectService.AddProjectManagerAsync(newPM, project.Id);
+                    }
+                    else
+                    {
+                        await _projectService.RemoveProjectManagerAsync(project.Id);
+                    }
+
+                    await _projectService.UpdateProjectAsync(project);
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -290,7 +335,7 @@ namespace BugTrackerMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
+            
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
             return View(project);
         }

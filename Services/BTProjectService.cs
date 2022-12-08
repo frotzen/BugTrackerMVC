@@ -1,8 +1,10 @@
 ﻿using BugTrackerMVC.Data;
 using BugTrackerMVC.Enums;
+using BugTrackerMVC.Extensions;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace BugTrackerMVC.Services
 {
@@ -49,14 +51,10 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
-
         public async Task<List<Project>> GetUserProjectsAsync(string userId)
         {
             try
-            {           // TRY TO MAKE THIS WORK!!!!!
-                /**ICollection<Project> companyProjects = new();
-                companyProjects = await GetAllProjectsByCompanyIdAsync(user.CompanyId);
-                return companyProjects.Where(p => p.Members.Contains(user));*/
+            {
                 List<Project>? projects = (await _context.Users
                                         .Include(u => u.Projects)
                                             .ThenInclude(p => p.ProjectPriority)
@@ -64,8 +62,31 @@ namespace BugTrackerMVC.Services
                                             .ThenInclude(p => p.Members)
                                         .Include(u => u.Projects)
                                             .ThenInclude(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketType)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketStatus)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketPriority)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Tickets)
+                                                .ThenInclude(t => t.Comments)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Tickets)
+                                                .ThenInclude(t => t.Attachments)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Tickets)
+                                                .ThenInclude(t => t.History)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Tickets)
+                                                .ThenInclude(t => t.DeveloperUser)
+                                        .Include(u => u.Projects)
+                                            .ThenInclude(p => p.Tickets)
+                                                .ThenInclude(t => t.SubmitterUser)
                                         .FirstOrDefaultAsync(u => u.Id == userId))?
-                                        .Projects.ToList();
+                                        .Projects.Where(p => p.Archived == false)
+                                        .ToList();
                 return projects!;
             }
             catch (Exception)
@@ -83,6 +104,21 @@ namespace BugTrackerMVC.Services
                                         .Include(p => p.Company)
                                         .Include(p => p.ProjectPriority)
                                         .Include(p => p.Tickets)
+                                            .ThenInclude(c => c.Comments)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.Attachments)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.History)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketPriority)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketStatus)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketType)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.DeveloperUser)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.SubmitterUser)
                                         .Include(p => p.Members)
                                         .ToListAsync();
                 return projects;
@@ -152,7 +188,7 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
-        public async Task<IEnumerable<ProjectPriority>> GetProjectPrioritiesAsync()
+        public async Task<List<ProjectPriority>> GetProjectPrioritiesAsync()
         {
             return await _context.ProjectPriorities.ToListAsync();
         }
@@ -179,7 +215,7 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
-
+        
 
         /****
          **     Setters
