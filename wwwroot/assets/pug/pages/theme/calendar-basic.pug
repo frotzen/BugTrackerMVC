@@ -1,0 +1,59 @@
+- var theme_customizer      = true;
+- var calendar              = true;
+
+doctype html
+html(lang='en')
+    include ../../components/header-files
+    body 
+        include ../../components/loader
+        // page-wrapper Start
+        #pageWrapper.page-wrapper.compact-wrapper
+            include ../../components/header
+            // Page Body Start
+            .page-body-wrapper.sidebar-icon
+                include ../../components/sidebar
+                .page-body
+                    .container-fluid
+                        .page-header
+                            .row
+                                .col-lg-6
+                                    ol.breadcrumb
+                                      li.breadcrumb-item
+                                        a(href='index.html')
+                                         i.f-16.fa.fa-home
+                                      li.breadcrumb-item Apps   
+                                      li.breadcrumb-item Calendar
+                                    h3
+                                      | Calendar Basic
+                                .col-lg-6
+                                  include ../../components/bookmark
+                    // Container-fluid starts
+                    .container-fluid
+                      .row
+                        .col-sm-12
+                          .card
+                            .card-header 
+                              h5 calendar 
+                            .card-body 
+                              #wrap.calander-main
+                                #external-events.calander-sidebar
+                                  h4.mb-4.font-medium Draggable Events
+                                  #external-events-list
+                                    .fc-event.fc-h-event.fc-daygrid-event.fc-daygrid-block-event.bg-primary.p-md-3.p-2.text-sm.mb-3.border-0
+                                      .fc-event-main Meeting
+                                    .fc-event.fc-h-event.fc-daygrid-event.fc-daygrid-block-event.bg-secondary.p-md-3.p-2.text-sm.mb-3.border-0
+                                      .fc-event-main Long Event
+                                    .fc-event.fc-h-event.fc-daygrid-event.fc-daygrid-block-event.bg-dark.p-md-3.p-2.text-sm.mb-3.border-0
+                                      .fc-event-main Birthday party
+                                    .fc-event.fc-h-event.fc-daygrid-event.fc-daygrid-block-event.bg-danger.p-md-3.p-2.text-sm.mb-3.border-0
+                                      .fc-event-main Holiday  
+                                    .fc-event.fc-h-event.fc-daygrid-event.fc-daygrid-block-event.bg-success.p-md-3.p-2.text-sm.mb-3.border-0
+                                      .fc-event-main Happy hours
+                                  p
+                                    input#drop-remove(type='checkbox')
+                                    label(for='drop-remove') remove after drop
+                                #calendar-wrap.calander-body
+                                  #calendar
+                    // Container-fluid Ends
+                include ../../components/footer
+        include ../../components/footer-files

@@ -1,0 +1,64 @@
+- var theme_customizer      = true;
+- var popper =     true;
+- var tooltip =    true;
+
+doctype html
+html(lang='en')
+    include ../../components/header-files
+    body
+        include ../../components/loader
+        // page-wrapper Start
+        #pageWrapper.page-wrapper.compact-wrapper
+            include ../../components/header
+            // Page Body Start
+            .page-body-wrapper.sidebar-icon
+                include ../../components/sidebar
+                .page-body
+                    .container-fluid
+                        .page-header
+                            .row
+                                .col-lg-6
+                                    ol.breadcrumb
+                                      li.breadcrumb-item
+                                        a(href='index.html')
+                                         i.f-16.fa.fa-home
+                                      li.breadcrumb-item Ui Kits
+                                      li.breadcrumb-item.active Tooltip   
+                                    h3
+                                      | Tooltip
+                                .col-lg-6
+                                  include ../../components/bookmark
+                    // Container-fluid starts
+                    .container-fluid
+                      .row
+                        .col-sm-12
+                          .card
+                            .card-header
+                              h5 Basic Tooltip
+                            .card-body.btn-showcase
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='top', title='Popover title')
+                                | Hover Me
+                        .col-sm-12
+                          .card
+                            .card-header
+                              h5 Directions
+                            .card-body.btn-showcase
+                              button.btn.btn-primary(type='button', data-bs-toggle='tooltip', data-bs-placement='top', title='Tooltip on top')
+                                | Tooltip on top
+                              button.btn.btn-primary(type='button', data-bs-toggle='tooltip', data-bs-placement='right', title='Tooltip on right')
+                                | Tooltip on right
+                              button.btn.btn-primary(type='button', data-bs-toggle='tooltip', data-bs-placement='bottom', title='Tooltip on bottom')
+                                | Tooltip on bottom
+                              button.btn.btn-primary(type='button', data-bs-toggle='tooltip', data-bs-placement='left', title='Tooltip on left')
+                                | Tooltip on left
+                        .col-sm-12
+                          .card
+                            .card-header
+                              h5 HTML element and Offset
+                            .card-body.btn-showcase
+                              button.btn.btn-primary(type='button', data-bs-toggle='tooltip', data-bs-placement='top', title='Tooltip with html') tooltip with html
+                              button.btn.btn-primary(type='button', data-bs-offset='20,20', data-bs-placement='top', title='Tooltip title', data-original-title='Tooltip title')
+                                | 20px 20px
+                    // Container-fluid Ends
+                include ../../components/footer
+        include ../../components/footer-files

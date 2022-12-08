@@ -1,0 +1,88 @@
+- var theme_customizer      = true;
+- var counter               = true;
+- var popover_custom        = true;
+doctype html
+html(lang='en')
+    include ../../components/header-files
+    body
+        include ../../components/loader
+        // page-wrapper Start
+        #pageWrapper.page-wrapper.compact-wrapper
+            include ../../components/header
+            // Page Body Start
+            .page-body-wrapper.sidebar-icon
+                include ../../components/sidebar
+                .page-body
+                    .container-fluid
+                        .page-header
+                            .row
+                                .col-lg-6
+                                    ol.breadcrumb
+                                      li.breadcrumb-item
+                                        a(href='index.html')
+                                         i.f-16.fa.fa-home
+                                      li.breadcrumb-item Ui Kits  
+                                      li.breadcrumb-item.active Popover 
+                                    h3
+                                      | Popover
+                                .col-lg-6
+                                  include ../../components/bookmark
+                    // Container-fluid starts
+                    .container-fluid
+                      .row.popover-main
+                        .col-sm-12
+                          .card
+                            .card-header
+                              h5 Basic Examples
+                              span lorem ipsum dolor sit amet, consectetur adipisicing elit
+                            .card-body.btn-showcase
+                              button.btn.btn-primary.example-popover(type='button', data-bs-toggle='popover', title='Popover title', data-bs-content="And here's some amazing content. It's very engaging. Right?") Click to toggle popover
+                              a.example-popover.btn.btn-primary(tabindex='0', role='button', data-bs-toggle='popover', data-bs-trigger='focus', title='Popover title', data-bs-content="And here's some amazing content. It's very engaging. Right?") Dismissible popover
+                              button.example-popover.btn.btn-primary(type='button', data-bs-trigger='hover', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='bottom', title='Popover title', data-offset='-20px -20px', data-bs-content='Vivamus sagittis lacus vel augue laoreet rutrum faucibus.')
+                                | On Hover Tooltip
+                        .col-sm-12
+                          .card
+                            .card-header
+                              h5 Direction
+                              span lorem ipsum dolor sit amet, consectetur adipisicing elit
+                            .card-body.btn-showcase
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='top', data-bs-content='Top popover')
+                                | Popover on top
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='right', data-bs-content='Right popover')
+                                | Popover on right
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='bottom', data-bs-content='Bottom popover')
+                                | Popover on bottom
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='left', data-bs-content='Left popover')
+                                | Popover on left
+                        .col-sm-12
+                          .card
+                            .card-header
+                              h5 HTML Content
+                              span lorem ipsum dolor sit amet, consectetur adipisicing elit
+                            .card-body.btn-showcase
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='top', title='Popover title', data-bs-html='true', data-bs-content="Just add data-bs-html='true' attribute and you can purse html code")
+                                | Popover HTML on top
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='right', data-bs-html='true', data-bs-content="Just add data-bs-html='true' attribute and you can purse html code")
+                                | Popover HTML on right
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='bottom', data-bs-html='true', data-bs-content="Just add data-bs-html='true' attribute and you can purse html code")
+                                | Popover HTML on bottom
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='left', data-bs-html='true', data-bs-content="Just add data-bs-html='true' attribute and you can purse html code")
+                                | Popover HTML on left
+                        .col-sm-12
+                          .card
+                            .card-header
+                              h5 Offset to Tooltip
+                              span lorem ipsum dolor sit amet, consectetur adipisicing elit
+                            .card-body.btn-showcase
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='top', title='Popover title', data-bs-offset='20,20', data-bs-content='Vivamus sagittis lacus vel augue laoreet rutrum faucibus.')
+                                | 20px 20px
+                              button.example-popover.btn.btn-primary(type='button', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='top', title='Popover title', data-offset='0px', data-bs-content='Vivamus sagittis lacus vel augue laoreet rutrum faucibus.')
+                                | 0px
+                              button.example-popover.btn.btn-primary(type='button', data-bs-trigger='hover', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='top', title='Popover title', data-bs-offset='20,20', data-bs-content='Vivamus sagittis lacus vel augue laoreet rutrum faucibus.')
+                                | 20px 20px On Hover
+                              button.example-popover.btn.btn-primary(type='button', data-bs-trigger='hover', data-bs-container='body', data-bs-toggle='popover', data-bs-placement='top', title='Popover title', data-offset='0px', data-bs-content='Vivamus sagittis lacus vel augue laoreet rutrum faucibus.')
+                                | 0px On Hover
+
+                    // Container-fluid Ends
+                include ../../components/footer
+        include ../../components/footer-files

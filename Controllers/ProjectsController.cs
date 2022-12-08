@@ -187,17 +187,15 @@ namespace BugTrackerMVC.Controllers
             List<BTUser> projectManagers = await _rolesService
                     .GetUsersInRoleAsync(nameof(BTRoles.ProjectManager), User.Identity!.GetCompanyId());
 
-            AssignPMViewModel viewModel = new();
-            viewModel.PMList = new SelectList(projectManagers, "Id", "FullName");
-
-            //{
-            //    //Project = new(),
-            //    PMList = new SelectList(projectManagers, "Id", "FullName"),
-            //    //PMId = null
-            //};
+            AssignPMViewModel viewModel = new()
+            {
+                Project = new(),
+                PMList = new SelectList(projectManagers, "Id", "FullName"),
+                PMId = null
+            };
 
             //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
-            // ToDo: call Project Service
+            // call Project Service for view data
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
             
             return View(viewModel);
@@ -215,6 +213,8 @@ namespace BugTrackerMVC.Controllers
 
             if (ModelState.IsValid)
             {
+                
+
                 //***** Method to get the companyId
                 int companyId = User.Identity!.GetCompanyId();
                 project.CompanyId = companyId;
@@ -230,6 +230,11 @@ namespace BugTrackerMVC.Controllers
                 project.StartDate = PostgresDate.Format(project.StartDate);
                 project.EndDate = PostgresDate.Format(project.EndDate);
 
+               
+
+                // use Project Service
+                await _projectService.AddProjectAsync(project);
+
                 // Add PM if one is selected
                 if (!string.IsNullOrEmpty(viewModel.PMId))
                 {
@@ -240,10 +245,6 @@ namespace BugTrackerMVC.Controllers
                 {
                     await _projectService.RemoveProjectManagerAsync(project.Id);
                 }
-
-                // use Project Service
-                await _projectService.AddProjectAsync(project);
-
                 return RedirectToAction(nameof(Index));
             }
 
@@ -290,7 +291,7 @@ namespace BugTrackerMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, ProjectManager")]
-        public async Task<IActionResult> Edit(int id, [Bind("ProjectPriorityId")] AssignPMViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, AssignPMViewModel viewModel)
         {
             Project project = viewModel.Project!;
 
@@ -306,7 +307,9 @@ namespace BugTrackerMVC.Controllers
                 project.StartDate = PostgresDate.Format(project.StartDate);
                 project.EndDate = PostgresDate.Format(project.EndDate);
 
-                
+                _context.Update(project);
+                await _context.SaveChangesAsync();
+
                 try
                 {
                     if (!string.IsNullOrEmpty(viewModel.PMId))
@@ -319,8 +322,7 @@ namespace BugTrackerMVC.Controllers
                         await _projectService.RemoveProjectManagerAsync(project.Id);
                     }
 
-                    await _projectService.UpdateProjectAsync(project);
-
+                    
                 }
                 catch (DbUpdateConcurrencyException)
                 {

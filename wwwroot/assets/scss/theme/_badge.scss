@@ -1,0 +1,105 @@
+/**=====================
+    49. Badge CSS start
+==========================**/
+.badge {
+  padding: $badge-padding;
+  &+.badge{
+  	margin-left: 5px;
+  }
+  svg{
+    width: $badge-svg-size;
+    height: $badge-svg-size;
+  }
+}
+
+// flat badge loop css
+@each $pill-badge-name, $pill-badge-color in (primary, $primary-color),
+        (secondary, $secondary-color) ,
+        (success, $success-color),
+        (danger, $danger-color),
+        (info, $info-color),
+        (light, $light-color),
+        (dark, $dark-color),
+        (warning, $warning-color) {
+  .pill-badge-#{$pill-badge-name}{
+    background-color: $pill-badge-color;
+    box-shadow: -0.5px 4.33px 16px 0px rgba($pill-badge-color, 0.25);
+    color: $white;
+  }
+}
+.badge-number{
+  vertical-align: middle;
+    line-height: 0.5;
+    padding-top: 9px 10px 8px;
+    @media only screen and (max-width: 1399px){
+      .badge{
+        padding: 0.42em 0.7em 0.38em;
+      }
+    }
+}
+.mega-title-badge{
+  .pull-right{
+    [dir="rtl"] & {
+      float: left;
+    }
+  }
+}
+
+a,.btn{
+  &.badge-primary{
+    &:hover{
+      color: $white;
+      background-color: darken($primary-color, 2%);
+    }
+  }
+  &.badge-secondary{
+    &:hover{
+      color: $white;
+      background-color: darken($secondary-color, 2%);
+    }
+  }
+  &.badge-success{
+    &:hover{
+      color: $white;
+      background-color: darken($success-color, 2%);
+    }
+  }
+  &.badge-info{
+    &:hover{
+      color: $white;
+      background-color: darken($info-color, 2%);
+    }
+  }
+  &.badge-warning{
+    &:hover{
+      color: $black;
+      background-color: darken($warning-color, 2%);
+    }
+  } 
+  &.badge-danger{
+    &:hover{
+      color: $white;
+      background-color: darken($danger-color, 2%);
+    }
+  }
+  &.badge-light{
+    &:hover{
+      color: $black;
+      background-color: lighten($light-color, 2%);
+    }
+  }
+  &.badge-dark{
+    &:hover{
+      color: $white;
+      background-color: darken($dark-color, 2%);
+    }
+  }
+}
+.email-badge{
+  color: rgb(137, 137, 137);
+}
+
+
+/**=====================
+    49. Badge CSS Ends
+==========================**/

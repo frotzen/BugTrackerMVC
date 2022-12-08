@@ -27,16 +27,18 @@ namespace BugTrackerMVC.Controllers
         private readonly IBTProjectService _projectService;
         private readonly IBTTicketService _ticketService;
         private readonly IBTRolesService _rolesService;
+        private readonly IBTTicketHistoryService _historyService;
 
         public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager,
                                  IBTTicketService ticketService, IBTProjectService projectService,
-                                 IBTRolesService rolesService)
+                                 IBTRolesService rolesService, IBTTicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _ticketService = ticketService;
             _rolesService = rolesService;
+            _historyService = historyService;
         }
 
         // GET: Tickets
@@ -171,8 +173,35 @@ namespace BugTrackerMVC.Controllers
             return View(viewModel);
         }
 
-        // GET: Tickets/Create
-        public async Task<IActionResult> Create()
+		// POST: Tickets/Details
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(TicketDetailsViewModel viewModel)
+        {
+            Ticket ticket = viewModel.Ticket!;
+            TicketComment comment = viewModel.TicketComment!;
+            try
+            {
+                if (ticket == null) return View(viewModel);
+                comment.Created = PostgresDate.Format(DateTime.Now);
+                comment.UserId = (await _userManager.GetUserAsync(User)).Id;
+                comment.Ticket = ticket;
+                comment.User = await _userManager.GetUserAsync(User);
+
+				await _ticketService.AddCommentAsync(viewModel.TicketComment!);
+			}
+            catch (Exception)
+            {
+
+                throw;
+            }
+            // if something goes wrong go to index
+			return RedirectToAction(nameof(Index));
+		}
+
+
+		// GET: Tickets/Create
+		public async Task<IActionResult> Create()
         {
             string userId = (await _userManager.GetUserAsync(User)).Id;
             int companyId = User.Identity!.GetCompanyId();
@@ -211,11 +240,15 @@ namespace BugTrackerMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,DeveloperUserId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
-            ModelState.Remove("SubmitterUserId");            
 
-            if (ModelState.IsValid)
+			int companyId = User.Identity!.GetCompanyId();
+			ModelState.Remove("SubmitterUserId");
+
+			if (ModelState.IsValid)
             {
-                ticket.SubmitterUserId = _userManager.GetUserId(User);
+                string userId = _userManager.GetUserId(User);
+
+				ticket.SubmitterUserId = _userManager.GetUserId(User);
 
                 // Update time for Postgres so a cast of Date types isn't attempted
                 ticket.Created = PostgresDate.Format(DateTime.Now);
@@ -225,8 +258,14 @@ namespace BugTrackerMVC.Controllers
                 ticket.TicketStatusId = (await _context.TicketStatuses
                                 .FirstOrDefaultAsync(s => s.Name  == nameof(BTTicketStatuses.New)))!.Id;
 
-                // Add ticket
+                // Add ticket and get user's companyId
                 await _ticketService.AddTicketAsync(ticket);
+
+                //*****
+                // Add History record here.
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, ticket.Project!.CompanyId);
+                await _historyService.AddHistoryAsync(null!, newTicket, userId);
+
 
                 return RedirectToAction(nameof(Index));
             }
@@ -234,7 +273,7 @@ namespace BugTrackerMVC.Controllers
             // dataValue is submitted by the form, dataText shows up in the html selector element
             //   using FullName for 3rd value displays full name for both types of users
 
-            int companyId = User.Identity!.GetCompanyId();
+            
             List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Developer), companyId);
 
             ViewData["DeveloperUserId"] = new SelectList(developers, "Id", "FullName");
@@ -296,6 +335,9 @@ namespace BugTrackerMVC.Controllers
 
             if (ModelState.IsValid)
             {
+                int companyId = User.Identity!.GetCompanyId();
+                string userId = _userManager.GetUserId(User);
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);
 
                 try
                 {
@@ -316,6 +358,12 @@ namespace BugTrackerMVC.Controllers
                         throw;
                     }
                 }
+
+                // Add ticket history
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
+
+
                 return RedirectToAction(nameof(Index));
             }
 

@@ -1,0 +1,331 @@
+/**=====================
+     01. General CSS Start
+==========================**/
+//Custom css Start
+body {
+    background-color: $body-bg-color;
+    font-size: $body-font-size;
+    overflow-x: hidden;
+    font-family: $font-monstret-sans, $font-serif;
+    color: $theme-body-font-color;
+}
+
+ul {
+    padding-left: $ul-padding-left;
+    list-style-type: none;
+    margin-bottom: 0;
+    padding-right: $ul-padding-right;
+}
+
+* a {
+    color: $primary-color;
+    text-decoration: none;
+}
+
+*.btn:focus {
+    box-shadow: $btn-focus-box-shadow !important;
+}
+
+p {
+    font-size: $paragraph-font-size;
+    line-height: $paragraph-line-height;
+    letter-spacing: $paragraph-letter-spacing;
+}
+
+code {
+    color: $code-tag-color !important;
+    background-color: $code-tag-bg-color;
+    padding: $code-tag-padding;
+    margin: $code-tag-margin;
+    border-radius: $code-tag-border-radious;
+}
+
+blockquote {
+    border-left: $blockquote-border;
+    padding: $blockquote-padding;
+}
+
+blockquote {
+    &.text-center {
+        border: none;
+        padding: $blockquote-padding;
+    }
+}
+
+blockquote {
+    &.text-end {
+        border-left: none;
+        border-right: $blockquote-border;
+        padding: $blockquote-padding;
+    }
+}
+.notify-alert {
+    .close {
+        background-color: transparent;
+        border: none;
+        font-size: 30px;
+        top: 0px !important;
+    }
+}
+
+:focus {
+    outline-color: $all-focus-outline-color;
+}
+
+.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+svg {
+    vertical-align: baseline;
+}
+
+input {
+    &:focus {
+        outline-color: $transparent-color;
+    }
+}
+
+.d-flex-widgets {
+    .flex-grow-1 {
+        margin-bottom: 30px;
+    }
+}
+
+//Custom css End
+
+//Typography css start
+
+.typography {
+
+    h1,
+    .h1,
+    h2,
+    .h2,
+    h3,
+    .h3,
+    h4,
+    .h4,
+    h5,
+    .h5,
+    h6,
+    .h6 {
+        margin: 20px 0;
+        margin-top: 0;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    small {
+        padding-left: $small-tag-padding;
+        color: $small-tag-color;
+    }
+}
+
+pre {
+    background-color: $pre-tag-bg-color;
+    padding: $pre-tag-padding;
+}
+
+a {
+    &:hover {
+        text-decoration: none;
+        color: $primary-color;
+    }
+}
+
+//Typography css end
+
+.owl-theme {
+    .owl-dots {
+        .owl-dot {
+            span {
+                background: lighten($primary-color, 20%);
+            }
+
+            &.active,
+            &:hover {
+                span {
+                    background: $primary-color;
+                }
+            }
+        }
+    }
+
+    .owl-nav {
+        &.disabled {
+            &+.owl-dots {
+                margin-bottom: -10px;
+                margin-top: 25px;
+            }
+        }
+    }
+}
+
+.click2edit {
+    &~.note-editor {
+        &.note-frame {
+            margin-bottom: 30px;
+        }
+    }
+}
+
+.note-editor {
+    &.note-frame {
+        border-color: $light-color;
+    }
+}
+
+.note-editor {
+    &.note-frame {
+        border-color: $light-color;
+    }
+}
+
+// modal page
+.modal {
+    .modal-body {
+        .card {
+            box-shadow: none !important;
+        }
+    }
+}
+
+.modal-dialog {
+    .modal-content {
+        .modal-body {
+            p {
+                a {
+                    margin-right: 0;
+                }
+            }
+        }
+
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 0.3rem;
+    }
+
+    .modal-header {
+        padding: 1rem 1rem;
+        border-bottom: 1px solid #dee2e6;
+        border-top-left-radius: calc(0.3rem - 1px);
+        border-top-right-radius: calc(0.3rem - 1px);
+    }
+
+    .modal-footer {
+        padding: 0.75rem;
+        border-top: 1px solid #dee2e6;
+        border-bottom-right-radius: calc(0.3rem - 1px);
+        border-bottom-left-radius: calc(0.3rem - 1px);
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-tooltip {
+        .tooltip-test {
+            color: $primary-color;
+        }
+    }
+}
+
+// index page notify
+.alert-theme {
+    .close {
+        top: 20px !important;
+        right: 20px !important;
+        color: $primary-color;
+        background: transparent;
+        border: none;
+        font-size: 30px;
+        [dir="rtl"] & {
+            right: unset !important;
+            left: 20px !important;
+        }
+    }
+
+    span {
+        +span {
+            +span {
+                border-left: 5px solid $primary-color;
+                background-color: $white;
+                border-radius: 4px;
+                box-shadow: 0 2px 14px -3px rgba($black, 0.2);
+            }
+        }
+    }
+
+    i {
+        padding: 20px;
+        padding-right: 0 !important;
+        margin-right: 20px !important;
+    }
+
+    .progress {
+        margin-top: -2px !important;
+        height: 2px;
+
+        .progress-bar {
+            background-color: $primary-color;
+        }
+    }
+}
+
+.alert-copy {
+    border: 1px solid $primary-color;
+    line-height: 1;
+    display: inline-block;
+    width: 300px;
+    color: $white;
+    background-color: $primary-color;
+    box-shadow: 3px 3px 5px 0 #9b9b9b;
+
+    .close {
+        box-shadow: none;
+        color: $white;
+        line-height: 1.4;
+        font-weight: 100;
+    }
+}
+
+.dropdown-basic {
+    .btn-group {
+        .btn-info {
+            color: $white;
+        }
+    }
+}
+
+.mb-3 {
+    .btn-info {
+        color: $white;
+    }
+}
+
+.ace-editor {
+    height: 400px;
+    width: 100%;
+}
+
+.editor-toolbar {
+    width: 100% !important;
+}
+
+.CodeMirror {
+    top: 0 !important;
+}
+
+// rangeslider
+.irs-from,
+.irs-to,
+.irs-single {
+    background: $primary-color;
+}
+
+/**=====================
+      01. General CSS Ends
+==========================**/

@@ -50,7 +50,9 @@ namespace BugTrackerMVC.Services
                 Ticket? ticket = new();
                 ticket = await _context.Tickets
                                        .Include(t => t.DeveloperUser)
+                                       .Include(t => t.Comments)
                                        .Include(t => t.Project)
+                                       .Include(t => t.History)
                                        .Include(t => t.SubmitterUser)
                                        .Include(t => t.TicketPriority)
                                        .Include(t => t.TicketStatus)
@@ -216,7 +218,35 @@ namespace BugTrackerMVC.Services
             }
         }
 
-        public async Task<List<Ticket>> GetArchivedTicketsByDeveloperIdAsync(string userId)
+		public async Task<Ticket> GetTicketAsNoTrackingAsync(int ticketId, int companyId)
+        {
+            try
+            {
+				Ticket? ticket = new();
+				ticket = await _context.Tickets
+                                       .Include(t => t.Project)
+                                            .ThenInclude(p => p.Company)
+                                       .Include(t => t.Attachments)
+									   .Include(t => t.DeveloperUser)
+									   .Include(t => t.Comments)
+									   .Include(t => t.History)
+									   .Include(t => t.SubmitterUser)
+									   .Include(t => t.TicketPriority)
+									   .Include(t => t.TicketStatus)
+									   .Include(t => t.TicketType)
+                                       .AsNoTracking()
+									   .FirstOrDefaultAsync(m => m.Id == ticketId && m.Project!.CompanyId == companyId && m.Archived == false);
+
+				return ticket;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+		public async Task<List<Ticket>> GetArchivedTicketsByDeveloperIdAsync(string userId)
         {
             try
             {

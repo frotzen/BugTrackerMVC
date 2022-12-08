@@ -1,0 +1,239 @@
+/**=====================
+     39. Table  CSS Start
+==========================**/
+.table-bordered {
+	td, th  {
+		border-color: $horizontal-border-color !important;
+	}
+}
+.pills-component {
+	width: 20%;
+}
+.product-page-width {
+	width: 80%;
+}
+.table{
+	--bs-table-border-color: #f6f6f6;
+	margin-bottom: $table-b-margin;
+	th,td{
+		padding: $table-padding;
+	}
+	th{
+		color: $table-heading-color;
+	}
+	td{
+		color: $table-row-color;
+	}
+	[class*='bg-']{
+		color: $white;
+	}
+	.bg-light{
+		color: $theme-body-font-color;
+	}
+	tfoot{
+		font-weight: $table-footer-font-weight;
+	}
+}
+.table-inverse {
+	th,td{
+		color: $white;
+	}
+}
+.table[class*='bg-']{
+	th,td{
+		color: $white;
+	}
+}
+.table-hover {
+	tbody {
+		tr:hover {
+			background-color: $table-hover-color;
+		}
+	}
+}
+
+//Sizing class
+.table-xl{
+	td,th{
+		padding: $table-xl-padding;
+		font-size: $table-xl-font;
+	}
+}
+.table-lg{
+	td,th{
+		padding: $table-lg-padding;
+		font-size: $table-lg-font;
+	}
+}
+.table-de{
+	td,th{
+		padding: $table-de-padding;
+	}
+}
+.table-sm{
+	th,td{
+		padding: $table-sm-padding;
+		font-size: $table-sm-font;
+	}
+}
+.table-xs{
+	th,td{
+		padding: $table-xs-padding;
+		font-size: $table-xs-font;
+	}
+}
+
+//Table Border
+.table-border-horizontal {
+	tr,th,td{
+		border-top: 1px solid $horizontal-border-color;
+		padding: $horizontal-padding;
+	}
+	tr{
+		border-style: none !important;
+	}
+}
+.table-border-vertical{
+	tr,th,td{
+		border-top: 0;
+		border-right: 1px solid $horizontal-border-color;
+	}
+	tr{
+		border-style: none !important;
+		td{
+			&:last-child{
+				border-right: none;
+			}
+		}
+	}
+}
+
+.table-bordernone{
+	td{
+		border: 0;
+	}
+	.bd-t-none{
+		border-top: none;
+	}
+	.u-s-tb{
+		padding: 11px;
+	}
+}
+.table-inverse{
+	color: $white;
+	background-color: $table-inverse-bg-color;
+	th,td{
+		border-color: $white;
+	}
+	&.table-bordered {
+		border: 0;
+	}
+}
+
+.table-striped{
+	tbody{
+		tr{
+			&:nth-of-type(odd){
+				background-color: rgba(245, 247, 250, 0.5);
+			}
+		}
+	}
+}
+.table-bordered{
+	td,th{
+		border-color: $light;
+	}
+}
+.dataTables_wrapper button:not(.btn) {
+    color: $primary-color;
+    background-color: rgba($primary-color , 0.2);
+    border: none;
+    span{
+    	color: $white;
+    }
+}
+.product-table{
+	.dataTables_wrapper button {
+    	color: $white;   
+	}
+}
+.table{
+	.thead-dark{
+		th{
+			color: $white;
+			background-color: #343a40;
+			border-color: #343a40;
+		}
+	}
+	.thead-light{
+		color: #495057;
+    	background-color: #e9ecef;
+    	border-color: #dee2e6;
+	}
+}
+.table-inverse{
+	color: #fff;
+    background-color: #292b2c;
+}
+.table-primary{
+	tbody{
+		td{
+			color: white;
+			background-color: transparent;
+		}
+	}
+}
+.table-striped{
+	&.table-primary{
+		&.table-hover{
+			> tbody{
+				> tr:hover{
+					> *{
+						--bs-table-accent-bg: #655af3;
+						color: $white;
+					}
+				}
+			}
+		} 
+		> tbody{
+			> tr:nth-of-type(odd){
+				> *{
+					--bs-table-accent-bg: #837bf3;
+					color: $white;
+				}
+				&> tr:hover{
+					> *{
+						--bs-table-accent-bg: #e9ecef;
+						color: $white;
+					}
+				}
+			}
+		}
+		 
+			> :not(caption){
+				> *{
+					> *{
+						background-color: $primary-color;
+						color: $white;
+					}
+
+				}
+			}  
+	} 
+}
+.table-styling{
+	&.table-primary{
+			> :not(caption){
+				> *{
+					> *{
+						background-color: $primary-color;
+						color: $white;
+					}
+
+				}
+			}  
+	} 
+}
+/**=====================
+     39.Table CSS Ends
+==========================**/
