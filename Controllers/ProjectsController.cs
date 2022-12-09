@@ -24,13 +24,13 @@ namespace BugTrackerMVC.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
-        private readonly IFileService _fileService;
+        private readonly IBTFileService _fileService;
         private readonly IBTProjectService _projectService;
         private readonly IBTTicketService _ticketService;
         private readonly IBTRolesService _rolesService;
 
         public ProjectsController(ApplicationDbContext context, UserManager<BTUser> userManager,
-                                    IFileService fileService, IBTProjectService projectService,
+                                    IBTFileService fileService, IBTProjectService projectService,
                                     IBTTicketService ticketService, IBTRolesService rolesService)
         {
             _context = context;

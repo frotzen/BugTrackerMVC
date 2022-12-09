@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
 using Microsoft.AspNetCore.Identity;
+using BugTrackerMVC.Helper;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -72,7 +73,8 @@ namespace BugTrackerMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(notification);
+                notification.Created = PostgresDate.Format(DateTime.Now);
+				_context.Add(notification);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

@@ -56,6 +56,7 @@ namespace BugTrackerMVC.Services
                                        .Include(t => t.SubmitterUser)
                                        .Include(t => t.TicketPriority)
                                        .Include(t => t.TicketStatus)
+                                       .Include(t => t.Attachments)
                                        .Include(t => t.TicketType)
                                        .FirstOrDefaultAsync(m => m.Id == ticketId);
                 return ticket!;
@@ -111,6 +112,7 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
+
         public async Task<List<Ticket>> GetTicketsByUserIdAsync(string userId, int companyId)
         {
             BTUser? btUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
@@ -268,8 +270,24 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
-         
-        public async Task AssignDeveloperAsync(Ticket ticket, string developerUserId)
+
+		public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
+		{
+			try
+			{
+				TicketAttachment? ticketAttachment = await _context.TicketAttachments
+																  .Include(t => t.User)
+																  .FirstOrDefaultAsync(t => t.Id == ticketAttachmentId);
+				return ticketAttachment!;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task AssignDeveloperAsync(Ticket ticket, string developerUserId)
         {
             try
             {
@@ -312,7 +330,21 @@ namespace BugTrackerMVC.Services
             }
         }
 
-        public async Task ArchiveTicketAsync(Ticket ticket)
+		public async Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment)
+        {
+            try
+            {
+				await _context.AddAsync(ticketAttachment);
+				await _context.SaveChangesAsync();
+			}
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+		public async Task ArchiveTicketAsync(Ticket ticket)
         {
             try
             {

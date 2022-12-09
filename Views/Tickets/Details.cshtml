@@ -1,4 +1,10 @@
-﻿@model BugTrackerMVC.Models.ViewModels.TicketDetailsViewModel
+﻿@using BugTrackerMVC.Models.ViewModels;
+@using BugTrackerMVC.Services.Interfaces;
+
+@inject IBTTicketHistoryService HistoryService
+@inject IBTFileService BTFileService
+
+@model BugTrackerMVC.Models.ViewModels.TicketDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -22,10 +28,34 @@
 								<span class="progress-badge" style="font-size:small">Project: @Html.DisplayFor(model => model.Project!.Name)</span>
 								<div class="progress">
 									@*Progress bar logic*@
+									<div class="card col m-1 p-2">
+										<div class="body">
+											@* Project Name *@
+											<h5>Project!.Name</h5>
+											@* Project Description *@
+											<p>Project!.Description</p>
+											<div class="progress-container progress-info m-b-25">
+												<span class="progress-badge" style="font-size:small">Project Status</span>
+												<div class="progress">
+													@* Razor code block *@
+													@{
+														var start = Model.Project!.StartDate;
+														var end = Model.Project!.EndDate;
+														var today = DateTime.Now;
+														var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+													}
+													<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
+														@* Use Progress Bar code variable here *@
+														<span class="progress-value">@percent%</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 									@*Variable from razor logic*@
-									<div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: [Percent]%;">
+									<div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
 										@*Variable from razor logic*@
-										<span class="progress-value">[Percent]%</span>
+										<span class="progress-value">@percent%</span>
 									</div>
 								</div>
 							</div>
@@ -59,11 +89,37 @@
 							<div class="card-body" style="overflow-y:auto;height:600px;">
 
 								@*Form and Logic for authorized users to add comments*@
-								<form asp-action="Details">
+								<form asp-action="Details" method="post">
+									<input asp-for="@Model.Ticket.Id" type="hidden"/>
+									<input asp-for="@Model.Ticket.Title" type="hidden"/>
+									<input asp-for="@Model.Ticket.Created" type="hidden"/>
+									<input asp-for="@Model.Ticket.Updated" type="hidden"/>
+									<input asp-for="@Model.Ticket.Archived" type="hidden"/>
+									<input asp-for="@Model.Ticket.ArchivedByProject" type="hidden"/>
+									<input asp-for="@Model.Ticket.ProjectId" type="hidden"/>
+									<input asp-for="@Model.Ticket.TicketTypeId" type="hidden"/>
+									<input asp-for="@Model.Ticket.TicketStatusId" type="hidden"/>
+									<input asp-for="@Model.Ticket.TicketPriorityId" type="hidden"/>
+									<input asp-for="@Model.Ticket.DeveloperUserId" type="hidden"/>
+									<input asp-for="@Model.Ticket.SubmitterUserId" type="hidden"/>
+									<input asp-for="@Model.Project.Id" type="hidden" />
+									<input asp-for="@Model.Project.CompanyId" type="hidden" />
+									<input asp-for="@Model.Project.Name" type="hidden" />
+									<input asp-for="@Model.Project.Description" type="hidden" />
+									<input asp-for="@Model.Project.Created" type="hidden" />
+									<input asp-for="@Model.Project.StartDate" type="hidden" />
+									<input asp-for="@Model.Project.EndDate" type="hidden" />
+									<input asp-for="@Model.Project.ProjectPriorityId" type="hidden" />
+									<input asp-for="@Model.Project.ImageFileData" type="hidden" />
+									<input asp-for="@Model.Project.ImageFileType" type="hidden" />
+									<input asp-for="@Model.Project.ImageFormFile" type="hidden" />
+									<input asp-for="@Model.Project.Archived" type="hidden" />
+									<input asp-for="@Model.TicketComments" type="hidden" />
+
 									<div class="form-group">
-										<label asp-for="@Model.TicketComment!.Comment" class="control-label"></label>
-										<textarea asp-for="@Model.TicketComment!.Comment" class="form-control" rows="4"></textarea>
-										<span asp-validation-for="@Model.TicketComment!.Comment" class="text-danger"></span>
+										<label asp-for="TicketComment!.Comment" class="control-label"></label>
+										<textarea asp-for="TicketComment!.Comment" class="form-control" rows="4"></textarea>
+										<span asp-validation-for="TicketComment!.Comment" class="text-danger"></span>
 									</div>
 									@*<a class="btn btn-sm btn-outline-info" asp-action="AssignPM" asp-route-id="@item.Id">Assign Pm</a>*@
 									<div class="form-group">
@@ -105,9 +161,49 @@
 								@* Refer to the Ticket Attachments document for this section *@
 
 								@* Ticket attachments part 1 here *@
+								<div class="row clearfix">
+									<div>
+										<form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
+											<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+											<input type="hidden" asp-for="@Model.Ticket!.Id" name="TicketId">
+											<div class="media-body ml-3">
+												<label>
+													Description
+													<input asp-for="@Model.Ticket!.Attachments.FirstOrDefault()!.Description" type="text" class="form-control" />
+												</label><br />
+												<label class="btn btn-outline-primary btn-sm">
+													<input asp-for="@Model.Ticket!.Attachments.FirstOrDefault()!.FormFile" type="file" class="form-control-file" />
+												</label>
+												<button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+											</div>
+										</form>
+									</div>
+								</div>
 
 
 								@* Ticket attachments part 2 here *@
+								<hr />
+								<h6>Attachments</h6>
+								<div class="container">
+									<div class="row">
+										@foreach (TicketAttachment item in Model.Ticket!.Attachments)
+										{
+											<div class="col col-sm-2">
+												<a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+													<div class="icon">
+														<img src="@BTFileService.GetFileIcon(item.FileName!)" style="height:50px;width:50px" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@item.FileName" />
+													</div>
+												</a>
+												<div style="font-size:x-small">
+													<div class="file-name">
+														<strong>@item.Description</strong>
+													</div>
+													<small>Size: @BTFileService.FormatFileSize(item.FileData!.Length) </small>
+												</div>
+											</div>
+										}
+									</div>
+								</div>
 
 							</div>
 							<div class="card-footer">
@@ -125,6 +221,28 @@
 						</div>
 						<div class="card-body" style="overflow-y:auto;height:1000px;background-color:antiquewhite">
 							@*Loop to show the history entries for the Ticket*@
+							@foreach (TicketHistory history in (await HistoryService.GetProjectTicketsHistoriesAsync(Model.Project.Id, Model.Project.CompanyId)).OrderByDescending(x => x.Created))
+							{
+								<div class="card">
+									@if (history.Description!.Contains("New Ticket Created"))
+									{
+										<div class="card-body">A ticket was added.</div>
+									}
+									else if (history.PropertyName!.Equals("TicketComment") || history.PropertyName.Equals("TicketAttachment"))
+									{
+										<div class="card-body">A <b>@history.PropertyName</b> was added.</div>
+									}
+									else
+									{
+										<div class="card-body">
+										<div>The ticket <b>@history.PropertyName</b> was edited.</div>
+										<div>@($"Previous {history.PropertyName}:  ") <span style="color: red">@history.OldValue</span></div>
+										<div>@($"Current {history.PropertyName}:  ") <span style="color: green">@history.NewValue</span></div>
+										</div>
+									}
+
+								</div>
+							}
 						</div>
 					</div>
 				</div>

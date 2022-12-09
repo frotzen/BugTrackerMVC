@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,17 +24,20 @@ namespace BugTrackerMVC.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTFileService _fileService;
         private readonly IBTProjectService _projectService;
         private readonly IBTTicketService _ticketService;
         private readonly IBTRolesService _rolesService;
         private readonly IBTTicketHistoryService _historyService;
 
         public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager,
-                                 IBTTicketService ticketService, IBTProjectService projectService,
-                                 IBTRolesService rolesService, IBTTicketHistoryService historyService)
+                                 IBTTicketService ticketService, IBTFileService fileService,
+                                 IBTProjectService projectService, IBTRolesService rolesService,
+                                 IBTTicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
+            _fileService = fileService;
             _projectService = projectService;
             _ticketService = ticketService;
             _rolesService = rolesService;
@@ -176,27 +179,72 @@ namespace BugTrackerMVC.Controllers
 		// POST: Tickets/Details
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Details(TicketDetailsViewModel viewModel)
+        public async Task<IActionResult> Details(int id, TicketDetailsViewModel viewModel)
         {
             Ticket ticket = viewModel.Ticket!;
-            TicketComment comment = viewModel.TicketComment!;
+            TicketComment comment = new();
             try
             {
                 if (ticket == null) return View(viewModel);
+
+                comment.Comment = viewModel.TicketComment!.Comment;
                 comment.Created = PostgresDate.Format(DateTime.Now);
                 comment.UserId = (await _userManager.GetUserAsync(User)).Id;
-                comment.Ticket = ticket;
-                comment.User = await _userManager.GetUserAsync(User);
+                comment.TicketId = viewModel.Ticket!.Id;
 
-				await _ticketService.AddCommentAsync(viewModel.TicketComment!);
+				await _ticketService.AddCommentAsync(comment);
+
+               // return View(viewModel);
+
+				return RedirectToAction(nameof(Details));
 			}
             catch (Exception)
             {
 
                 throw;
             }
-            // if something goes wrong go to index
-			return RedirectToAction(nameof(Index));
+            
+		}
+
+        // POST: AddTicketAttachment
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
+		{
+			string statusMessage;
+
+			if (ModelState.IsValid && ticketAttachment.FormFile != null)
+			{
+				ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+				ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+				ticketAttachment.FileType = ticketAttachment.FormFile.ContentType;
+
+				ticketAttachment.Created = PostgresDate.Format(DateTime.Now);
+				ticketAttachment.UserId = _userManager.GetUserId(User);
+
+				await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+				statusMessage = "Success: New attachment added to Ticket.";
+			}
+			else
+			{
+				statusMessage = "Error: Invalid data.";
+
+			}
+
+			return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
+		}
+
+
+		// GET: ShowFile
+		public async Task<IActionResult> ShowFile(int id)
+		{
+			TicketAttachment ticketAttachment = await _ticketService.GetTicketAttachmentByIdAsync(id);
+			string fileName = ticketAttachment.FileName!;
+			byte[] fileData = ticketAttachment.FileData!;
+			string ext = Path.GetExtension(fileName).Replace(".", "");
+
+			Response.Headers.Add("Content-Disposition", $"inline; filename={fileName}");
+			return File(fileData, $"application/{ext}");
 		}
 
 
@@ -263,7 +311,7 @@ namespace BugTrackerMVC.Controllers
 
                 //*****
                 // Add History record here.
-                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, ticket.Project!.CompanyId);
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);
                 await _historyService.AddHistoryAsync(null!, newTicket, userId);
 
 
@@ -335,6 +383,12 @@ namespace BugTrackerMVC.Controllers
 
             if (ModelState.IsValid)
             {
+                // check if archived
+                if (ticket.Archived)
+                {
+					// maybe make an alert and return to view?
+					return RedirectToAction(nameof(Index));
+				}
                 int companyId = User.Identity!.GetCompanyId();
                 string userId = _userManager.GetUserId(User);
                 Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);

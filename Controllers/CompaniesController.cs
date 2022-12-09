@@ -93,29 +93,34 @@ namespace BugTrackerMVC.Controllers
 
         // POST: ManageUserRoles
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel model)
+        [ValidateAntiForgeryToken]            // this parameter below should be the  \/  same as created in the view
+        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel viewModel)
         {
             // get companyId
             int companyId = User.Identity!.GetCompanyId();
 
             // instantiate BTUser
-            BTUser? btUser = (await _companyService.GetMembersAsync(companyId)).FirstOrDefault(m => m.Id == model.BTUser!.Id);
+            BTUser? btUser = (await _companyService.GetMembersAsync(companyId)).FirstOrDefault(m => m.Id == viewModel.BTUser!.Id);
 
             // get roles for that user
             IEnumerable<string> currentRoles = await _rolesService.GetUserRolesAsync(btUser!);
 
             // get selected roles for user
-            string? selectedRole = model.SelectedRoles!.FirstOrDefault();
+            IEnumerable<string> selectedRoles = viewModel.SelectedRoles!;
 
-            // remove current roles and add new role
-            if (!string.IsNullOrEmpty(selectedRole))
+
+            // remove current roles and add new roles
+            foreach(string role in currentRoles)
             {
-                if (await _rolesService.RemoveUserFromRolesAsync(btUser!, currentRoles))
-                {
-                    await _rolesService.AddUserToRoleAsync(btUser!, selectedRole);
-                }
+                if (string.IsNullOrEmpty(role)) return RedirectToAction(nameof(ManageUserRoles));
             }
+            await _rolesService.RemoveUserFromRolesAsync(btUser!, currentRoles);
+
+            foreach (string role in selectedRoles)
+            {
+                if (string.IsNullOrEmpty(role)) return RedirectToAction(nameof(ManageUserRoles));
+            }
+            await _rolesService.AddUserToRolesAsync(btUser!, selectedRoles);
 
             // navigate
             return RedirectToAction(nameof(ManageUserRoles));

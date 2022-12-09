@@ -28,7 +28,7 @@ builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.Req
                 .AddDefaultTokenProviders();
 
 // ***** Custom Services
-builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IBTFileService, BTFileService>();
 builder.Services.AddScoped<IEmailSender, EmailService>();
 builder.Services.AddScoped<IBTRolesService, BTRolesService>();
 builder.Services.AddScoped<IBTProjectService, BTProjectService>();

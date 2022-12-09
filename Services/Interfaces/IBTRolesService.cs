@@ -12,6 +12,15 @@ namespace BugTrackerMVC.Services.Interfaces
         /// <returns>
         /// List of BTUser
         /// </returns>
+        
+        public Task<bool> AddUserToRolesAsync(BTUser user, IEnumerable<string> roleNames);
+        /// <summary>
+        /// Get All Roles
+        /// </summary>
+        /// <returns>
+        /// List of BTUser
+        /// </returns>
+
         public Task<List<IdentityRole>> GetRolesAsync();
         /// <summary>
         /// Get roles for a BTUser

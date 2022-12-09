@@ -10,7 +10,7 @@ namespace BugTrackerMVC.Services
     {
         private readonly UserManager<BTUser> _userManager;
         private readonly ApplicationDbContext _context;
-     
+
         public BTRolesService(ApplicationDbContext context, UserManager<BTUser> userManager)
         {
             _context = context;
@@ -22,12 +22,24 @@ namespace BugTrackerMVC.Services
             try
             {
                 bool result = (await _userManager.AddToRoleAsync(user, roleName)).Succeeded;
-
                 return result;
             }
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        public async Task<bool> AddUserToRolesAsync(BTUser user, IEnumerable<string> roleNames)
+        {
+            try
+            {
+                bool result = (await _userManager.AddToRolesAsync(user, roleNames)).Succeeded;
+                return result;
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
