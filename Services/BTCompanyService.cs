@@ -13,7 +13,28 @@ namespace BugTrackerMVC.Services
             _context = context;
         }
 
-        public async Task<List<BTUser>> GetMembersAsync(int? companyId)
+		public async Task<Company> GetCompanyInfoAsync(int companyId)
+        {
+            try
+            {
+                Company? company = new();
+                if(company != null)
+                {
+                    company = await _context.Companies.Include(c => c.Members)
+                                            .Include(c => c.Projects)
+                                            .Include(c => c.Invites)
+											.FirstOrDefaultAsync(c => c.Id == companyId);
+                }
+                return company!;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+		public async Task<List<BTUser>> GetMembersAsync(int companyId)
         {
             try
             {
