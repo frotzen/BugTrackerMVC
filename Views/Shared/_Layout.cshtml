@@ -3,89 +3,271 @@
 
 <!DOCTYPE html>
 <html lang="en">
+<!--
+    HEAD
+-->
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../assets/images/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../assets/images/favicon.png" type="image/x-icon">
     <title>@ViewData["Title"] - TheBugTracker</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-</head>
-<body>
-    <div class="container-fluid overflow-hidden">
-        <div class="row vh-100 overflow-auto">
-            <div class="col-12 col-sm-3 col-xl-2 px-sm-2 px-0 bg-dark d-flex sticky-top">
-                <div class="d-flex flex-sm-column flex-row flex-grow-1 align-items-center align-items-sm-start px-3 pt-2 text-white">
-                    <a href="/" class="d-flex align-items-center pb-sm-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-5">B<span class="d-none d-sm-inline">ugTracker</span></span>
-                    </a>
-                    <partial name="_LoginPartial" />
 
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                        <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start" id="menu">
-                            <li class="nav-item">
-                                <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link px-sm-0 px-2">
-                                    <i class="fs-5 bi-house"></i><span class="ms-1 d-none d-sm-inline">Home</span>
-                                </a>
-                            </li>
-                            <li class="dropdown">
-                                <a asp-area="" asp-controller="Companies" asp-action="Index" class="nav-link dropdown-toggle px-sm-0 px-2" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fs-5 bi-building"></i><span class="ms-1 d-none d-sm-inline">Company</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Companies" asp-action="ManageUserRoles">Manage Roles</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a asp-area="" asp-controller="Projects" asp-action="Index" class="nav-link dropdown-toggle px-sm-0 px-2" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fs-5 bi-file-earmark-ppt"></i><span class="ms-1 d-none d-sm-inline">Projects</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Create">New project...</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Index">Index</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="MyProjects">My Projects</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="AllProjects">All Projects</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="UnassignedProjects">Unassigned Projects</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="ArchivedProjects">Archived Projects</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a asp-area="" asp-controller="Tickets" asp-action="Index" class="nav-link dropdown-toggle px-sm-0 px-2" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fs-5 bi-file-earmark-font"></i><span class="ms-1 d-none d-sm-inline">Tickets</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Create">New ticket...</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Index">Index</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="MyTickets">My Tickets</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="AllTickets">All Tickets</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned Tickets</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link px-sm-0 px-2">
-                                    <i class="fs-5 bi-mailbox2"></i><span class="ms-1 d-none d-sm-inline">Notifications</span>
-                                </a>
-                            </li>
-                        </ul>
-                    }
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700&amp;display=swap" rel="stylesheet">
+    <!-- Font Awesome-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/fontawesome.css">
+    <!-- ico-font-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/icofont.css">
+    <!-- Themify icon-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/themify.css">
+    <!-- Flag icon-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/flag-icon.css">
+    <!-- Feather icon-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/feather-icon.css">
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/prism.css">
+    <!-- Plugins css Ends-->
+    <!-- Bootstrap css-->
+    <!-- CSS only -->
+    <link href="../lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <!-- App css-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    <link id="color" rel="stylesheet" href="../assets/css/color-1.css" media="screen">
+    <!-- Responsive css-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/responsive.css">
+</head>
+<!--
+    BODY
+-->
+<body main-theme-layout="box-layout">
+    <!-- Loader starts-->
+    <div class="loader-wrapper">
+        <div class="theme-loader"></div>
+    </div>
+    <!-- Loader ends-->
+
+    <!-- page-wrapper Start-->
+    <div class="page-wrapper compact-wrapper" id="pageWrapper">
+        <!-- Page Header Start-->
+        <div class="page-main-header">
+            <div class="main-header-right">
+
+                <div class="main-header-left">
+                    <div class="logo-wrapper"><a href="/Home"><img src="../assets/images/logo/logo.png" height="50" alt=""></a></div>
                 </div>
-            </div>
-            <div class="col d-flex flex-column h-100">
-                <main class="row">
-                    @RenderBody()
-                </main>
-                <footer class="row bg-light py-4 mt-auto">
-                    <div class="container">
-                        &copy; 2021 - TheBugTracker - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+                <div class="mobile-sidebar">
+                    <div class="flex-grow-1 text-end switch-sm">
+                        <label class="switch">
+                            <input id="sidebar-toggle" type="checkbox" data-bs-toggle=".container" checked="checked"><span class="switch-state"></span>
+                        </label>
                     </div>
-                </footer>
+                </div>
+
+                <div class="nav-right col pull-right right-menu">
+                    <ul class="nav-menus">
+                        <li class="px-0">
+                            <form class="form-inline search-form">
+                                <input class="form-control-plaintext" placeholder="Search....."><i class="close-search" data-feather="x"></i>
+                            </form><span class="mobile-search"><i data-feather="search"></i></span>
+                        </li>
+                        <li class="onhover-dropdown">
+                            <i data-feather="bell"></i>
+                            <ul class="notification-dropdown onhover-show-div">
+                                <li class="d-block">
+                                    <h6 class="f-w-600">Notifications</h6><span class="f-12">You have 2 unread messages</span>
+                                </li>
+                                <li>
+                                    <p class="mb-0"><i class="fa fa-circle-o me-3 font-primary"> </i>Delivery processing <span class="pull-right">10 min.</span></p>
+                                </li>
+                                <li>
+                                    <p class="mb-0"><i class="fa fa-circle-o me-3 font-success"></i>Order Complete<span class="pull-right">1 hr</span></p>
+                                </li>
+                                <li>
+                                    <p class="mb-0"><i class="fa fa-circle-o me-3 font-info"></i>Tickets Generated<span class="pull-right">3 hr</span></p>
+                                </li>
+                                <li>
+                                    <p class="mb-0"><i class="fa fa-circle-o me-3 font-warning"></i>Delivery Complete<span class="pull-right">6 hr</span></p>
+                                </li>
+                                <li class="bg-light txt-dark"><a href="#">All </a> notification</li>
+                            </ul>
+                        </li>
+                        <li class="onhover-dropdown">
+                            <i data-feather="message-circle"></i>
+                            <ul class="chat-dropdown onhover-show-div p-t-20 p-b-20">
+                                <li>
+                                    <div class="d-flex align-items-start">
+                                        <img class="img-fluid rounded-circle me-3" src="../assets/images/user/2.jpg" alt="">
+                                        <div class="status-circle online"></div>
+                                        <div class="flex-grow-1">
+                                            <span class="f-w-600">Erica Hughes</span>
+                                            <p class="f-12 mb-0 light-font">There are many variations of passages...</p>
+                                            <p class="f-12 mb-0 font-primary">1 hr ago</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="d-flex align-items-start">
+                                        <img class="img-fluid rounded-circle me-3" src="../assets/images/user/1.jpg" alt="">
+                                        <div class="status-circle away"></div>
+                                        <div class="flex-grow-1">
+                                            <span class="f-w-600">Kori Thomas</span>
+                                            <p class="f-12 mb-0 light-font">There are many variations of passages...</p>
+                                            <p class="f-12 mb-0 font-primary">58 mins ago</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="d-flex align-items-start">
+                                        <img class="img-fluid rounded-circle me-3" src="../assets/images/user/4.jpg" alt="">
+                                        <div class="status-circle offline"></div>
+                                        <div class="flex-grow-1">
+                                            <span class="f-w-600">Ain Chavez</span>
+                                            <p class="f-12 mb-0 light-font">There are many variations of passages...</p>
+                                            <p class="f-12 mb-0 font-primary">32 mins ago</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="light-font text-center">Mark all as read      </li>
+                            </ul>
+                        </li>
+                        <li><a class="text-dark" href="#!" onclick="javascript:toggleFullScreen()"><i data-feather="maximize"></i></a></li>
+                        <li class="theme-setting"><i data-feather="settings"></i></li>
+                        <li class="onhover-dropdown px-0">
+                            <span class="d-flex user-header"><img class="me-2 rounded-circle img-35" src="../assets/images/dashboard/user.png" alt=""><span class="flex-grow-1"><span class="f-12 f-w-600">Elana Saint</span><span class="d-block">Admin</span></span></span>
+                            <ul class="profile-dropdown onhover-show-div">
+                                <li><i data-feather="user"> </i>Profile</li>
+                                <li class="f-w-600">Home</li>
+                                <li class="f-12"><i data-feather="chevron-right"> </i>Inbox</li>
+                                <li class="f-12"><i data-feather="chevron-right"> </i>Taskboard</li>
+                                <li class="f-12"><i data-feather="chevron-right"> </i>Settings</li>
+                                <li><i data-feather="log-in"></i>Log in  </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-lg-none mobile-toggle pull-right"><i data-feather="more-horizontal"></i></div>
             </div>
         </div>
-    </div>
+        <!-- Page Header End -->
+        <!-- Page Body Start -->
 
+        <div class="page-body-wrapper horizontal-menu">
+            <!-- Page Sidebar Start -->
+            <header class="main-nav">
+                <nav>
+                    <div class="main-navbar">
+                        <div id="mainnav">
+                            <div class=""><a href="/" class="d-flex justify-content-center text-dark">
+                                <span class="fs-5">B<span class="d-none d-sm-inline">ugTracker</span></span>
+                            </a>
+                            </div>
+                            
+                            <partial name="_LoginPartial" />
+                         
+                            @if (SignInManager.IsSignedIn(User))
+                                {
+                                    <ul class="nav-menu custom-scrollbar">
+                                        <li class="back-btn">
+                                            <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
+                                        </li>
+                                        <li class="nav-link">
+                                            <a class="nav-link menu-item" asp-area="" asp-controller="Home" asp-action="Index"><i data-feather="home"></i><span>Home</span></a>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a class="nav-link menu-title" href="#"><i data-feather="briefcase"></i><span>Company</span></a>
+                                            <ul class="nav-submenu menu-content">
+                                                <li><a href="/Companies/ManageUserRoles">Manage Roles</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a class="nav-link menu-title" href="#"><i data-feather="calendar"></i><span>Projects</span></a>
+                                            <ul class="nav-submenu menu-content">
+                                                <li><a href="/Projects/Create">New Project</a></li>
+                                                <li><a href="/Projects/Index">Index</a></li>
+                                                <li><a href="/Projects/MyProjects">My Projects</a></li>
+                                                <li><a href="/Projects/AllProjects">All Projects</a></li>
+                                                <li><a href="/Projects/UnassignedProjects">Unassigned Projects</a></li>
+                                                <li><a href="/Projects/ArchivedProjects">Archived Projects</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a class="nav-link menu-title" href="#"><i data-feather="book-open"></i><span>Tickets</span></a>
+                                            <ul class="nav-submenu menu-content">
+                                                <li><a href="/Tickets/Create">New Ticket</a></li>
+                                                <li><a href="/Tickets/Index">Index</a></li>
+                                                <li><a href="/Tickets/MyTickets">My Tickets</a></li>
+                                                <li><a href="/Tickets/AllTickets">All Tickets</a></li>
+                                                <li><a href="/Tickets/UnassignedTickets">Unassigned Tickets</a></li>
+                                                <li><a href="/Tickets/ArchivedTickets">Archived Tickets</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a class="nav-link menu-title" href="#"><i data-feather="bell"></i><span>Notifications</span></a>
+                                            <ul class="nav-submenu menu-content">
+                                                <li><a href="/Notifications/Index">Index</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                }
+                            </div>
+                    </div>
+                </nav>
+            </header>
+            
+            <!-- Page Sidebar Ends -->
+
+            <!-- Page Container Start -->
+            <div class="page-body">
+                <div class="container-fluid">
+
+                    <!-- Embedded Page Start -->
+                    <main class="row">
+                        @RenderBody()
+                    </main>
+                    <!-- Embedded Page Ends -->
+                </div>
+            </div>
+            <!-- Page Container End -->
+        </div>
+    </div>
+    <!-- footer start-->
+    <footer class="footer">
+        <div @*class="container-fluid"*@>
+            <div class="row mt-auto">
+                @*&copy; 2022 - TheBugTracker - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>*@
+                <div class="col-md-6 footer-copyright">
+                    <p class="mb-0">BugTracker Copyright &copy; &nbsp;2022</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="pull-right mb-0">by Elwin Beall &nbsp;<i class="fa fa-envelope-o"></i></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- jquery-->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- feather icon js-->
+    <script src="../assets/js/icons/feather-icon/feather.min.js"></script>
+    <script src="../assets/js/icons/feather-icon/feather-icon.js"></script>
+    <!-- Sidebar jquery-->
+    <script src="../assets/js/sidebar-menu.js"></script>
+    <script src="../assets/js/config.js"></script>
+    <!-- Plugins JS start-->
+    <script src="../assets/js/prism/prism.min.js"></script>
+    <script src="../assets/js/clipboard/clipboard.min.js"></script>
+    <script src="../assets/js/custom-card/custom-card.js"></script>
+    <script src="../assets/js/tooltip-init.js"></script>
+    <!-- Plugins JS Ends-->
+    <!-- Theme js-->
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/theme-customizer/customizer.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

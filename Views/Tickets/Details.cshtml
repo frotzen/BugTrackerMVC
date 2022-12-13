@@ -90,18 +90,18 @@
 
 								@*Form and Logic for authorized users to add comments*@
 								<form asp-action="Details" method="post">
-									<input asp-for="@Model.Ticket.Id" type="hidden"/>
-									<input asp-for="@Model.Ticket.Title" type="hidden"/>
-									<input asp-for="@Model.Ticket.Created" type="hidden"/>
-									<input asp-for="@Model.Ticket.Updated" type="hidden"/>
-									<input asp-for="@Model.Ticket.Archived" type="hidden"/>
-									<input asp-for="@Model.Ticket.ArchivedByProject" type="hidden"/>
-									<input asp-for="@Model.Ticket.ProjectId" type="hidden"/>
-									<input asp-for="@Model.Ticket.TicketTypeId" type="hidden"/>
-									<input asp-for="@Model.Ticket.TicketStatusId" type="hidden"/>
-									<input asp-for="@Model.Ticket.TicketPriorityId" type="hidden"/>
-									<input asp-for="@Model.Ticket.DeveloperUserId" type="hidden"/>
-									<input asp-for="@Model.Ticket.SubmitterUserId" type="hidden"/>
+									<input asp-for="@Model.Ticket!.Id" type="hidden"/>
+									<input asp-for="@Model.Ticket!.Title" type="hidden"/>
+									<input asp-for="@Model.Ticket!.Created" type="hidden"/>
+									<input asp-for="@Model.Ticket!.Updated" type="hidden"/>
+									<input asp-for="@Model.Ticket!.Archived" type="hidden"/>
+									<input asp-for="@Model.Ticket!.ArchivedByProject" type="hidden"/>
+									<input asp-for="@Model.Ticket!.ProjectId" type="hidden"/>
+									<input asp-for="@Model.Ticket!.TicketTypeId" type="hidden"/>
+									<input asp-for="@Model.Ticket!.TicketStatusId" type="hidden"/>
+									<input asp-for="@Model.Ticket!.TicketPriorityId" type="hidden"/>
+									<input asp-for="@Model.Ticket!.DeveloperUserId" type="hidden"/>
+									<input asp-for="@Model.Ticket!.SubmitterUserId" type="hidden"/>
 									<input asp-for="@Model.Project.Id" type="hidden" />
 									<input asp-for="@Model.Project.CompanyId" type="hidden" />
 									<input asp-for="@Model.Project.Name" type="hidden" />
@@ -251,92 +251,6 @@
 	</div>
 </div>
 
-
-
-@*
-<div>
-    <h4>Ticket</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Archived)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Archived)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ArchivedByProject)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ArchivedByProject)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Project)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Project.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketPriority)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TicketPriority.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TicketType.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TicketStatus.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeveloperUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeveloperUser.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SubmitterUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SubmitterUser.FullName)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-*@
 @section Scripts {
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");

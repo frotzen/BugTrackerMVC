@@ -16,6 +16,8 @@ using BugTrackerMVC.Enums;
 using System.ComponentModel.Design;
 using BugTrackerMVC.Extensions;
 using BugTrackerMVC.Models.ViewModels;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -29,11 +31,15 @@ namespace BugTrackerMVC.Controllers
         private readonly IBTTicketService _ticketService;
         private readonly IBTRolesService _rolesService;
         private readonly IBTTicketHistoryService _historyService;
+        private readonly IEmailSender _emailService;
+        private readonly IBTNotificationService _notificationService;
+
 
         public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager,
                                  IBTTicketService ticketService, IBTFileService fileService,
                                  IBTProjectService projectService, IBTRolesService rolesService,
-                                 IBTTicketHistoryService historyService)
+                                 IBTTicketHistoryService historyService, IEmailSender emailService,
+                                 IBTNotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
@@ -42,6 +48,8 @@ namespace BugTrackerMVC.Controllers
             _ticketService = ticketService;
             _rolesService = rolesService;
             _historyService = historyService;
+            _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         // GET: Tickets
@@ -288,15 +296,15 @@ namespace BugTrackerMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,DeveloperUserId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
-
+            
 			int companyId = User.Identity!.GetCompanyId();
 			ModelState.Remove("SubmitterUserId");
 
 			if (ModelState.IsValid)
             {
                 string userId = _userManager.GetUserId(User);
-
-				ticket.SubmitterUserId = _userManager.GetUserId(User);
+                BTUser btUser = await _userManager.FindByIdAsync(userId);
+				ticket.SubmitterUserId = userId;
 
                 // Update time for Postgres so a cast of Date types isn't attempted
                 ticket.Created = PostgresDate.Format(DateTime.Now);
@@ -311,9 +319,29 @@ namespace BugTrackerMVC.Controllers
 
                 //*****
                 // Add History record here.
+                
                 Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);
                 await _historyService.AddHistoryAsync(null!, newTicket, userId);
 
+                //Notify
+                BTUser? projectManager = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
+
+                Notification notification = new()
+                {
+                    NotificationTypeId = (await _context.NotificationTypes.FirstOrDefaultAsync(n => n.Name == nameof(BTNotificationType.Ticket)))!.Id,
+                    TicketId = ticket.Id,
+                    Title = "Ticket Assignment",
+                    Message = $"Ticket : {ticket.Title}, was assigned by {btUser.FullName}",
+                    Created = PostgresDate.Format(DateTime.Now),
+                    SenderId = btUser.Id,
+                    RecipientId = projectManager.Id
+                };
+
+                if(projectManager != null)
+                {
+                    await _notificationService.AddNotificationAsync(notification);
+                    await _notificationService.SendEmailNotificationAsync(notification, $"New Ticket Added for Project: {ticket.Project!.Name}");
+                }
 
                 return RedirectToAction(nameof(Index));
             }
@@ -389,8 +417,13 @@ namespace BugTrackerMVC.Controllers
 					// maybe make an alert and return to view?
 					return RedirectToAction(nameof(Index));
 				}
+
+                // Set email notification on or off (for testing purposes)
+                bool emailNotification = true;
+
                 int companyId = User.Identity!.GetCompanyId();
                 string userId = _userManager.GetUserId(User);
+                BTUser btUser = await _userManager.GetUserAsync(User);
                 Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);
 
                 try
@@ -418,6 +451,26 @@ namespace BugTrackerMVC.Controllers
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
 
 
+                Notification notification = new()
+                {
+                    NotificationTypeId = (await _context.NotificationTypes.FirstOrDefaultAsync(n => n.Name == nameof(BTNotificationType.Ticket)))!.Id,
+                    TicketId = ticket.Id,
+                    Title = "Ticket Updated",
+                    Message = $"Ticket : {ticket.Title}, was updated by {btUser.FullName}",
+                    Created = PostgresDate.Format(DateTime.Now),
+                    SenderId = userId,
+                    RecipientId = ticket.DeveloperUserId
+                };
+
+                
+                    await _notificationService.AddNotificationAsync(notification);
+
+                // if email notification in set to true, send notification
+                if (emailNotification)
+                {
+                    await _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -433,6 +486,8 @@ namespace BugTrackerMVC.Controllers
             ViewData["TicketTypeId"] = new SelectList(await _ticketService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
+        
+        
 
         // GET: Tickets/Archive/5
         public async Task<IActionResult> Archive(int id)
@@ -451,6 +506,8 @@ namespace BugTrackerMVC.Controllers
 
             return View(ticket);
         }
+
+
 
         // POST: Tickets/Archive/5
         [HttpPost, ActionName("Archive")]
