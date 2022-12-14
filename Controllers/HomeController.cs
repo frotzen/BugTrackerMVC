@@ -25,6 +25,11 @@ namespace BugTrackerMVC.Controllers
             return View();
         }
 
+        // GET: Home/Dashboard
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();

@@ -23,16 +23,16 @@ namespace BugTrackerMVC.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
-        private readonly BTInviteService _inviteService;
-        private readonly BTProjectService _projectService;
-        private readonly BTCompanyService _companyService;
+        private readonly IBTInviteService _inviteService;
+        private readonly IBTProjectService _projectService;
+        private readonly IBTCompanyService _companyService;
         private readonly IEmailSender _emailService;
         private readonly IDataProtector _protector;
 
         public InvitesController(ApplicationDbContext context, UserManager<BTUser> userManager,
-								 BTInviteService inviteService, BTProjectService projectService,
-								 BTCompanyService companyService, IEmailSender emailSender,
-								 IDataProtector dataProtectionProvider)
+								 IBTInviteService inviteService, IBTProjectService projectService,
+								 IBTCompanyService companyService, IEmailSender emailSender,
+								 IDataProtectionProvider dataProtectionProvider)
         {
             _context = context;
             _userManager = userManager;
@@ -40,7 +40,7 @@ namespace BugTrackerMVC.Controllers
             _projectService = projectService;
             _companyService = companyService;
             _emailService = emailSender;
-            _protector = dataProtectionProvider.CreateProtector("$+@rLk8ugTkr");
+            _protector = dataProtectionProvider.CreateProtector("$+@rLk8ugTkr"); // Key for Invite guid encryption
 		}
 
         // GET: Invites

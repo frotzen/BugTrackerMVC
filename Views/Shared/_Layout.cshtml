@@ -9,35 +9,35 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="../assets/images/favicon.png" type="image/x-icon">
-    <link rel="shortcut icon" href="../assets/images/favicon.png" type="image/x-icon">
+    <link rel="icon" href="~/assets/images/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="~/assets/images/favicon.png" type="image/x-icon">
     <title>@ViewData["Title"] - TheBugTracker</title>
 
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700&amp;display=swap" rel="stylesheet">
     <!-- Font Awesome-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/fontawesome.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/fontawesome.css">
     <!-- ico-font-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/icofont.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/icofont.css">
     <!-- Themify icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/themify.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/themify.css">
     <!-- Flag icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/flag-icon.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/flag-icon.css">
     <!-- Feather icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/feather-icon.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/feather-icon.css">
     <!-- Plugins css start-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/prism.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/prism.css">
     <!-- Plugins css Ends-->
     <!-- Bootstrap css-->
     <!-- CSS only -->
     <link href="../lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
     <!-- App css-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
-    <link id="color" rel="stylesheet" href="../assets/css/color-1.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link id="color" rel="stylesheet" href="~/assets/css/color-1.css" media="screen">
     <!-- Responsive css-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/responsive.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 </head>
 <!--
     BODY
@@ -56,7 +56,7 @@
             <div class="main-header-right">
 
                 <div class="main-header-left">
-                    <div class="logo-wrapper"><a href="/Home"><img src="../assets/images/logo/logo.png" height="50" alt=""></a></div>
+                    <div class="logo-wrapper"><a href="/Home"><img src="~/assets/images/logo/logo.png" height="50" alt=""></a></div>
                 </div>
 
                 <div class="mobile-sidebar">
@@ -100,7 +100,7 @@
                             <ul class="chat-dropdown onhover-show-div p-t-20 p-b-20">
                                 <li>
                                     <div class="d-flex align-items-start">
-                                        <img class="img-fluid rounded-circle me-3" src="../assets/images/user/2.jpg" alt="">
+                                        <img class="img-fluid rounded-circle me-3" src="/assets/images/user/2.jpg" alt="">
                                         <div class="status-circle online"></div>
                                         <div class="flex-grow-1">
                                             <span class="f-w-600">Erica Hughes</span>
@@ -111,7 +111,7 @@
                                 </li>
                                 <li>
                                     <div class="d-flex align-items-start">
-                                        <img class="img-fluid rounded-circle me-3" src="../assets/images/user/1.jpg" alt="">
+                                        <img class="img-fluid rounded-circle me-3" src="/assets/images/user/1.jpg" alt="">
                                         <div class="status-circle away"></div>
                                         <div class="flex-grow-1">
                                             <span class="f-w-600">Kori Thomas</span>
@@ -122,7 +122,7 @@
                                 </li>
                                 <li>
                                     <div class="d-flex align-items-start">
-                                        <img class="img-fluid rounded-circle me-3" src="../assets/images/user/4.jpg" alt="">
+                                        <img class="img-fluid rounded-circle me-3" src="/assets/images/user/4.jpg" alt="">
                                         <div class="status-circle offline"></div>
                                         <div class="flex-grow-1">
                                             <span class="f-w-600">Ain Chavez</span>
@@ -137,7 +137,7 @@
                         <li><a class="text-dark" href="#!" onclick="javascript:toggleFullScreen()"><i data-feather="maximize"></i></a></li>
                         <li class="theme-setting"><i data-feather="settings"></i></li>
                         <li class="onhover-dropdown px-0">
-                            <span class="d-flex user-header"><img class="me-2 rounded-circle img-35" src="../assets/images/dashboard/user.png" alt=""><span class="flex-grow-1"><span class="f-12 f-w-600">Elana Saint</span><span class="d-block">Admin</span></span></span>
+                            <span class="d-flex user-header"><img class="me-2 rounded-circle img-35" src="/assets/images/dashboard/user.png" alt=""><span class="flex-grow-1"><span class="f-12 f-w-600">Elana Saint</span><span class="d-block">Admin</span></span></span>
                             <ul class="profile-dropdown onhover-show-div">
                                 <li><i data-feather="user"> </i>Profile</li>
                                 <li class="f-w-600">Home</li>
@@ -181,6 +181,11 @@
                                             <a class="nav-link menu-title" href="#"><i data-feather="briefcase"></i><span>Company</span></a>
                                             <ul class="nav-submenu menu-content">
                                                 <li><a href="/Companies/ManageUserRoles">Manage Roles</a></li>
+
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <li><a href="/Invites/Create">Company Invite</a></li>
+                                            }
                                             </ul>
                                         </li>
                                         <li class="dropdown">
@@ -251,22 +256,22 @@
     <!-- jquery-->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap JS Bundle -->
-    <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- feather icon js-->
-    <script src="../assets/js/icons/feather-icon/feather.min.js"></script>
-    <script src="../assets/js/icons/feather-icon/feather-icon.js"></script>
+    <script src="~/assets/js/icons/feather-icon/feather.min.js"></script>
+    <script src="~/assets/js/icons/feather-icon/feather-icon.js"></script>
     <!-- Sidebar jquery-->
-    <script src="../assets/js/sidebar-menu.js"></script>
-    <script src="../assets/js/config.js"></script>
+    <script src="~/assets/js/sidebar-menu.js"></script>
+    <script src="~/assets/js/config.js"></script>
     <!-- Plugins JS start-->
-    <script src="../assets/js/prism/prism.min.js"></script>
-    <script src="../assets/js/clipboard/clipboard.min.js"></script>
-    <script src="../assets/js/custom-card/custom-card.js"></script>
-    <script src="../assets/js/tooltip-init.js"></script>
+    <script src="~/assets/js/prism/prism.min.js"></script>
+    <script src="~/assets/js/clipboard/clipboard.min.js"></script>
+    <script src="~/assets/js/custom-card/custom-card.js"></script>
+    <script src="~/assets/js/tooltip-init.js"></script>
     <!-- Plugins JS Ends-->
     <!-- Theme js-->
-    <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/theme-customizer/customizer.js"></script>
+    <script src="~/assets/js/script.js"></script>
+    <script src="~/assets/js/theme-customizer/customizer.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -14,6 +14,7 @@
 	ViewData["Title"] = "Dashboard";
 	@* Instantiate the btUser *@
 	BTUser btUser = await UserManager.GetUserAsync(User);
+	// Inject project service
 }
 
 <h1>Dashboard</h1>
@@ -22,7 +23,7 @@
 	[Code: Copy from Ticket/Details]
 </a>
 @* Get The btUser FullName *@
-<strong>[User's FullName]</strong>
+<strong>@btUser.FullName</strong>
 <span class="text-muted" style="font-size:x-small;">
 	@* Company Name *@
 	<strong>[Show CompanyName]</strong>
@@ -38,7 +39,9 @@
 					<div class="card text-center bg-info">
 						<div class="body">
 							<div class="p-15 text-light">
+@*  FIX THIS NEXT LINE!!!!!  
 								<h3>@Model.Projects.Where(p => p.StartDate < PostgresDate.Format(DateTime.Now) && p.EndDate > PostgresDate.Format(DateTime.Now)).Count()</h3>
+								*@
 								<span>Active Projects</span>
 							</div>
 						</div>
@@ -62,7 +65,9 @@
 				<div class="card text-center bg-warning">
 					<div class="body">
 						<div class="p-15 text-light">
+@* FIX THIS NEXT LINE!!!!!
 							<h3>@Model.Tickets.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</h3>
+							*@
 							<span>Unassigned Tickets</span>
 						</div>
 					</div>

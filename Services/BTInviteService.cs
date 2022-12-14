@@ -2,6 +2,7 @@
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using BugTrackerMVC.Helper;
 
 namespace BugTrackerMVC.Services
 {
@@ -144,7 +145,7 @@ namespace BugTrackerMVC.Services
 			if (invite != null)
 			{
 				// Determine invite date
-				DateTime inviteDate = invite.InviteDate.PostgresDate.Format(DateTime);
+				DateTime inviteDate = PostgresDate.Format(invite.InviteDate);
 
 				// Custom validation of invite based on the date it was issued
 				// In this case we are allowing an invite to be valid for 7 days
