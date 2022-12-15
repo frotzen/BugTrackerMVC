@@ -38,7 +38,6 @@ namespace BugTrackerMVC.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             ApplicationDbContext context,
-            IUserEmailStore<BTUser> emailStore,
             IUserStore<BTUser> userStore)
         {
             _userManager = userManager;
@@ -46,7 +45,7 @@ namespace BugTrackerMVC.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _context = context;
-            _emailStore = emailStore;
+            _emailStore = GetEmailStore();
             _userStore = userStore;
         }
 
@@ -176,6 +175,14 @@ namespace BugTrackerMVC.Areas.Identity.Pages.Account
                     $"Ensure that '{nameof(BTUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
+        }
+        private IUserEmailStore<BTUser> GetEmailStore()
+        {
+            if (!_userManager.SupportsUserEmail)
+            {
+                throw new NotSupportedException("The default UI requires a user store with email support.");
+            }
+            return (IUserEmailStore<BTUser>)_userStore;
         }
     }
 }
