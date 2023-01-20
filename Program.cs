@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using BugTrackerMVC.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+// !!!!! commented out as not needed
+// var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
 
 // Add services to the container.
 
@@ -17,6 +19,9 @@ var connectionString = DataUtility.GetConnectionString(builder.Configuration);
 // ***** change Sql server to Npgsql
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+
+// builder.Services.AddDefaultIdentity<BTUser>(options => options.SignIn.RequireConfirmedAccount = true)
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
