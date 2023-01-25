@@ -1,41 +1,90 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using BugTrackerMVC.Services.Interfaces
+@using BugTrackerMVC.Enums
+
+@inject IBTFileService BTFileService
 @inject SignInManager<BTUser> SignInManager
 @inject UserManager<BTUser> UserManager
+
 @{ 
     BTUser btUser = await UserManager.GetUserAsync(User);
+
 }
 
-<div class="dropdown py-sm-4 ms-auto ms-sm-0 flex-shrink-1">
+<li class="nav-item navbar-dropdown dropdown-user dropdown">
+    
+    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+        
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div class="avatar avatar-online">
+                    <img src="@BTFileService.ConvertByteArrayToFile(btUser.ImageFileData!, btUser.ImageFileType!, (int)DefaultImage.BTUserImage)" alt class="w-px-40 h-auto rounded-circle" />
+                </div>
+            }
+            else
+            {
+                <div class="avatar avatar-offline">
+                    <img src="/img/defaultUserImage.png"/>
+                </div>
+            }
+        
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        @if (SignInManager.IsSignedIn(User))
+        {        
+        
+            <li>
+                <a class="dropdown-item" href="#">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                                <img src="@BTFileService.ConvertByteArrayToFile(btUser.ImageFileData!, btUser.ImageFileType!, (int)DefaultImage.BTUserImage)" alt class="w-px-40 h-auto rounded-circle" />
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">@btUser.FullName</span>
+                            <small class="text-muted">Admin</small>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <div class="dropdown-divider"></div>
+            </li>
+            <li>
+                <a asp-area="Identity" asp-page="/Account/Manage/Index" class="dropdown-item">
+                    <i class="bx bx-user me-2"></i>
+                    <span class="align-middle">My Profile</span>
+                </a>
+            </li>
+            <li>
+                <div class="dropdown-divider"></div>
+            </li>
+            <li>
+                <a href="javascript:document.getElementById('logoutForm').submit();" class="dropdown-item">
+                    <i class="bx bx-power-off me-2"></i>
+                    <span class="align-middle">Log Out</span>
+                </a>
+            </li>
+        
+        }
+        else
+        {
+            <li>
+                <a asp-area="Identity" asp-page="/Account/Register" class="dropdown-item">
+                    <i class="bx bx-user me-2"></i>
+                    <span class="align-middle">Register</span>
+                </a>
+        </li>
+            <li>
+                <a asp-area="Identity" asp-page="/Account/Login" class="dropdown-item">
+                    <i class="bx bx-key me-2"></i>
+                    <span class="align-middle">Log In</span>
+                </a>
+            </li>
+        }
+    </ul>
+</li>
 
-    @if (SignInManager.IsSignedIn(User))
-    {
-            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" width="28" height="28" class="rounded-circle">
-                <span class="d-none d-sm-inline mx-1">@btUser.FirstName</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a></li>
-                <li>
-                    <hr class="dropdown-divider">
-                </li>
-            <li><a class="dropdown-item text-light" href="javascript:document.getElementById('logoutForm').submit();">Sign out</a></li>
-            </ul>
-
-    }
-    else
-    {
-            <a asp-area="Identity" asp-page="/Account/Login" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" width="28" height="28" class="rounded-circle">
-                <span class="d-none d-sm-inline mx-1">Log In</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                <li><a class="dropdown-item text-light" asp-area="Identity" asp-page="/Account/Register">Register</a></li>
-                <li>
-                    <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item text-light" asp-area="Identity" asp-page="/Account/Login">Sign In</a></li>
-            </ul>
-    }
-</div>
 <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
 </form>

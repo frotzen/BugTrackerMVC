@@ -33,8 +33,8 @@ namespace BugTrackerMVC.Services
                 switch (defaultImage)
                 {
                     case 1: return _defaultBTUserImageSrc;
-                    case 2: return _defaultProjectImageSrc;
-                    case 3: return _defaultCompanyImageSrc;
+                    case 2: return _defaultCompanyImageSrc;
+                    case 3: return _defaultProjectImageSrc;
                 }
             }
 
