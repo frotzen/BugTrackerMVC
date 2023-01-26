@@ -4,23 +4,55 @@
     ViewData["Title"] = "Resend email confirmation";
 }
 
-<h1>@ViewData["Title"]</h1>
-<h2>Enter your email.</h2>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Input.Email" class="form-control" aria-required="true" />
-                <label asp-for="Input.Email" class="form-label-lg"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+<!-- Content -->
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner py-4">
+          <h1>@ViewData["Title"]</h1>          
+          <!-- Resend Email Confirmation -->
+          <div class="card">
+            <div class="card-body">
+              <!-- Logo -->
+                    <div class="app-brand justify-content-center">
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
+                            <span class="app-brand-logo demo">
+                                <img src="/img/p_aardvark_rf_100x48.png">
+                            </span>
+                            <span class="app-brand-text demo text-body fw-bolder">Aardvark</span>
+                        </a>
+                    </div>
+              <!-- /Logo -->
+              <h4 class="mb-2">Enter your email.</h4>
+              <form class="mb-3" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="mb-3">
+                  <label asp-for="Input.Email" class="form-label">Email</label>
+                  <input asp-for="Input.Email"
+                    type="text"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autofocus
+                  />
+                  <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary d-grid w-100">Send Reset Link</button>
+              </form>
+              <div class="text-center">
+                <a asp-area="Identity" asp-page="/Account/Login" class="d-flex align-items-center justify-content-center">
+                  <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
+                  Back to login
+                </a>
+              </div>
             </div>
-            <button type="submit" class="w-100 mt-4 btn btn-lg btn-primary">Resend</button>
-        </form>
+          </div>
+          <!-- /Forgot Password -->
+        </div>
+      </div>
     </div>
-</div>
 
+    <!-- / Content -->
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
