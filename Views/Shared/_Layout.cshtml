@@ -62,12 +62,12 @@
         <!-- Menu -->
 
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-          <div class="app-brand demo">
+          <div class="app-brand demo ps-2">
             <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link">
               <span class="app-brand-logo demo">
-               <img class="img-fluid"/>
+               <img class="img-fluid" src="/img/p_aardvark_rf_50x24.png"/>
               </span>
-              <span class="app-brand-text menu-text fs-3 fw-bolder ms-2">AardvarkMVC</span>
+              <span class="app-brand-text demo menu-text fw-bolder ms-2">AardvarkMVC</span>
             </a>
 
             <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -78,124 +78,134 @@
           <div class="menu-inner-shadow"></div>
           <ul class="menu-inner py-1">
 
-            
-
-            <!-- Dashboard -->
-            <li class="menu-item @Html.ActiveClass("Home", "Index")">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                    <div data-i18n="Analytics">Home</div>
-                </a>
-            </li>
-
             <!-- Layouts -->
             @if (SignInManager.IsSignedIn(User))
             {
-                        <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles", "active open")">
-                            <a asp-area="" asp-controller="Companies" asp-action="Index" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-buildings"></i>
-                                <div data-i18n="Companies">Companies</div>
-                            </a>
+                <!-- Dashboard -->
+                <li class="menu-item @Html.ActiveClass("Home", "Index")">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                        <div data-i18n="Analytics">Home</div>
+                    </a>
+                </li>
+                <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles", "active open")">
+                    <a asp-area="" asp-controller="Companies" asp-action="Index" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons bx bx-buildings"></i>
+                        <div data-i18n="Companies">Companies</div>
+                    </a>
 
-                            <ul class="menu-sub">
-                                <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles")">
-                                    <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="menu-link">
-                                        <div data-i18n="Manage Roles">Manage Roles</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <!-- Actions -->
-                        <li class="menu-header small text-uppercase">
-                            <span class="menu-header-text">Actions</span>
-                        </li>
-                        <!-- Projects -->
-                        <li class="menu-item @Html.ActiveClass("Projects", "Create,Index,MyProjects,AllProjects,UnassignedProjects,ArchivedProjects", "active open")">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-folder"></i>
-                                <div data-i18n="Projects">Projects</div>
+                    <ul class="menu-sub">
+                        <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles")">
+                            <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="menu-link">
+                                <div data-i18n="Manage Roles">Manage Roles</div>
                             </a>
-                            <ul class="menu-sub">
-                                <li class="menu-item @Html.ActiveClass("Projects", "Create")">
-                                    <a asp-area="" asp-controller="Projects" asp-action="Create" class="menu-link">
-                                        <div data-i18n="New Project">New Project</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Projects", "Index")">
-                                    <a asp-area="" asp-controller="Projects" asp-action="Index" class="menu-link">
-                                        <div data-i18n="Index">Index</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Projects", "MyProjects")">
-                                    <a asp-area="" asp-controller="Projects" asp-action="MyProjects" class="menu-link">
-                                        <div data-i18n="My Projects">My Projects</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Projects", "AllProjects")">
-                                    <a asp-area="" asp-controller="Projects" asp-action="AllProjects" class="menu-link">
-                                        <div data-i18n="All Projects">All Projects</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Projects", "UnassignedProjects")">
-                                    <a asp-area="" asp-controller="Projects" asp-action="UnassignedProjects" class="menu-link">
-                                        <div data-i18n="Unassigned Projects">Unassigned Projects</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Projects", "ArchivedProjects")">
-                                    <a asp-area="" asp-controller="Projects" asp-action="ArchivedProjects" class="menu-link">
-                                        <div data-i18n="Archived Projects">Archived Projects</div>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
-                        <!-- Tickets -->
-                        <li class="menu-item @Html.ActiveClass("Tickets", "Create,Index,MyTickets,AllTickets,UnassignedTickets,ArchivedTickets", "active open")">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-notepad"></i>
-                                <div data-i18n="Tickets">Tickets</div>
+                    </ul>
+                </li>
+                <!-- Actions -->
+                <li class="menu-header small text-uppercase">
+                    <span class="menu-header-text">Actions</span>
+                </li>
+                <!-- Projects -->
+                <li class="menu-item @Html.ActiveClass("Projects", "Create,Index,MyProjects,AllProjects,UnassignedProjects,ArchivedProjects", "active open")">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons bx bx-folder"></i>
+                        <div data-i18n="Projects">Projects</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item @Html.ActiveClass("Projects", "Create")">
+                            <a asp-area="" asp-controller="Projects" asp-action="Create" class="menu-link">
+                                <div data-i18n="New Project">New Project</div>
                             </a>
-                            <ul class="menu-sub">
-                                <li class="menu-item @Html.ActiveClass("Tickets", "Create")">
-                                    <a asp-area="" asp-controller="Tickets" asp-action="Create" class="menu-link">
-                                        <div data-i18n="New Ticket">New Ticket</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Tickets", "Index")">
-                                    <a asp-area="" asp-controller="Tickets" asp-action="Index" class="menu-link">
-                                        <div data-i18n="Index">Index</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Tickets", "MyTickets")">
-                                    <a asp-area="" asp-controller="Tickets" asp-action="MyTickets" class="menu-link">
-                                        <div data-i18n="My Tickets">My Tickets</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Tickets", "AllTickets")">
-                                    <a asp-area="" asp-controller="Tickets" asp-action="AllTickets" class="menu-link">
-                                        <div data-i18n="All Tickets">All Tickets</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Tickets", "UnassignedTickets")">
-                                    <a asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets" class="menu-link">
-                                        <div data-i18n="Unnassigned Tickets">Unnassigned Tickets</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @Html.ActiveClass("Tickets", "ArchivedTickets")">
-                                    <a asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets" class="menu-link">
-                                        <div data-i18n="Archived Tickets">Archived Tickets</div>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
-                        <!-- Information -->
-                        <li class="menu-header small text-uppercase"><span class="menu-header-text">Information</span></li>
-                        <!-- Notifications -->
-                        <li class="menu-item @Html.ActiveClass("Notifications", "Index")">
-                            <a asp-area="" asp-controller="Notifications" asp-action="Index" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-notification"></i>
-                <div data-i18n="Basic">Notifications</div>
-              </a>
-            </li>
+                        <li class="menu-item @Html.ActiveClass("Projects", "Index")">
+                            <a asp-area="" asp-controller="Projects" asp-action="Index" class="menu-link">
+                                <div data-i18n="Index">Index</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Projects", "MyProjects")">
+                            <a asp-area="" asp-controller="Projects" asp-action="MyProjects" class="menu-link">
+                                <div data-i18n="My Projects">My Projects</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Projects", "AllProjects")">
+                            <a asp-area="" asp-controller="Projects" asp-action="AllProjects" class="menu-link">
+                                <div data-i18n="All Projects">All Projects</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Projects", "UnassignedProjects")">
+                            <a asp-area="" asp-controller="Projects" asp-action="UnassignedProjects" class="menu-link">
+                                <div data-i18n="Unassigned Projects">Unassigned Projects</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Projects", "ArchivedProjects")">
+                            <a asp-area="" asp-controller="Projects" asp-action="ArchivedProjects" class="menu-link">
+                                <div data-i18n="Archived Projects">Archived Projects</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- Tickets -->
+                <li class="menu-item @Html.ActiveClass("Tickets", "Create,Index,MyTickets,AllTickets,UnassignedTickets,ArchivedTickets", "active open")">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons bx bx-notepad"></i>
+                        <div data-i18n="Tickets">Tickets</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item @Html.ActiveClass("Tickets", "Create")">
+                            <a asp-area="" asp-controller="Tickets" asp-action="Create" class="menu-link">
+                                <div data-i18n="New Ticket">New Ticket</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Tickets", "Index")">
+                            <a asp-area="" asp-controller="Tickets" asp-action="Index" class="menu-link">
+                                <div data-i18n="Index">Index</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Tickets", "MyTickets")">
+                            <a asp-area="" asp-controller="Tickets" asp-action="MyTickets" class="menu-link">
+                                <div data-i18n="My Tickets">My Tickets</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Tickets", "AllTickets")">
+                            <a asp-area="" asp-controller="Tickets" asp-action="AllTickets" class="menu-link">
+                                <div data-i18n="All Tickets">All Tickets</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Tickets", "UnassignedTickets")">
+                            <a asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets" class="menu-link">
+                                <div data-i18n="Unnassigned Tickets">Unnassigned Tickets</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Tickets", "ArchivedTickets")">
+                            <a asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets" class="menu-link">
+                                <div data-i18n="Archived Tickets">Archived Tickets</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- Information -->
+                <li class="menu-header small text-uppercase"><span class="menu-header-text">Information</span></li>
+                <!-- Notifications -->
+                <li class="menu-item @Html.ActiveClass("Notifications", "Index")">
+                    <a asp-area="" asp-controller="Notifications" asp-action="Index" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-notification"></i>
+                        <div data-i18n="Basic">Notifications</div>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="menu-item">
+                    <a asp-area="Identity" asp-page="/Account/Login" class="menu-link">
+                        <span class="fs-4">Log In</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a asp-area="Identity" asp-page="/Account/Register" class="menu-link">
+                        <span class="fs-4">Register</span>
+                    </a>
+                </li>
             }
           </ul>
         </aside>
@@ -205,7 +215,7 @@
         <div class="layout-page">
           <!-- Navbar -->
           <nav
-            class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
             id="layout-navbar"
           >
             <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
@@ -262,31 +272,21 @@
 
             <!-- Footer -->
             <footer class="content-footer footer bg-footer-theme">
-              <div class="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                 <div class="mb-2 mb-md-0">
                   ©
                   <script>
                     document.write(new Date().getFullYear());
                   </script>
-                  Elwin Beall <span class="ms-5">Sneat theme by <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a></span>                  
+                  <img src="~/img/EB_Logo.png" height="20" /> Elwin Beall
                 </div>
-                <div>
-                  <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-                  <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
-
-                  <a
-                    href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                    target="_blank"
-                    class="footer-link me-4"
-                    >Documentation</a
-                  >
-
-                  <a
-                    href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                    target="_blank"
-                    class="footer-link me-4"
-                    >Support</a
-                  >
+                <div class="mb-2 mb-md-0">
+                    Sneat theme by <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>                  
+                </div>
+                <div class="mb-2 mb-md-0">
+                    <a href="https://www.linkedin.com/in/elwin-beall/" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-linkedin bx-sm bx-tada-hover"></i></a>
+                    <a href="https://twitter.com/frotzen" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-twitter bx-sm bx-tada-hover"></i></a>
+                    <a href="https://github.com/frotzen" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-github bx-sm bx-tada-hover"></i></a>
                 </div>
               </div>
             </footer>
