@@ -1,9 +1,12 @@
 ﻿@using BugTrackerMVC.Models.ViewModels
 
 @model IEnumerable<ManageUserRolesViewModel>
+@{
+    ViewData["Title"] = "Manage Roles";
+}
 
 <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted">Company</span> / Manage Roles</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted">@ViewContext.RouteData.Values["controller"]!.ToString()</span> / @ViewBag.Title</h4>
 
     <!-- Hoverable Table rows -->
     <div class="card">
@@ -27,12 +30,15 @@
                                 <input type="hidden" asp-for="@viewModel.BTUser!.Id" />
                                 <div class="row">
                                     <div class="col-auto">
-                                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>@viewModel.BTUser</strong></td>
+                                        <td>
+                                            <i class="fab fa-angular fa-lg text-danger me-3"></i>
+                                            <strong>@viewModel.BTUser</strong>
+                                        </td>
                                     </div>
                                     <div class="col-auto">
                                         <td>@viewModel.BTUser!.FullName</td>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col">
                                         <td>
                                             <div class="form-group w-px-150">
                                                 <select asp-for="@viewModel.SelectedRoles" class="form-control" asp-items="@viewModel.Roles"></select>
@@ -54,38 +60,3 @@
     </div>
     <!--/ Hoverable Table rows -->
 </div>
-@*
-    <h2 class="m-t-0 h3"><b>Manage viewModel Roles </b></h2>
-    
-    @foreach (var viewModel in Model)
-    {
-        <div class="row">
-            <div class="card col-4 m-3">
-                <div class="card-body">
-                    <p class="text-muted font-13 m-b-30">
-                        This form displays the current roles assigned to the user: <strong class="text-info">@viewModel.BTUser!.FullName</strong>.
-                        Use the dropdown to select the roles this user should be assigned.
-                        Once roles are selected, click "Assign Roles" to submit the form.
-                    </p>
-                    <hr />
-                    <form asp-action="ManageUserRoles" asp-controller="Companies" method=post>
-                        <input type="hidden" asp-for="@viewModel.BTUser.Id" />
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label asp-for="@viewModel.Roles" class="custom-label"> Roles for @viewModel.BTUser.FullName </label>
-                                    <select asp-for="@viewModel.SelectedRoles" class="form-control" asp-items="@viewModel.Roles"></select>
-                                    <hr />
-                                </div>
-                                <div class="form-group">
-                                    <input type="submit" value="Assign Role" class="btn btn-info" />
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    }
-</div>
-*@

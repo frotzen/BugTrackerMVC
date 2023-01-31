@@ -1,15 +1,118 @@
 ﻿@inject SignInManager<BTUser> SignInManager
+
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<ul class="nav nav-pills flex-column">
-    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a></li>
-    @if (hasExternalLogins)
-    {
-        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a></li>
-    }
-    <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a></li>
-</ul>
+
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand demo ps-2">
+        <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link">
+            <span class="app-brand-logo demo">
+                <img class="img-fluid" src="/img/p_aardvark_rf_50x24.png" />
+            </span>
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">AardvarkMVC</span>
+        </a>
+
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+            <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+    </div>
+
+    <div class="menu-inner-shadow"></div>
+    <ul class="menu-inner py-1">
+
+        <!-- Layouts -->
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <!-- Dashboard -->
+            <li class="menu-item">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <div data-i18n="Analytics">Home</div>
+                </a>
+            </li>
+            <!-- / Dashboard -->
+
+            <li class="menu-item"> <!-- Html helper below may need to be changed -->
+                <div class="nav-item @Html.ActiveClass("Identity", "Index")">
+                    <a class="menu-link nav-link @ManageNavPages.IndexNavClass(ViewContext)" 
+                        id="profile" asp-page="./Index">
+                        <i class="menu-icon tf-icons bx bx-folder"></i>
+                        <div data-i18n="Profile">Profile</div>
+                    </a>
+                </div>
+            </li>
+
+            <li class="menu-item"> <!-- Html helper below may need to be changed -->
+                <div class="nav-item @Html.ActiveClass("Identity", "Account/Manage")">
+                    <a class="menu-link nav-link @ManageNavPages.EmailNavClass(ViewContext)" 
+                        id="email" asp-page="./Email">
+                        <i class="menu-icon tf-icons bx bx-envelope"></i>
+                        <div data-i18n="Email">Email</div>
+                    </a>
+                </div>
+            </li>
+
+            <li class="menu-item"> <!-- Html helper below may need to be changed -->
+                <div class="nav-item @Html.ActiveClass("Identity", "Account/Manage")">
+                    <a class="menu-link nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" 
+                        id="change-password" asp-page="./ChangePassword">
+                        <i class="menu-icon tf-icons bx bx-lock"></i>
+                        <div data-i18n="Password">Password</div>
+                    </a>
+                </div>
+            </li>
+                        
+            <!-- External Logins -->
+            @if (hasExternalLogins)
+            {
+                <li class="menu-item" id="external-logins"> <!-- Html helper below may need to be changed -->
+                    <div class="nav-item @Html.ActiveClass("Identity", "Account/Manage")">
+                        <a class="menu-link nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)"
+                             id="external-login" asp-page="./ExternalLogins">
+                            <i class="menu-icon tf-icons bx bx-buildings"></i>
+                            <div data-i18n="External logins">External logins</div>
+                        </a>
+                    </div>
+                </li>
+            }
+            <!-- / External Logins -->
+
+            <li class="menu-item"> <!-- Html helper below may need to be changed -->
+                <div class="nav-item @Html.ActiveClass("Identity", "Account/Manage")">
+                    <a class="menu-link nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"
+                            id="two-factor" asp-page="./TwoFactorAuthentication">
+                        <i class="menu-icon tf-icons bx bx-check-shield"></i>
+                        <div data-i18n="Two-factor authentication">2F authentication</div>
+                    </a>
+                </div>
+            </li>
+
+            <li class="menu-item"> <!-- Html helper below may need to be changed -->
+                <div class="nav-item @Html.ActiveClass("Identity", "Account/Manage")">
+                    <a class="menu-link nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)"
+                   id="personal-data" asp-page="./PersonalData">
+                        <i class="menu-icon tf-icons bx bx-street-view"></i>
+                        <div data-i18n="Personal data">Personal data</div>
+                    </a>
+                </div>
+            </li>
+            
+        }
+        else
+        {
+            <li class="menu-item">
+                <a asp-area="Identity" asp-page="/Account/Login" class="menu-link">
+                    <span class="fs-4">Log In</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a asp-area="Identity" asp-page="/Account/Register" class="menu-link">
+                    <span class="fs-4">Register</span>
+                </a>
+            </li>
+        }
+        <!-- / Layouts -->
+
+    </ul>
+</aside>
