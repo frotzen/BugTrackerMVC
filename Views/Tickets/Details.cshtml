@@ -13,7 +13,7 @@
 <h1>@ViewBag.Title</h1>
 
 <div>
-	<div classxfont-weighteighteightgetainer-fluid">
+	<div class="container-fluid">
 		<div class="row gy-2">
 			<div class="col-md-12 col">
 				<div class="row col-cols-2 mt-5 bg-secondary">
@@ -21,8 +21,9 @@
 						<div class="card-body">
 							@*Title of Ticket*@
 							<h5>@Html.DisplayFor(model => model.Ticket!.Title)</h5>
-							@*Description of Ticket*@
-							<p>@Html.DisplayFor(model => model.Ticket!.Description)</p>
+							@*Description of Ticket: *** NOTE: remove html tags ****@
+							@{var descText = Html.Raw(Model.Ticket!.Description);}
+							<p>@descText</p>
 							<div class="progress-container progress-info m-b-25">
 								@*Project Name and information*@
 								<span class="progress-badge" style="font-size:small">Project: @Html.DisplayFor(model => model.Project!.Name)</span>

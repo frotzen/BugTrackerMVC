@@ -10,23 +10,23 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted">@ViewContext.RouteData.Values["controller"]!.ToString()</span> / @ViewBag.Title</h4>
 
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Create">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form asp-action="Create" id="form" asp-controller="Projects" onsubmit="handleSubmit()">
                 <div asp-validation-summary="ModelOnly" class="text-danger" enctype="multipart/form-data"></div>
-               
+                <input type="hidden" asp-for="Project!.Description" id="textBox" />
+
                 @*<div class="form-group">
             <label asp-for="Project!.CompanyId" class="control-label"></label>
             <select asp-for="Project!.CompanyId" class ="form-control" asp-items="ViewBag.CompanyId"></select>
             </div>*@
                 <div class="form-group mb-3">
-                    <label asp-for="Project!.Name" class="control-label"></label>
-                <input asp-for="Project!.Name" class="form-control" />
+                    <label asp-for="Project!.Name" class="control-label">Project Name</label>
+                    <input asp-for="Project!.Name" class="form-control" placeholder="Enter a name"/>
                     <span asp-validation-for="Project!.Name" class="text-danger"></span>
                 </div>
-                <div class="form-group mb-3">
-                <label asp-for="Project!.Description" class="control-label"></label>
-                <input asp-for="Project!.Description" class="form-control" />
+                <div class="form-group mb-3 rounded bg-white" id="editor">
+                    @Html.Raw(Model.Project!.Description)
                     <span asp-validation-for="Project!.Description" class="text-danger"></span>
                 </div>
                 @*<div class="form-group">
@@ -35,17 +35,17 @@
                     <span asp-validation-for="Created" class="text-danger"></span>
                 </div>*@
                 <div class="form-group mb-3">
-                <label asp-for="Project!.StartDate" class="control-label"></label>
-                <input asp-for="Project!.StartDate" class="form-control" />
+                <label asp-for="Project!.StartDate" class="control-label">Start Date</label>
+                <input asp-for="Project!.StartDate" class="form-control" placeholder="today"/>
                 <span asp-validation-for="Project!.StartDate" class="text-danger"></span>
                 </div>
                 <div class="form-group mb-3">
-                    <label asp-for="Project!.EndDate" class="control-label"></label>
-                <input asp-for="Project!.EndDate" class="form-control" />
+                    <label asp-for="Project!.EndDate" class="control-label">End Date</label>
+                <input asp-for="Project!.EndDate" class="form-control" placeholder="MM/DD/YYYY" />
                 <span asp-validation-for="Project!.EndDate" class="text-danger"></span>
                 </div>
                 <div class="form-group mb-3">
-                    <label asp-for="Project!.ProjectPriorityId" class="control-label"></label>
+                    <label asp-for="Project!.ProjectPriorityId" class="control-label">Priority</label>
                     <select asp-for="Project!.ProjectPriorityId" class="form-control" asp-items="ViewBag.ProjectPriorityId"></select>
                 </div>
                 <div class="form-group mb-3">
@@ -79,13 +79,25 @@
                     <input type="submit" value="Create" class="btn btn-primary" />
                 </div>
             </form>
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
         </div>
     </div>
-
-    <div>
-        <a asp-action="Index">Back to List</a>
-    </div>
 </div>
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        let quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'Enter a description'
+        });
+        function handleSubmit() {
+            console.info('handleSubmit() called');
+            document.getElementById('textBox').value = quill.root.innerHTML;
+        };
+    </script>
 }

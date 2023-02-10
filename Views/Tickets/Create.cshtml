@@ -7,9 +7,9 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted">@ViewContext.RouteData.Values["controller"]!.ToString()</span> / @ViewBag.Title</h4>
 
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Create">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form asp-action="Create" id="form" asp-controller="Tickets" onsubmit="handleSubmit()">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input asp-for="SubmitterUserId" type="hidden" />
                 <input asp-for="ArchivedByProject" type="hidden" />
@@ -17,14 +17,16 @@
                 <input asp-for="Archived" type="hidden" />
                 <input asp-for="Created" type="hidden" />
                 <input asp-for="Updated" type="hidden" />
+                <input asp-for="Description" type="hidden" id="textBox" />
+
                 <div class="form-group mb-3">
-                    <label asp-for="Title" class="control-label"></label>
-                    <input asp-for="Title" class="form-control" />
+                    <label asp-for="Title" class="control-label">Title</label>
+                    <input asp-for="Title" class="form-control" placeholder="Enter a title"/>
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="Description" class="control-label"></label>
-                    <input asp-for="Description" class="form-control"/>
+
+                <label>Description</label>
+                <div class="form-group mb-3 rounded bg-white" id="editor">
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 @*<div class="form-group">
@@ -48,11 +50,11 @@
                     </label>
                 </div>*@
                 <div class="form-group mb-3">
-                    <label asp-for="ProjectId" class="control-label"></label>
+                    <label asp-for="ProjectId" class="control-label">Project</label>
                     <select asp-for="ProjectId" class ="form-control" asp-items="ViewBag.ProjectId"></select>
                 </div>
                 <div class="form-group mb-3">
-                    <label asp-for="TicketTypeId" class="control-label"></label>
+                    <label asp-for="TicketTypeId" class="control-label">Ticket Type</label>
                     <select asp-for="TicketTypeId" class ="form-control" asp-items="ViewBag.TicketTypeId"></select>
                 </div>
                 @*
@@ -61,11 +63,11 @@
                     <select asp-for="TicketStatusId" class ="form-control" asp-items="ViewBag.TicketStatusId"></select>
                 </div>*@
                 <div class="form-group mb-3">
-                    <label asp-for="TicketPriorityId" class="control-label"></label>
+                    <label asp-for="TicketPriorityId" class="control-label">Ticket Priority</label>
                     <select asp-for="TicketPriorityId" class ="form-control" asp-items="ViewBag.TicketPriorityId"></select>
                 </div>
                 <div class="form-group mb-3">
-                    <label asp-for="DeveloperUserId" class="control-label"></label>
+                    <label asp-for="DeveloperUserId" class="control-label">Developer</label>
                     <select asp-for="DeveloperUserId" class ="form-control" asp-items="ViewBag.DeveloperUserId"></select>
                 </div>
                 @*
@@ -86,5 +88,17 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        let quill = new Quill('#editor', {
+        theme: 'snow',
+        placeholder: 'Enter a description'
+        });
+        function handleSubmit(){
+            console.info('handleSubmit() called');
+            document.getElementById('textBox').value = quill.root.innerHTML;
+        };
+    </script>
 }

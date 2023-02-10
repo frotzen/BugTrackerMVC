@@ -27,7 +27,7 @@ namespace BugTrackerMVC.Helper
 {
     public static class MvcExtensions
     {
-        public static string ActiveClass(this IHtmlHelper htmlHelper, string controllers = null, string actions = null, string cssClass = "active")
+        public static string ActiveClass(this IHtmlHelper htmlHelper, string controllers = null!, string actions = null!, string cssClass = "active")
         {
             var currentController = htmlHelper?.ViewContext.RouteData.Values["controller"] as string;
             var currentAction = htmlHelper?.ViewContext.RouteData.Values["action"] as string;

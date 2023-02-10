@@ -25,6 +25,7 @@ namespace BugTrackerMVC.Models
         [DisplayName("Date Updated")]
         public DateTime Updated { get; set; }
 
+        [DisplayName("Archived")]
         public bool Archived { get; set; }
 
         [DisplayName("Archived By Project")]

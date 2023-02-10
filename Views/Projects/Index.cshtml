@@ -9,100 +9,109 @@
     ViewData["Title"] = "Index";
 }
 
-<div>
-<h1>@ViewBag.Title</h1>
+<div class="container-xxl flex-grow-1 container-p-y mb-5">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted">@ViewContext.RouteData.Values["controller"]!.ToString()</span> / @ViewBag.Title</h4>
 
-<p>
+    @*<p>
     <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                Project Manager
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProjectPriority)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr class="@(item.Archived ? "border border-2 border-danger": "")">
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                    @{
-                        BTUser? projectManager = await ProjectService.GetProjectManagerAsync(item.Id);
-                    }
-                    @if(projectManager is null && User.IsInRole(nameof(BTRoles.Admin)))
-                    {
-                        <a class="btn btn-sm btn-outline-info" asp-action="AssignPM" asp-route-id="@item.Id">Assign Pm</a>
-                    }
-                    else
-                    {
-                        <text>@(projectManager?.FullName ?? "Unassigned")</text>
-                    }
+    </p>*@
+
+    <table class="table mb-5" id="table_id">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    Project Manager
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Created)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ImageFileData)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ImageFileType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Archived)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Company)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProjectPriority)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr class="@(item.Archived ? "border border-2 border-danger": "")">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                        @{
+                            BTUser? projectManager = await ProjectService.GetProjectManagerAsync(item.Id);
+                        }
+                        @if(projectManager is null && User.IsInRole(nameof(BTRoles.Admin)))
+                        {
+                            <a class="btn btn-sm btn-outline-info" asp-action="AssignPM" asp-route-id="@item.Id">Assign Pm</a>
+                        }
+                        else
+                        {
+                            <text>@(projectManager?.FullName ?? "Unassigned")</text>
+                        }
 
              
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Created)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Archived)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImageFileData)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImageFileType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Archived)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+    </script>
+}

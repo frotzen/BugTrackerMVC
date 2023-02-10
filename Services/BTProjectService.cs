@@ -249,8 +249,7 @@ namespace BugTrackerMVC.Services
             try
             {
                 project.Archived = true;
-                _context.Update(project);
-                await _context.SaveChangesAsync();
+                await UpdateProjectAsync(project);
 
             }
             catch (Exception)
@@ -263,8 +262,7 @@ namespace BugTrackerMVC.Services
             try
             {
                 project.Archived = false;
-                _context.Update(project);
-                await _context.SaveChangesAsync();
+                await UpdateProjectAsync(project);
             }
             catch (Exception)
             {
