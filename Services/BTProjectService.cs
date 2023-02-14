@@ -11,12 +11,12 @@ namespace BugTrackerMVC.Services
     public class BTProjectService : IBTProjectService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IBTRolesService _roleService;
+        private readonly IBTRolesService _rolesService;
 
-        public BTProjectService(ApplicationDbContext context, IBTRolesService roleService)
+        public BTProjectService(ApplicationDbContext context, IBTRolesService rolesService)
         {
             _context = context;
-            _roleService = roleService;
+            _rolesService = rolesService;
         }
 
         /****
@@ -145,7 +145,7 @@ namespace BugTrackerMVC.Services
                 {
                     foreach(var member in project.Members)
                     {
-                        if(await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+                        if(await _rolesService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
                         {
                             isMember = true;
                             break;
@@ -192,30 +192,6 @@ namespace BugTrackerMVC.Services
         {
             return await _context.ProjectPriorities.ToListAsync();
         }
-
-        /* Project Manager Methods */
-        public async Task<BTUser> GetProjectManagerAsync(int projectId)
-        {
-            try
-            {
-                Project? project = await _context.Projects.Include(p => p.Members)
-                                                 .FirstOrDefaultAsync(p => p.Id == projectId);
-
-                foreach (BTUser member in project!.Members)
-                {
-                    if (await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
-                    {
-                        return member;
-                    }
-                }
-                return null!;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        
 
         /****
          **     Setters
@@ -270,7 +246,29 @@ namespace BugTrackerMVC.Services
             }
         }
 
+
         /* Project Manager methods */
+        public async Task<BTUser> GetProjectManagerAsync(int projectId)
+        {
+            try
+            {
+                Project? project = await _context.Projects.Include(p => p.Members)
+                                                 .FirstOrDefaultAsync(p => p.Id == projectId);
+
+                foreach (BTUser member in project!.Members)
+                {
+                    if (await _rolesService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+                    {
+                        return member;
+                    }
+                }
+                return null!;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<bool> AddProjectManagerAsync(BTUser member, int projectId)
         {
             // Adding a Project Manager will add them to this project only
@@ -325,6 +323,28 @@ namespace BugTrackerMVC.Services
         }
 
         /* Project Member methods */
+        public async Task<List<BTUser>> GetProjectMembersByRoleAsync(int projectId, string role)
+        {
+            try
+            {
+                Project? project = await _context.Projects.Include(p => p.Members)
+                                                          .FirstOrDefaultAsync(p => p.Id == projectId);
+                List<BTUser> members = new();
+
+                foreach (var user in project!.Members)
+                {
+                    if (await _rolesService.IsUserInRoleAsync(user, role))
+                    {
+                        members.Add(user);
+                    }
+                }
+                return members;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<bool> AddMemberToProjectAsync(BTUser member, int projectId)
         {
             try

@@ -13,6 +13,7 @@ namespace BugTrackerMVC.Services.Interfaces
         public Task<List<Project>> GetAllProjectsByCompanyIdAsync(int companyId);
         public Task<List<Project>> GetAllUnassignedProjectsByCompanyIdAsync(int companyId);
         public Task<List<Project>> GetArchivedProjectsByCompanyIdAsync(int companyId);
+        public Task<List<BTUser>> GetProjectMembersByRoleAsync(int projectId, string role);
         public Task<List<ProjectPriority>> GetProjectPrioritiesAsync();
         public Task<BTUser> GetProjectManagerAsync(int projectId);
 

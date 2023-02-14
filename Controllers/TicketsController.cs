@@ -152,6 +152,31 @@ namespace BugTrackerMVC.Controllers
             return View(tickets);
         }
 
+        // GET: Ticket/AssignDevelper/5
+        [HttpGet]
+        public async Task<IActionResult> AssignDeveloper (int id)
+        {
+            AssignDeveloperViewModel model = new();
+
+            model.Ticket = await _ticketService.GetTicketByIdAsync(id);
+            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(BTRoles.Developer)),
+                                   "Id", "FullName");
+
+            return View(model);
+        }
+
+        // POST: Tickets/AssignDeveloper/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
+        {
+            if(model.DeveloperId != null)
+            {
+                await _ticketService.AssignDeveloperAsync(model.Ticket, model.DeveloperId);
+            }
+
+            return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket.Id });
+        }
 
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int id)
