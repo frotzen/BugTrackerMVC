@@ -9,10 +9,10 @@
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted">@ViewContext.RouteData.Values["controller"]!.ToString()</span> / @ViewBag.Title</h4>
 
     <!-- Hoverable Table rows -->
-    <div class="card">
+    <div class="card p-3">
         <h5 class="card-header">Company Users</h5>
-        <div class="table-responsive text-nowrap">
-            <table class="table table-hover">
+        <div class="table-responsive text-nowrap mb-5">
+            <table class="table table-hover" id="table_id">
                 <thead>
                     <tr>
                         <th>User</th>
@@ -60,3 +60,11 @@
     </div>
     <!--/ Hoverable Table rows -->
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+    </script>
+}

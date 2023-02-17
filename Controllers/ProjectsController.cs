@@ -122,14 +122,16 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
-            List<BTUser> projectManagers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.ProjectManager), User.Identity!.GetCompanyId());
+            int companyId = User.Identity!.GetCompanyId();
+            string roleName = nameof(BTRoles.ProjectManager); // set PM as role
+            List<BTUser> projectManagers = await _rolesService.GetUsersInRoleAsync(roleName, companyId);
             BTUser? currentPM = await _projectService.GetProjectManagerAsync(id.Value);
 
             AssignPMViewModel viewModel = new()
             {
                 Project = await _projectService.GetProjectByIdAsync(id.Value),
-                PMList = new SelectList(projectManagers, "Id", "FullName", currentPM?.Id),
-                PMId = currentPM?.Id
+                PMId = currentPM?.Id,
+                PMList = new SelectList(projectManagers, "Id", "FullName", currentPM?.Id)
             };
 
             return View(viewModel);

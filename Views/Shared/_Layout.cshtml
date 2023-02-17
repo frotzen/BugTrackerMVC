@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using BugTrackerMVC.Enums
 @inject SignInManager<BTUser> SignInManager
 
 <!DOCTYPE html>
@@ -126,21 +127,27 @@
                                 <div data-i18n="Index">Index</div>
                             </a>
                         </li>
-                        <li class="menu-item @Html.ActiveClass("Projects", "MyProjects")">
-                            <a asp-area="" asp-controller="Projects" asp-action="MyProjects" class="menu-link">
-                                <div data-i18n="My Projects">My Projects</div>
-                            </a>
-                        </li>
+                        @if (!User.IsInRole(nameof(BTRoles.Admin)))
+                        {
+                            <li class="menu-item @Html.ActiveClass("Projects", "MyProjects")">
+                                <a asp-area="" asp-controller="Projects" asp-action="MyProjects" class="menu-link">
+                                    <div data-i18n="My Projects">My Projects</div>
+                                </a>
+                            </li>
+                        }
                         <li class="menu-item @Html.ActiveClass("Projects", "AllProjects")">
                             <a asp-area="" asp-controller="Projects" asp-action="AllProjects" class="menu-link">
                                 <div data-i18n="All Projects">All Projects</div>
                             </a>
                         </li>
-                        <li class="menu-item @Html.ActiveClass("Projects", "UnassignedProjects")">
-                            <a asp-area="" asp-controller="Projects" asp-action="UnassignedProjects" class="menu-link">
-                                <div data-i18n="Unassigned Projects">Unassigned Projects</div>
-                            </a>
-                        </li>
+                        @if (User.IsInRole(nameof(BTRoles.Admin)))
+                        {
+                            <li class="menu-item @Html.ActiveClass("Projects", "UnassignedProjects")">
+                                <a asp-area="" asp-controller="Projects" asp-action="UnassignedProjects" class="menu-link">
+                                    <div data-i18n="Unassigned Projects">Unassigned Projects</div>
+                                </a>
+                            </li>
+                        }                                
                         <li class="menu-item @Html.ActiveClass("Projects", "ArchivedProjects")">
                             <a asp-area="" asp-controller="Projects" asp-action="ArchivedProjects" class="menu-link">
                                 <div data-i18n="Archived Projects">Archived Projects</div>
