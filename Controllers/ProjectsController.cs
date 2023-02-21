@@ -160,6 +160,53 @@ namespace BugTrackerMVC.Controllers
             return RedirectToAction(nameof(Details), new { id = viewModel.Project?.Id });
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin, ProjectManager")]
+        // GET: Projects/AssignMembers
+        public async Task<IActionResult> AssignMembers(int id)
+        {
+            ProjectMembersViewModel model = new();
+            int companyId = User.Identity!.GetCompanyId();
+            model.Project = await _projectService.GetProjectByIdAsync(id);
+
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Developer), companyId);
+            List<BTUser> submitters = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Submitter), companyId);
+            List<BTUser> companyMembers = developers.Concat(submitters).ToList();
+
+            List<string> projectMembers = model.Project.Members.Select(m => m.Id).ToList();
+            model.Users = new MultiSelectList(companyMembers, "Id", "FullName", projectMembers);
+            
+            return View(model);
+        }
+
+        [HttpPost]        
+        [Authorize(Roles = "Admin, ProjectManager")]
+        [ValidateAntiForgeryToken]
+        // POST: Projects/AssignMembers
+        public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
+        {
+            if(model.SelectedUsers != null)
+            {
+                List<BTUser> projectMembers = await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id);
+                // Remove current members
+                foreach(BTUser member in projectMembers)
+                {
+                    await _projectService.RemoveMemberFromProjectAsync(member, model.Project.Id);
+                }
+
+                // Add selected members returned from View
+                foreach(string member in model.SelectedUsers)
+                {
+                    BTUser thisMember = await _userManager.FindByIdAsync(member);
+                    await _projectService.AddMemberToProjectAsync(thisMember, model.Project.Id);
+                }
+
+                // Return to project details
+                return RedirectToAction("Details", "Projects", new { id = model.Project.Id});
+            }
+
+            return RedirectToAction(nameof(AssignMembers), new {id = model.Project.Id});
+        }
 
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -255,6 +302,7 @@ namespace BugTrackerMVC.Controllers
         }
 
         // GET: Projects/Edit/5
+        [HttpGet]
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {

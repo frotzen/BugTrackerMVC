@@ -5,6 +5,7 @@ using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System.Data;
 
 namespace BugTrackerMVC.Services
 {
@@ -345,6 +346,30 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
+
+        public async Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
+        {
+            try
+            {
+                Project? project = await _context.Projects.Include(p => p.Members)
+                                                          .FirstOrDefaultAsync(p => p.Id == projectId);
+                List<BTUser> members = new();
+
+                foreach (var user in project!.Members)
+                {
+                    if (!await _rolesService.IsUserInRoleAsync(user, nameof(BTRoles.ProjectManager)))
+                    {
+                        members.Add(user);
+                    }
+                }
+                return members;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         public async Task<bool> AddMemberToProjectAsync(BTUser member, int projectId)
         {
             try
@@ -385,5 +410,6 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
+
     }
 }

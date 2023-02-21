@@ -5,8 +5,10 @@ namespace BugTrackerMVC.Services.Interfaces
     public interface IBTProjectService
     {
         // Needs to be implemented for Interface, No logic, all is public, all
-        // methods have to be implemented here for class intended to be a service
-        
+        // methods have to be declared here for class intended to be a service
+        //
+        // methods do not have async modifier here, only in implementation
+
         /* Getters */
         public Task<Project> GetProjectByIdAsync(int projectId);
         public Task<List<Project>> GetUserProjectsAsync(string userId);
@@ -14,6 +16,7 @@ namespace BugTrackerMVC.Services.Interfaces
         public Task<List<Project>> GetAllUnassignedProjectsByCompanyIdAsync(int companyId);
         public Task<List<Project>> GetArchivedProjectsByCompanyIdAsync(int companyId);
         public Task<List<BTUser>> GetProjectMembersByRoleAsync(int projectId, string role);
+        public Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId);
         public Task<List<ProjectPriority>> GetProjectPrioritiesAsync();
         public Task<BTUser> GetProjectManagerAsync(int projectId);
 

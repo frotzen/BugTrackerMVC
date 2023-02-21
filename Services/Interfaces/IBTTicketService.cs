@@ -5,6 +5,7 @@ namespace BugTrackerMVC.Services.Interfaces
 {
     public interface IBTTicketService
     {
+        // methods do not have async modifier here, only in implementation
         public Task<Ticket> GetTicketByIdAsync(int ticketId);
 
 

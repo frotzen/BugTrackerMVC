@@ -1,7 +1,9 @@
 ﻿@using BugTrackerMVC.Models;
 @using BugTrackerMVC.Enums;
 @using BugTrackerMVC.Services.Interfaces;
+@using Microsoft.AspNetCore.Identity;
 
+@inject UserManager<BTUser> UserManager
 @inject IBTTicketService TicketService
 @inject IBTProjectService ProjectService
 @inject IBTRolesService RolesService
@@ -10,6 +12,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
 <div class="container-xxl flex-grow-1 container-p-y mb-5">
@@ -44,20 +47,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="card col m-1 p-2">
-                    <div class="card-body">
-                        <ul class=" list-unstyled basic-list">
-                            <li>Start Date: <span class="">@Html.DisplayFor(model => model.StartDate)</span></li>
-                            <li>Deadline: <span class="">@Html.DisplayFor(model => model.EndDate)</span></li>
-                            <li>Priority: <span class="">@Html.DisplayFor(model => model.ProjectPriority!.Name)</span></li>
-                            @* if() logic *@
-                            [Project Active/Inactive]
-                        </ul>
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card">
+                        <div>
+                            <div class="card-body">
+                                <ul class=" list-unstyled basic-list">
+                                    <li>Start Date: <span class="">@Model.StartDate.ToString("MM-dd-yyyy")</span></li>
+                                    <li>Deadline: <span class="">@Model.EndDate.ToString("MM-dd-yyyy")</span></li>
+                                    <li>Priority: <span class="">@Html.DisplayFor(model => model.ProjectPriority!.Name)</span></li>
+                                    <li>Status: 
+                                    @if(Model.Archived){
+                                        <span> Inactive</span>
+                                    }
+                                    else{
+                                        <span> Active</span>
+                                    }
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col mt-5 ">
+        <div class="col-md-6 col-lg-4 mb-3">
             <div class="bg-secondary">
                 <div class="card m-1 p-2">
                     <div class="header">
@@ -65,17 +78,36 @@
                         <hr />
                     </div>
                     <div class="body" style="overflow-y:auto;height:300px;">
-                        @* use if() logic for Avatar/Default image etc *@
+                        @* Find PM or Not Assigned *@
                         @{
                             BTUser projectManager = await ProjectService.GetProjectManagerAsync(Model.Id);
-                            string pMName = projectManager is null ? "unassigned" : projectManager.FullName!;
                         }
-                        @pMName
+                        @if(projectManager != null)
+                        {
+                            <p>@projectManager.FullName</p>
+                            @if(User.IsInRole(nameof(BTRoles.Admin)) || (btUser.Id == projectManager!.Id))
+                            {
+                                <a class="btn btn-sm btn-primary" asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@Model.Id">
+                                    Manage Team
+                                </a>
+                            }
+
+                        }
+                        else
+                        {
+                            <p>Not Assigned</p>
+                            @if(User.IsInRole(nameof(BTRoles.Admin)))
+                            {
+                                <a class="btn btn-sm btn-primary" asp-action="AssignPM" asp-controller="Projects" asp-route-id="@Model.Id">
+                                    Assign PM
+                                </a>
+                            }
+                        }
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col mt-5 ">
+        <div class="col-md-6 col-lg-4 mb-3">
             <div class="bg-secondary">
                 <div class="card m-1 p-2">
                     <div class="header">
@@ -86,7 +118,15 @@
                         <ul class="right_chat list-unstyled mb-0">
                             @foreach(BTUser member in Model.Members)
                             {
-                                <li>@member.FullName</li>
+                                if (!(await RolesService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager))))
+                                {
+                                    <li>
+                                        <span>@member.FullName</span>&nbsp;&nbsp;
+                                        <span>(@(
+                                         (await UserManager.GetRolesAsync(member)).FirstOrDefault()
+                                         )</span>)
+                                    </li>
+                                }
                             }
                             @* Logic for avatars *@
                         </ul>
@@ -95,7 +135,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col mt-5 ">
+        <div class="col-md-6 col-lg-4 mb-3">
             <div class="bg-dark">
                 <div class="card m-1 p-2">
                     <div class="header">

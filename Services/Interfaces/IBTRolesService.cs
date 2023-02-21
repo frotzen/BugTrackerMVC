@@ -5,6 +5,7 @@ namespace BugTrackerMVC.Services.Interfaces
 {
     public interface IBTRolesService
     {
+        // methods do not have async modifier here, only in implementation
         public Task<bool> AddUserToRoleAsync(BTUser user, string roleName);
         /// <summary>
         /// Get All Roles
