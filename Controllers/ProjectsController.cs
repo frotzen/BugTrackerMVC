@@ -315,7 +315,7 @@ namespace BugTrackerMVC.Controllers
             List<BTUser> projectManagers = await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.ProjectManager), companyId);
             BTUser? currentPM = await _projectService.GetProjectManagerAsync(id.Value);
 
-            // use Project Service
+            // use Project Service to create new AssignPMViewModel
             AssignPMViewModel viewModel = new()
             {
                 Project = await _projectService.GetProjectByIdAsync(id.Value),

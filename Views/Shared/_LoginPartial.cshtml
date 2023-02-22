@@ -18,7 +18,7 @@
             @if (SignInManager.IsSignedIn(User))
             {
                 <div class="avatar avatar-online">
-                    <img src="@BTFileService.ConvertByteArrayToFile(btUser.ImageFileData!, btUser.ImageFileType!, (int)DefaultImage.BTUserImage)" alt class="w-px-40 h-auto rounded-circle" />
+                    <img src="@BTFileService.ConvertByteArrayToFile(btUser.ImageFileData!, btUser.ImageFileType!, (int)DefaultImage.BTUserImage)" alt="User Image" class="w-px-40 h-auto rounded-circle" />
                 </div>
             }
             else
