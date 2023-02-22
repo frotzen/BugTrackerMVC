@@ -357,11 +357,16 @@ namespace BugTrackerMVC.Controllers
                 project.StartDate = PostgresDate.Format(project.StartDate);
                 project.EndDate = PostgresDate.Format(project.EndDate);
 
-                _context.Update(project);
-                await _context.SaveChangesAsync();
-
                 try
                 {
+                    if (project.ImageFormFile != null)
+                    {
+                        project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(project.ImageFormFile);
+                        project.ImageFileType = project.ImageFormFile.ContentType;
+                    }
+                    // use Project Service to update before returning
+                    await _projectService.UpdateProjectAsync(project);
+
                     if (!string.IsNullOrEmpty(viewModel.PMId))
                     {
                         BTUser newPM = await _userManager.FindByIdAsync(viewModel.PMId);
@@ -370,9 +375,9 @@ namespace BugTrackerMVC.Controllers
                     else
                     {
                         await _projectService.RemoveProjectManagerAsync(project.Id);
-                    }
+                    }                    
 
-                    
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -385,11 +390,10 @@ namespace BugTrackerMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
-            return View(project);
+            return RedirectToAction("Edit"); // was return View(project);
         }
 
         // GET: Projects/Archive/5
