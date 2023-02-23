@@ -1,8 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using BugTrackerMVC.Services.Interfaces
 @using BugTrackerMVC.Enums
+@using System.Linq
 
 @inject IBTFileService BTFileService
+@inject IBTRolesService RolesService
 @inject SignInManager<BTUser> SignInManager
 @inject UserManager<BTUser> UserManager
 
@@ -31,8 +33,9 @@
     </a>
     <ul class="dropdown-menu dropdown-menu-end">
         @if (SignInManager.IsSignedIn(User))
-        {        
-        
+        {                    
+            string btUserRole = (await RolesService.GetUserRolesAsync(btUser)).FirstOrDefault("Unassigned")!;
+
             <li>
                 <a class="dropdown-item" href="#">
                     <div class="d-flex">
@@ -43,7 +46,7 @@
                         </div>
                         <div class="flex-grow-1">
                             <span class="fw-semibold d-block">@btUser.FullName</span>
-                            <small class="text-muted">Admin</small>
+                            <small class="text-muted">@btUserRole</small>
                         </div>
                     </div>
                 </a>

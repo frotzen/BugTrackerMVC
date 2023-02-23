@@ -1,6 +1,7 @@
 ﻿using BugTrackerMVC.Controllers;
 using BugTrackerMVC.Data;
 using BugTrackerMVC.Enums;
+using BugTrackerMVC.Helper;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -292,6 +293,8 @@ namespace BugTrackerMVC.Services
             try
             {
                 ticket.DeveloperUserId = developerUserId;
+                ticket.Created = PostgresDate.Format(ticket.Created);
+                ticket.Updated = PostgresDate.Format(DateTime.Now);
                 _context.Tickets.Update(ticket);
                 await _context.SaveChangesAsync();
             }

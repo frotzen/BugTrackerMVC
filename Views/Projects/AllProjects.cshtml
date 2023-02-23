@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<BugTrackerMVC.Models.Project>
 
+@using BugTrackerMVC.Services.Interfaces;
+@using BugTrackerMVC.Enums
+
+@inject IBTFileService FileService
+
 @{
     ViewData["Title"] = "All Projects";
 }
@@ -21,9 +26,6 @@
                     @Html.DisplayNameFor(model => model.Description)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Created)
-                </th>
-                <th>
                     @Html.DisplayNameFor(model => model.StartDate)
                 </th>
                 <th>
@@ -33,13 +35,7 @@
                     @Html.DisplayNameFor(model => model.ImageFileData)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ImageFileType)
-                </th>
-                <th>
                     @Html.DisplayNameFor(model => model.Archived)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Company)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.ProjectPriority)
@@ -57,25 +53,16 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Created)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.StartDate)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.EndDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ImageFileData)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ImageFileType)
+                        <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" />
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Archived)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Company.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
