@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<BugTrackerMVC.Models.Project>
 
+@using Microsoft.AspNetCore.Mvc.Rendering
 @using Microsoft.AspNetCore.Identity
 @using BugTrackerMVC.Services.Interfaces
 @using BugTrackerMVC.Enums
@@ -54,7 +55,7 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @Html.DeTag(item.Description!)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.StartDate)
@@ -69,7 +70,7 @@
                     @Html.DisplayFor(modelItem => item.Archived)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
+                    @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

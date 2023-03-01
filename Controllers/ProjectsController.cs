@@ -423,7 +423,6 @@ namespace BugTrackerMVC.Controllers
             }
 
             int companyId = User.Identity!.GetCompanyId();
-            // ToDo: use project service
             var project = await _projectService.GetProjectByIdAsync(id);
 
             if (project != null)

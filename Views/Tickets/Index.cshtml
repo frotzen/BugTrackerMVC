@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<BugTrackerMVC.Models.Ticket>
 
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -16,12 +18,6 @@
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Created)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Updated)
@@ -61,12 +57,6 @@
                         @Html.DisplayFor(modelItem => item.Title)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Created)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.Updated)
                     </td>
                     <td>
@@ -76,16 +66,16 @@
                         @Html.DisplayFor(modelItem => item.ArchivedByProject)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Project.Description)
+                        @Html.DeTag(item.Project!.Name!)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TicketPriority.Id)
+                        @Html.DisplayFor(modelItem => item.TicketPriority.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TicketType.Id)
+                        @Html.DisplayFor(modelItem => item.TicketType.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TicketStatus.Id)
+                        @Html.DisplayFor(modelItem => item.TicketStatus.Name)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)

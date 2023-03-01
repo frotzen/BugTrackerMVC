@@ -2,7 +2,7 @@
 
 /* 
     If you want to add the active class on the li element when you are in
-    the “Home” controller on the “Index” action, you will need to following
+    the “Home” controller on the “Index” action, you will need the following
     code in your view:
 
         <li class="nav-item @Html.ActiveClass("Home", "Index")">
@@ -39,5 +39,12 @@ namespace BugTrackerMVC.Helper
                 ? cssClass
                 : "";
         }
+
+        public static string DeTag(this IHtmlHelper htmlHelper, string taggedText)
+        {
+			var tagRx = new System.Text.RegularExpressions.Regex("<[^>]*>");
+			taggedText = tagRx.Replace(taggedText, "");
+            return taggedText;
+		}
     }
 }

@@ -25,11 +25,10 @@
 						@*Title of Ticket*@
 						<h5>@Html.DisplayFor(model => model.Ticket!.Title)</h5>
 						<span><strong>Developer:</strong> @developerName</span><br/>
-						@*Description of Ticket: *** NOTE: remove html tags ****@
-						@{
-							string ticketDescription = Model.Ticket.Description!.Trim();
-						}
-						<span><strong>Description:</strong> @ticketDescription</span>
+						<span><strong>Submitter:</strong> @Model.Ticket.SubmitterUser!.FullName</span><br/>
+
+						@*Description of Ticket: *** NOTE: use Html.DeTag() remove html tags ****@
+						<span><strong>Description: </strong>@Html.DeTag(Model.Ticket.Description!)</span>
 						<div class="progress-container progress-info text-center m-b-25">
 							@*Project Name and information*@
 							<span class="progress-badge" style="font-size:small">Project Status</span>
@@ -132,7 +131,7 @@
 								{
 									<li>
 										<div class="card">
-										@comment.Created  &nbsp;&nbsp; --> &nbsp;&nbsp; @comment.User<br>
+										@comment.Created: &nbsp;&nbsp;@comment.User.FullName<br>
 										@comment.Comment
 										</div>
 									</li>

@@ -60,19 +60,19 @@
                     @Html.DisplayFor(modelItem => item.HasBeenViewed)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.NotificationType.Id)
+                    @Html.DisplayFor(modelItem => item.NotificationType.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Ticket.Description)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Project.Description)
+                    @Html.DisplayFor(modelItem => item.Project.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Sender.Id)
+                    @Html.DisplayFor(modelItem => item.Sender.FullName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Recipient.Id)
+                    @Html.DisplayFor(modelItem => item.Recipient.FullName)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

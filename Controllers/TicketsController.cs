@@ -60,23 +60,13 @@ namespace BugTrackerMVC.Controllers
             //  int companyId = (await _userManager.GetUserAsync(User)).CompanyId;
             //  GetAllTicketsByDeveloperIdAsync(string userId)
             //
-            string userId = (await _userManager.GetUserAsync(User)).Id;
-            List<Ticket> tickets = new();
-
-            if (User.IsInRole(nameof(BTRoles.Admin)))
-            {
-                //  !!!!!!!*****  take another look at this  *****!!!!!!!
-                // call Get All Tickets from service
-                // 
-                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
-            }
-            else
-            {
-                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
-            }
+            BTUser btUser = await _userManager.GetUserAsync(User);
+            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(btUser.Id, btUser.CompanyId);
 
             return View(tickets);
         }
+
+
         // GET: Tickets/UnassignedTickets
         public async Task<IActionResult> UnassignedTickets()
         {
@@ -125,28 +115,21 @@ namespace BugTrackerMVC.Controllers
         public async Task<IActionResult> AllTickets()
         {
             int companyId = User.Identity!.GetCompanyId();
-            //
 
             string userId = (await _userManager.GetUserAsync(User)).Id;
             List<Ticket> tickets = new();
 
-            if (User.IsInRole(nameof(BTRoles.Admin)))
+            if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
             {
-                //  !!!!!!!*****  take another look at this  *****!!!!!!!
-                // call GetAllTicketsAsync() from _ticketService for testing
-                //  put GetAllTicketsByCompanyIdAsyn(companyId) back when done
-
-                 tickets = await _ticketService.GetAllTicketsAsync();
-                //tickets = await _ticketService.GetAllTicketsByCompanyIdAsync(companyId);
-
+                 tickets = await _ticketService.GetAllTicketsByCompanyIdAsync(companyId);
             }
-            else if(User.IsInRole(nameof(BTRoles.ProjectManager)))
+            else if(User.IsInRole(nameof(BTRoles.Developer)))
             {
-                tickets = await _ticketService.GetAllTicketsByCompanyIdAsync(companyId);
+                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
             }
             else
             {
-                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
+                tickets = await _ticketService.GetTicketsByUserIdAsync(userId, companyId);
             }
 
             return View(tickets);
