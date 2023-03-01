@@ -341,14 +341,9 @@ namespace BugTrackerMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, ProjectManager")]
-        public async Task<IActionResult> Edit(int id, AssignPMViewModel viewModel)
+        public async Task<IActionResult> Edit(AssignPMViewModel viewModel)
         {
             Project project = viewModel.Project!;
-
-            if (id != project.Id)
-            {
-                return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -375,7 +370,7 @@ namespace BugTrackerMVC.Controllers
                     else
                     {
                         await _projectService.RemoveProjectManagerAsync(project.Id);
-                    }                    
+                    }
 
                     return RedirectToAction("Index");
                 }

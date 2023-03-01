@@ -4,6 +4,7 @@ using BugTrackerMVC.Enums;
 using BugTrackerMVC.Helper;
 using BugTrackerMVC.Models;
 using BugTrackerMVC.Services.Interfaces;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
 
@@ -272,7 +273,24 @@ namespace BugTrackerMVC.Services
             }
         }
 
-		public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
+        public async Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId)
+        {
+            List<Ticket> tickets = new();
+
+            try
+            {
+                tickets = (await GetAllTicketsByCompanyIdAsync(companyId))
+                                .Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).ToList();
+                return tickets;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
 		{
 			try
 			{
