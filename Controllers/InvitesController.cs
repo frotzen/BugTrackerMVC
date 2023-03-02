@@ -20,7 +20,7 @@ using System.ComponentModel;
 
 namespace BugTrackerMVC.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class InvitesController : Controller
     {
         private readonly ApplicationDbContext _context;
