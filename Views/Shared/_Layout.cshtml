@@ -92,7 +92,7 @@
                         <div data-i18n="Analytics">Home</div>
                     </a>
                 </li>
-                <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles", "active open")">
+                <li class="menu-item @Html.ActiveClass("Companies,Invites", "ManageUserRoles,Create", "active open")">
                     <a asp-area="" asp-controller="Companies" asp-action="Index" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons bx bx-buildings"></i>
                         <div data-i18n="Companies">Companies</div>
@@ -102,6 +102,13 @@
                         <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles")">
                             <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="menu-link">
                                 <div data-i18n="Manage Roles">Manage Roles</div>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="menu-sub">
+                        <li class="menu-item @Html.ActiveClass("Invites", "Create")">
+                            <a asp-area="" asp-controller="Invites" asp-action="Create" class="menu-link">
+                                <div data-i18n="Company Invite">Company Invite</div>
                             </a>
                         </li>
                     </ul>
