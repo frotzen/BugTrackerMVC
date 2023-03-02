@@ -44,6 +44,7 @@ namespace BugTrackerMVC.Services
             }
         }
 
+        #region GetRolesAsync
         public async Task<List<IdentityRole>> GetRolesAsync()
         {
             try
@@ -59,6 +60,7 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
+        #endregion
 
         public async Task<IEnumerable<string>> GetUserRolesAsync(BTUser user)
         {
