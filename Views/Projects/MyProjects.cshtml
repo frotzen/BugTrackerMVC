@@ -49,44 +49,55 @@
             </tr>
         </thead>
         <tbody>
-    @foreach (var item in await ProjectService.GetUserProjectsAsync(btUser.Id)) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DeTag(item.Description!)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-                <td>
-                    <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Archived)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
-                </td>
-            </tr>
-    }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DeTag(item.Description!)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Archived)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectPriority!.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        @if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            @if (item.Archived)
+                            {
+                                <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
 
 @section Scripts {
-        <script>
-            $(document).ready( function () {
+    <script>
+        $(document).ready(function () {
             $('#table_id').DataTable();
-            } );
-        </script>
+        });
+    </script>
 }

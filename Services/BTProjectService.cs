@@ -179,9 +179,27 @@ namespace BugTrackerMVC.Services
             try
             {
                 List<Project> projects = await _context.Projects
-                                         .Where(p => p.CompanyId == companyId)
-                                         .Where(b => b.Archived == true)
-                                         .ToListAsync();
+                                         .Where(p => p.CompanyId == companyId && p.Archived == true)
+                                        .Include(p => p.Company)
+                                        .Include(p => p.ProjectPriority)
+                                        .Include(p => p.Tickets)
+                                            .ThenInclude(c => c.Comments)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.Attachments)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.History)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketPriority)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketStatus)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.TicketType)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.DeveloperUser)
+                                        .Include(p => p.Tickets)
+                                           .ThenInclude(c => c.SubmitterUser)
+                                        .Include(p => p.Members)
+                                        .ToListAsync();
                 return projects;
             }
             catch (Exception)
@@ -228,6 +246,13 @@ namespace BugTrackerMVC.Services
                 project.Archived = true;
                 await UpdateProjectAsync(project);
 
+                // Archive Project tickets
+                foreach(Ticket ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = true;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception)
             {
@@ -240,6 +265,14 @@ namespace BugTrackerMVC.Services
             {
                 project.Archived = false;
                 await UpdateProjectAsync(project);
+
+                // Archive Project tickets
+                foreach (Ticket ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = false;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception)
             {

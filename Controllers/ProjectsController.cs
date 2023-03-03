@@ -68,8 +68,7 @@ namespace BugTrackerMVC.Controllers
         public async Task<IActionResult> ArchivedProjects()
         {
             int companyId = User.Identity!.GetCompanyId();
-            List<Project> projects = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId))
-                                                           .Where(p => p.Archived == true).ToList();
+            List<Project> projects = await _projectService.GetArchivedProjectsByCompanyIdAsync(companyId);
 
             return View(projects);
         }
@@ -81,20 +80,10 @@ namespace BugTrackerMVC.Controllers
             string userId = (await _userManager.GetUserAsync(User)).Id;
             int companyId = User.Identity!.GetCompanyId();
             List<Project> projects = new();
-
-            if (User.IsInRole(nameof(BTRoles.Admin)))
-            {
-                // call GetAllProjects from service
-                projects = (await _projectService.GetAllProjectsByCompanyIdAsync(companyId));
-
-            }
-            else
-            {
-                // Call service to get user projects
-                projects = await _projectService.GetUserProjectsAsync(userId);
-            }
-
-
+            
+            // Call service to get user projects
+            projects = await _projectService.GetUserProjectsAsync(userId);
+            
             return View(projects);
         }
 
@@ -432,6 +421,50 @@ namespace BugTrackerMVC.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+        // GET: Projects/Restore/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity!.GetCompanyId();
+            var project = await _projectService.GetProjectByIdAsync(id.Value);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return View(project);
+        }
+
+        // POST: Projects/RestoreConfirmed/5
+        [HttpPost, ActionName("Restore")]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity!.GetCompanyId();
+            var project = await _projectService.GetProjectByIdAsync(id);
+
+            if (project != null)
+            {
+                await _projectService.RestoreProjectAsync(project);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
 
         private bool ProjectExists(int id)
         {

@@ -2,11 +2,15 @@
 
 @using BugTrackerMVC.Services.Interfaces
 @using BugTrackerMVC.Enums
+@using Microsoft.AspNetCore.Identity
 
+@inject UserManager<BTUser> UserManager
 @inject IBTFileService FileService
+@inject IBTProjectService ProjectService
 
 @{
     ViewData["Title"] = "Archived Projects";
+    BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
 <div class="container-xxl flex-grow-1 container-p-y mb-5">
@@ -41,13 +45,14 @@
             </tr>
         </thead>
         <tbody>
-    @foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @Html.DeTag(item.Description!)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.StartDate)
@@ -56,18 +61,25 @@
                     @Html.DisplayFor(modelItem => item.EndDate)
                 </td>
                 <td>
-                        <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" />
+                    <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" />
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
+                    @Html.DisplayFor(modelItem => item.ProjectPriority!.Id)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+                    @{
+                        bool isProjectPM = (await ProjectService.GetProjectManagerAsync(item.Id)).Id == btUser.Id;
+                    }
+                    @if(User.IsInRole(nameof(BTRoles.Admin)) || isProjectPM)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <span>|</span>
+                        <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                    }                        
                 </td>
             </tr>
-    }
+        }
         </tbody>
     </table>
 </div>
