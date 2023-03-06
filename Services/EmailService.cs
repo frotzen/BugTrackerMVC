@@ -7,6 +7,8 @@ using MimeKit;
 
 namespace BugTrackerMVC.Services
 {
+    // Note: Interface is IEmailSender from Microsoft.AspNetCore.Identity.UI.Services
+    //       Not a custom service
     public class EmailService : IEmailSender
     {
         private readonly MailSettings _mailSettings;
