@@ -44,28 +44,35 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" asp-for="Input.RememberMe" />
-                                <label class="form-check-label" for="remember-me"> Remember Me </label>
-                            </div>
-                        </div>
-                        <div class="mb-3">
                             <button class="btn btn-primary d-grid w-100" id="login-submit" type="submit">Log in</button>
                         </div>
                     </form>
 
-                    <p class="text-center">
-                        <span>New on our platform?</span>
-                        <a asp-area="Identity" asp-page="/Account/Register">
-                            <span>Create an account</span>
-                        </a>
+                    <p class="align-content-center">
+                        Testing our platform?
+                        <form class="" id="account" method="post">
+                            <div class="btn-group dropend justify-content-center">
+                                <button type="button"
+                                        class="btn btn-primary dropdown-toggle"
+                                        id="dropdownMenuOffset"
+                                        data-bs-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                        data-bs-offset="-50,20">
+                                    Use a Demo login
+                                </button>
+                                <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuOffset">
+                                    <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoAdminEmail">Demo Admin</button></li>
+                                    <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoPMEmail">Demo PM</button></li>
+                                    <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoDevEmail">Demo Developer</button></li>
+                                    <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoSubEmail">Demo Submitter</button></li>
+                                </ul>
+                            </div>
+                        </form>
                     </p>
                     <div>
                         <p>
                             <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                        </p>
-                        <p>
-                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
                         </p>
                         <p>
                             <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>

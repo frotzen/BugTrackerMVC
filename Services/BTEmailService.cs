@@ -9,10 +9,10 @@ namespace BugTrackerMVC.Services
 {
     // Note: Interface is IEmailSender from Microsoft.AspNetCore.Identity.UI.Services
     //       Not a custom service
-    public class EmailService : IEmailSender
+    public class BTEmailService : IEmailSender
     {
         private readonly MailSettings _mailSettings;
-        public EmailService(IOptions<MailSettings> mailSettings)
+        public BTEmailService(IOptions<MailSettings> mailSettings)
         {
             _mailSettings = mailSettings.Value;
         }

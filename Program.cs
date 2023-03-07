@@ -34,12 +34,13 @@ builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.Req
 
 // ***** Custom Services
 builder.Services.AddScoped<IBTFileService, BTFileService>();
-builder.Services.AddScoped<IEmailSender, EmailService>();
+builder.Services.AddScoped<IEmailSender, BTEmailService>();
 builder.Services.AddScoped<IBTRolesService, BTRolesService>();
 builder.Services.AddScoped<IBTProjectService, BTProjectService>();
 builder.Services.AddScoped<IBTTicketService, BTTicketService>();
 builder.Services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
 builder.Services.AddScoped<IBTCompanyService, BTCompanyService>();
+builder.Services.AddScoped<IBTNotificationService, BTNotificationService>();
 builder.Services.AddScoped<IBTInviteService, BTInviteService>();
 
 // ***** MailSettings
