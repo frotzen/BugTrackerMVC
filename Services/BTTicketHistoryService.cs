@@ -91,8 +91,8 @@ namespace BugTrackerMVC.Services
                     {
                         TicketId = newTicket.Id,
                         PropertyName = "TicketPriority",
-                        OldValue = oldTicket.TicketPriority.Name,
-                        NewValue = newTicket.TicketPriority.Name,
+                        OldValue = oldTicket.TicketPriority!.Name,
+                        NewValue = newTicket.TicketPriority!.Name,
                         Created = PostgresDate.Format(DateTime.Now),
                         UserId = userId,
                         Description = $"New ticket priority: {newTicket.TicketPriority.Name}"
@@ -107,8 +107,8 @@ namespace BugTrackerMVC.Services
                     {
                         TicketId = newTicket.Id,
                         PropertyName = "TicketStatus",
-                        OldValue = oldTicket.TicketStatus.Name,
-                        NewValue = newTicket.TicketStatus.Name,
+                        OldValue = oldTicket.TicketStatus!.Name,
+                        NewValue = newTicket.TicketStatus!.Name,
                         Created = PostgresDate.Format(DateTime.Now),
                         UserId = userId,
                         Description = $"New ticket Status: {newTicket.TicketStatus.Name}"
@@ -123,8 +123,8 @@ namespace BugTrackerMVC.Services
                     {
                         TicketId = newTicket.Id,
                         PropertyName = "TicketTypeId",
-                        OldValue = oldTicket.TicketType.Name,
-                        NewValue = newTicket.TicketType.Name,
+                        OldValue = oldTicket.TicketType!.Name,
+                        NewValue = newTicket.TicketType!.Name,
                         Created = PostgresDate.Format(DateTime.Now),
                         UserId = userId,
                         Description = $"New ticket Type: {newTicket.TicketType.Name}"
@@ -143,7 +143,7 @@ namespace BugTrackerMVC.Services
                         NewValue = newTicket.DeveloperUser?.FullName,
                         Created = PostgresDate.Format(DateTime.Now),
                         UserId = userId,
-                        Description = $"New ticket developer: {newTicket.DeveloperUser.FullName}"
+                        Description = $"New ticket developer: {newTicket.DeveloperUser!.FullName}"
 
                     };
                     await _context.TicketHistories.AddAsync(history);
@@ -169,9 +169,9 @@ namespace BugTrackerMVC.Services
         {
             try
             {
-                Ticket ticket = await _context.Tickets.FindAsync(ticketId);
+                Ticket? ticket = await _context.Tickets.FindAsync(ticketId);
                 string description = model.ToLower().Replace("ticket", "");
-                description = $"New {description} added to ticket: {ticket.Title}";
+                description = $"New {description} added to ticket: {ticket!.Title}";
 
 
                 TicketHistory history = new()

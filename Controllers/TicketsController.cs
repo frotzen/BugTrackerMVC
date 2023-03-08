@@ -407,6 +407,11 @@ namespace BugTrackerMVC.Controllers
                     ticket.Created = PostgresDate.Format(ticket.Created);
                     ticket.Updated = PostgresDate.Format(DateTime.Now);
 
+
+                    // Remove HTML tags from Description *Quill puts tags around things
+                    var regexTags = new System.Text.RegularExpressions.Regex("<[^>]*>");
+                    ticket.Description = regexTags.Replace(ticket.Description!, "");
+
                     await _ticketService.UpdateTicketAsync(ticket);
                 }
                 catch (DbUpdateConcurrencyException)
