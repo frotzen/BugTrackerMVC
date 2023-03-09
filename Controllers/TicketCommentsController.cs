@@ -9,6 +9,7 @@ using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
 using Microsoft.AspNetCore.Identity;
 using BugTrackerMVC.Services.Interfaces;
+using BugTrackerMVC.Helper;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -104,8 +105,8 @@ namespace BugTrackerMVC.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            ticketComment.Created = PostgresDate.Format(ticketComment.Created);
+			if (ModelState.IsValid)
             {
                 try
                 {
@@ -155,7 +156,7 @@ namespace BugTrackerMVC.Controllers
         {
             if (_context.TicketComments == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.TicketComment'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.TicketComment' is null.");
             }
             var ticketComment = await _context.TicketComments.FindAsync(id);
             if (ticketComment != null)

@@ -12,6 +12,7 @@
 
 @{
 	ViewData["Title"] = "Details";
+	BTUser btUser = await UserManager.GetUserAsync(User);
 	string developerName = Model.Ticket!.DeveloperUser is null ? "unassigned" : Model.Ticket.DeveloperUser.FullName!;
 }
 
@@ -131,7 +132,7 @@
 								{
 									<li>
 										<div class="card">
-										@comment.Created: &nbsp;&nbsp;@comment.User.FullName<br>
+										@comment.Created: &nbsp;@comment.User.FullName<br>
 										@comment.Comment
 										</div>
 									</li>
@@ -217,23 +218,26 @@
 						@foreach (TicketHistory history in (await HistoryService.GetProjectTicketsHistoriesAsync(Model.Project.Id, Model.Project.CompanyId)).Where(i => i.TicketId == Model.Ticket.Id).OrderByDescending(x => x.Created))
 						{
 							<div class="card">
+								<span>@history.Created</span>
 								@if (history.Description!.Contains("New Ticket Created"))
 								{
-									<div class="card-body">A ticket was added.</div>
+									<div class="card-body"><strong>@history.User.FullName</strong> created this ticket.</div>
 								}
 								else if (history.PropertyName!.Equals("TicketComment") || history.PropertyName.Equals("TicketAttachment"))
 								{
-									<div class="card-body">A <b>@history.PropertyName</b> was added.</div>
+									<div class="card-body"><strong>@history.User.FullName</strong> added <b>@history.PropertyName</b>.</div>
 								}
 								else
 								{
+									// string example @($"Previous {history.PropertyName}:  ")
 									<div class="card-body">
-									<div>The ticket <b>@history.PropertyName</b> was edited.</div>
-									<div>@($"Previous {history.PropertyName}:  ") <span style="color: red">@history.OldValue</span></div>
-									<div>@($"Current {history.PropertyName}:  ") <span style="color: green">@history.NewValue</span></div>
+										<div>
+											<strong>@history.User.FullName</strong> changed <b>@history.PropertyName</b> from
+											<span style="color: red">@history.OldValue</span> to 
+											<span style="color: green">@history.NewValue</span>
+										</div>
 									</div>
 								}
-
 							</div>
 						}
 					</div>

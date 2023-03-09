@@ -155,10 +155,30 @@ namespace BugTrackerMVC.Controllers
         {
             if(model.DeveloperId != null)
             {
-                await _ticketService.AssignDeveloperAsync(model.Ticket, model.DeveloperId);
+                BTUser btUser = await _userManager.GetUserAsync(User);
+                int companyId = btUser.CompanyId;
+
+                // get ticket before assigning developer
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket!.Id, companyId);
+
+                try
+                {
+                    await _ticketService.AssignDeveloperAsync(model.Ticket!, model.DeveloperId);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                // get ticket after assigning developer then call history service
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(companyId, btUser.CompanyId);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+
+                return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
             }
 
-            return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket.Id });
+            return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket!.Id });
         }
 
         // GET: Tickets/Details/5
@@ -179,7 +199,7 @@ namespace BugTrackerMVC.Controllers
             }
 
             viewModel.Project = await _projectService.GetProjectByIdAsync(viewModel.Ticket.ProjectId);
-            viewModel.TicketComments = await _context.TicketComments.Where(c => c.TicketId == id).ToListAsync();
+            viewModel.TicketComments = await _context.TicketComments.Include(u => u.User).Where(c => c.TicketId == id).ToListAsync();
 
             return View(viewModel);
         }
@@ -202,7 +222,7 @@ namespace BugTrackerMVC.Controllers
 
 				await _ticketService.AddCommentAsync(comment);
 
-               // return View(viewModel);
+                //return View(viewModel);
 
 				return RedirectToAction(nameof(Details));
 			}
@@ -296,34 +316,41 @@ namespace BugTrackerMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,DeveloperUserId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
-
+            BTUser btUser = await _userManager.GetUserAsync(User);
 			int companyId = User.Identity!.GetCompanyId();
 			ModelState.Remove("SubmitterUserId");
 
 			if (ModelState.IsValid)
             {
-                string userId = _userManager.GetUserId(User);
+                try
+                {
+                    ticket.SubmitterUserId = btUser.Id;
 
-				ticket.SubmitterUserId = _userManager.GetUserId(User);
+                    // Update time for Postgres so a cast of Date types isn't attempted
+                    ticket.Created = PostgresDate.Format(DateTime.Now);
+                    ticket.Updated = PostgresDate.Format(DateTime.Now);
 
-                // Update time for Postgres so a cast of Date types isn't attempted
-                ticket.Created = PostgresDate.Format(DateTime.Now);
-                ticket.Updated = PostgresDate.Format(DateTime.Now);
-                
-                // Set new ticket status to New using Enums
-                ticket.TicketStatusId = (await _context.TicketStatuses
-                                .FirstOrDefaultAsync(s => s.Name  == nameof(BTTicketStatuses.New)))!.Id;
+                    // Set new ticket status to New using Enums
+                    ticket.TicketStatusId = (await _context.TicketStatuses
+                                    .FirstOrDefaultAsync(s => s.Name == nameof(BTTicketStatuses.New)))!.Id;
 
-                // Add ticket and get user's companyId
-                await _ticketService.AddTicketAsync(ticket);
+                    // Add ticket and get user's companyId
+                    await _ticketService.AddTicketAsync(ticket);
 
-                //*****
-                // Add History record here.
-                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);
-                await _historyService.AddHistoryAsync(null!, newTicket, userId);
+                    //*****
+                    // Add History record here.
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id, companyId);
+                    await _historyService.AddHistoryAsync(null!, newTicket, btUser.Id);
 
+                    // TODO: Notifications
+                }
+                catch (Exception)
+                {
 
-                return RedirectToAction(nameof(Index));
+                    throw;
+                }
+
+                return RedirectToAction(nameof(AllTickets));
             }
             // Param list 2nd & 3rd values are for actual dataValue & display dataText, respectively
             // dataValue is submitted by the form, dataText shows up in the html selector element
@@ -407,10 +434,17 @@ namespace BugTrackerMVC.Controllers
                     ticket.Created = PostgresDate.Format(ticket.Created);
                     ticket.Updated = PostgresDate.Format(DateTime.Now);
 
-
-                    // Remove HTML tags from Description *Quill puts tags around things
+                    // Check Description for HTML tags <>
+                    // Remove HTML tags from Description if necessary
+                    // *Quill puts tags around things
+                    string regexDescription = ticket.Description!;
                     var regexTags = new System.Text.RegularExpressions.Regex("<[^>]*>");
-                    ticket.Description = regexTags.Replace(ticket.Description!, "");
+                    regexDescription = regexTags.Replace(regexDescription, "");
+
+                    if(regexDescription != ticket.Description)
+                    {
+                        ticket.Description = regexDescription;
+                    }
 
                     await _ticketService.UpdateTicketAsync(ticket);
                 }
