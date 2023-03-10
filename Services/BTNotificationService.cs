@@ -42,7 +42,6 @@ namespace BugTrackerMVC.Services
             {
                 IEnumerable<string> adminIds = (await _rolesService.GetUsersInRoleAsync(nameof(BTRoles.Admin), companyId)).Select(a => a.Id);
 
-
                 foreach (string adminId in adminIds)
                 {
                     notification.Id = 0;
@@ -56,7 +55,6 @@ namespace BugTrackerMVC.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -65,18 +63,17 @@ namespace BugTrackerMVC.Services
         {
             try
             {
-                List<Notification> notifications = new();
-
-                notifications = await _context.Notifications
+                List<Notification> notifications = await _context.Notifications
                                               .Where(n => n.SenderId == userId || n.RecipientId == userId)
                                               .Include(n => n.Recipient)
                                               .Include(n => n.Sender)
+                                              .Include(n => n.Ticket)
+                                              .ThenInclude(t => t!.Project)
                                               .ToListAsync();
                 return notifications;
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -87,15 +84,18 @@ namespace BugTrackerMVC.Services
             {
                 BTUser? btUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == notification.RecipientId);
 
-                string userEmail = btUser!.Email;
-
-                await _emailService.SendEmailAsync(userEmail, emailSubject, notification.Message);
-                return true;
-
+                if(btUser != null)
+                {
+                    await _emailService.SendEmailAsync(btUser.Email, emailSubject, notification.Message);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
