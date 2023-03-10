@@ -18,13 +18,15 @@ namespace BugTrackerMVC.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTTicketService _ticketService;
+        private readonly IBTTicketHistoryService _historyService;
 
         public TicketCommentsController(ApplicationDbContext context, UserManager<BTUser> userManager,
-                                        IBTTicketService ticketService)
+                                        IBTTicketService ticketService, IBTTicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
             _ticketService = ticketService;
+            _historyService = historyService;
         }
 
         // GET: TicketComments
@@ -69,9 +71,18 @@ namespace BugTrackerMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ticketComment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+					_context.Add(ticketComment);
+					await _context.SaveChangesAsync();
+					return RedirectToAction(nameof(Index));
+				}
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                
             }
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketComment.TicketId);
             return View(ticketComment);

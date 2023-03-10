@@ -16,6 +16,7 @@ using BugTrackerMVC.Enums;
 using System.ComponentModel.Design;
 using BugTrackerMVC.Extensions;
 using BugTrackerMVC.Models.ViewModels;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 
 namespace BugTrackerMVC.Controllers
 {
@@ -172,7 +173,7 @@ namespace BugTrackerMVC.Controllers
                 }
 
                 // get ticket after assigning developer then call history service
-                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(companyId, btUser.CompanyId);
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket!.Id, companyId);
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
 
                 return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
@@ -209,29 +210,29 @@ namespace BugTrackerMVC.Controllers
 		[ValidateAntiForgeryToken]
         public async Task<IActionResult> Details(int id, TicketDetailsViewModel viewModel)
         {
-            Ticket ticket = viewModel.Ticket!;
-            TicketComment comment = new();
-            try
+            if (id != 0)
             {
-                if (ticket == null) return View(viewModel);
+                TicketComment comment = new();
+                try
+                {
+                    comment.Comment = viewModel.TicketComment!.Comment;
+                    comment.Created = PostgresDate.Format(DateTime.Now);
+                    comment.UserId = (await _userManager.GetUserAsync(User)).Id;
+                    comment.TicketId = viewModel.Ticket!.Id;
 
-                comment.Comment = viewModel.TicketComment!.Comment;
-                comment.Created = PostgresDate.Format(DateTime.Now);
-                comment.UserId = (await _userManager.GetUserAsync(User)).Id;
-                comment.TicketId = viewModel.Ticket!.Id;
+                    await _ticketService.AddCommentAsync(comment);
 
-				await _ticketService.AddCommentAsync(comment);
+                    // Add history
+                    await _historyService.AddHistoryAsync(comment.TicketId, nameof(TicketComment), comment.UserId);
+					return RedirectToAction("Details", new { id = comment!.TicketId });
+				}
+                catch (Exception)
+                {
 
-                //return View(viewModel);
-
-				return RedirectToAction(nameof(Details));
-			}
-            catch (Exception)
-            {
-
-                throw;
+                    throw;
+                }
             }
-            
+			return RedirectToAction(nameof(Details));
 		}
 
         // POST: AddTicketAttachment
@@ -243,14 +244,25 @@ namespace BugTrackerMVC.Controllers
 
 			if (ModelState.IsValid && ticketAttachment.FormFile != null)
 			{
-				ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
-				ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
-				ticketAttachment.FileType = ticketAttachment.FormFile.ContentType;
+                try
+                {
+					ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+					ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+					ticketAttachment.FileType = ticketAttachment.FormFile.ContentType;
 
-				ticketAttachment.Created = PostgresDate.Format(DateTime.Now);
-				ticketAttachment.UserId = _userManager.GetUserId(User);
+					ticketAttachment.Created = PostgresDate.Format(DateTime.Now);
+					ticketAttachment.UserId = _userManager.GetUserId(User);
 
-				await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+					await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+
+                    // History
+                    await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
+				}
+                catch (Exception)
+                {
+                    throw;
+                }
+				
 				statusMessage = "Success: New attachment added to Ticket.";
 			}
 			else
