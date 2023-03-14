@@ -58,10 +58,10 @@ namespace BugTrackerMVC.Controllers
             string userId = (await _userManager.GetUserAsync(User)).Id;
             int companyId = User.Identity!.GetCompanyId();
             List<Project> projects = new();
-            
+
             // Call service to get user projects
             projects = await _projectService.GetUserProjectsAsync(userId);
-            
+
             return View(projects);
         }
 
@@ -74,7 +74,7 @@ namespace BugTrackerMVC.Controllers
             string userId = (await _userManager.GetUserAsync(User)).Id;
             int companyId = User.Identity!.GetCompanyId();
             List<Project> projects = (await _projectService.GetAllUnassignedProjectsByCompanyIdAsync(companyId));
-                       
+
             return View(projects);
         }
 
@@ -84,7 +84,7 @@ namespace BugTrackerMVC.Controllers
         [Authorize(Roles = nameof(BTRoles.Admin))]
         public async Task<IActionResult> AssignPM(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -111,9 +111,9 @@ namespace BugTrackerMVC.Controllers
         // POST: Assign Project Manager
         public async Task<IActionResult> AssignPM(AssignPMViewModel viewModel)
         {
-            if(viewModel.Project?.Id != null)
+            if (viewModel.Project?.Id != null)
             {
-                if(!string.IsNullOrEmpty(viewModel.PMId))
+                if (!string.IsNullOrEmpty(viewModel.PMId))
                 {
                     BTUser newPM = await _userManager.FindByIdAsync(viewModel.PMId);
                     await _projectService.AddProjectManagerAsync(newPM, viewModel.Project.Id);
@@ -143,38 +143,38 @@ namespace BugTrackerMVC.Controllers
 
             List<string> projectMembers = model.Project.Members.Select(m => m.Id).ToList();
             model.Users = new MultiSelectList(companyMembers, "Id", "FullName", projectMembers);
-            
+
             return View(model);
         }
 
 
-        [HttpPost]        
+        [HttpPost]
         [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
         // POST: Projects/AssignMembers
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
         {
-            if(model.SelectedUsers != null)
+            if (model.SelectedUsers != null)
             {
                 List<BTUser> projectMembers = await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id);
                 // Remove current members
-                foreach(BTUser member in projectMembers)
+                foreach (BTUser member in projectMembers)
                 {
                     await _projectService.RemoveMemberFromProjectAsync(member, model.Project.Id);
                 }
 
                 // Add selected members returned from View
-                foreach(string member in model.SelectedUsers)
+                foreach (string member in model.SelectedUsers)
                 {
                     BTUser thisMember = await _userManager.FindByIdAsync(member);
                     await _projectService.AddMemberToProjectAsync(thisMember, model.Project.Id);
                 }
 
                 // Return to project details
-                return RedirectToAction("Details", "Projects", new { id = model.Project.Id});
+                return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
             }
 
-            return RedirectToAction(nameof(AssignMembers), new {id = model.Project.Id});
+            return RedirectToAction(nameof(AssignMembers), new { id = model.Project.Id });
         }
 
 
@@ -217,7 +217,7 @@ namespace BugTrackerMVC.Controllers
             //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             // call Project Service for view data
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
-            
+
             return View(viewModel);
         }
 
@@ -322,6 +322,18 @@ namespace BugTrackerMVC.Controllers
                 project.StartDate = PostgresDate.Format(project.StartDate);
                 project.EndDate = PostgresDate.Format(project.EndDate);
 
+                // Check Description for HTML tags <>
+                // Remove HTML tags from Description if necessary
+                // *Quill puts tags around things
+                string regexDescription = project.Description!;
+                var regexTags = new System.Text.RegularExpressions.Regex("<[^>]*>");
+                regexDescription = regexTags.Replace(regexDescription, "");
+
+                if (regexDescription != project.Description)
+                {
+                    project.Description = regexDescription;
+                }
+
                 try
                 {
                     if (project.ImageFormFile != null)
@@ -356,7 +368,7 @@ namespace BugTrackerMVC.Controllers
                     }
                 }
             }
-            
+
             ViewData["ProjectPriorityId"] = new SelectList(await _projectService.GetProjectPrioritiesAsync(), "Id", "Name");
             return RedirectToAction("Edit"); // was return View(project);
         }
@@ -400,7 +412,7 @@ namespace BugTrackerMVC.Controllers
             if (project != null)
             {
                 await _projectService.ArchiveProjectAsync(project);
-            }            
+            }
 
             return RedirectToAction(nameof(AllProjects));
         }
