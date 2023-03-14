@@ -273,6 +273,29 @@ namespace BugTrackerMVC.Services
             }
         }
 
+        public async Task<List<Ticket>> GetAllArchivedTicketsByCompanyIdAsync(int companyId)
+        {
+            try
+            {
+                List<Ticket> tickets = await _context.Tickets
+                                       .Where(t => t.Archived == true)
+                                       .Include(t => t.DeveloperUser)
+                                       .Include(t => t.Project)
+                                       .Include(t => t.SubmitterUser)
+                                       .Include(t => t.TicketPriority)
+                                       .Include(t => t.TicketStatus)
+                                       .Include(t => t.TicketType)
+                                       .ToListAsync();
+
+                return tickets;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId)
         {
             List<Ticket> tickets = new();
@@ -305,6 +328,21 @@ namespace BugTrackerMVC.Services
 				throw;
 			}
 		}
+
+        public async Task<List<TicketComment>> GetTicketCommentsAsync(int ticketId)
+        {
+            try
+            {
+                List<TicketComment> ticketComments = await _context.TicketComments
+                    .Include(u => u.User).Where(c => c.TicketId == ticketId).ToListAsync();
+
+                return ticketComments;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
 		public async Task AssignDeveloperAsync(Ticket ticket, string developerUserId)
         {

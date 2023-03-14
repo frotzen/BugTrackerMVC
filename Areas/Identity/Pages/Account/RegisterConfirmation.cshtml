@@ -5,6 +5,11 @@
 }
 
 <h1>@ViewData["Title"]</h1>
+<p>
+    Please check your email to confirm your account.
+</p>
+
+@*
 @{
     if (@Model.DisplayConfirmAccountLink)
     {
@@ -16,8 +21,8 @@
     else
     {
 <p>
-        Please check your email to confirm your account.
+    Please check your email to confirm your account.
 </p>
     }
 }
-
+*@

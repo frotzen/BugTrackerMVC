@@ -21,8 +21,9 @@
                         <th>Update</th>
                     </tr>
                 </thead>
+
                 <tbody class="table-border-bottom-0">
-                    @* Whatever var  \/   used here needs to be captured in the post method parameter list *@
+                    <!-- Whatever var  \/   used here needs to be captured in the post method parameter list -->
                     @foreach (var viewModel in Model)
                     {
                         <tr>
@@ -35,9 +36,11 @@
                                             <strong>@viewModel.BTUser</strong>
                                         </td>
                                     </div>
+
                                     <div class="col-auto">
                                         <td>@viewModel.BTUser!.FullName</td>
                                     </div>
+
                                     <div class="col">
                                         <td>
                                             <div class="form-group w-px-150">
@@ -45,16 +48,19 @@
                                             </div>
                                         </td>
                                     </div>
+
                                     <div class="auto">
                                         <td>
-                                            <input type="submit" class="btn btn-primary" value="Save"/>                                
+                                            <input type="submit" class="btn btn-primary" value="Save" />                                
                                         </td>
                                     </div>
+
                                 </div>
                             </form>
                         </tr>
                     }                    
                 </tbody>
+
             </table>
         </div>
     </div>

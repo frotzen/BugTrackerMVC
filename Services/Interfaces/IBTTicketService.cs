@@ -23,8 +23,10 @@ namespace BugTrackerMVC.Services.Interfaces
         public Task<List<Ticket>> GetAllTicketsByCompanyIdAsync(int companyId);
         public Task<Ticket> GetTicketAsNoTrackingAsync(int ticketId, int companyId);
 		public Task<List<Ticket>> GetArchivedTicketsByDeveloperIdAsync(string userId);
+		public Task<List<Ticket>> GetAllArchivedTicketsByCompanyIdAsync(int companyId);
         public Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId);
 		public Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
+		public Task<List<TicketComment>> GetTicketCommentsAsync(int ticketId);
 		public Task AssignDeveloperAsync(Ticket ticket, string developerUserId);
         public Task AddTicketAsync(Ticket ticket);
         public Task AddCommentAsync(TicketComment ticketComment);

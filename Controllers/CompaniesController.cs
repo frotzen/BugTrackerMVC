@@ -93,7 +93,7 @@ namespace BugTrackerMVC.Controllers
 
         // POST: ManageUserRoles
         [HttpPost]
-        [ValidateAntiForgeryToken]            // this parameter below should be the  \/  same as created in the view
+        [ValidateAntiForgeryToken]            // this parameter below should be the  \/  same as created for the view
         public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel viewModel)
         {
             // get companyId

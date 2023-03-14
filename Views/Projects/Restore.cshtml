@@ -1,4 +1,9 @@
-﻿@model BugTrackerMVC.Models.Project
+﻿@using BugTrackerMVC.Services.Interfaces
+@using BugTrackerMVC.Enums
+
+@inject IBTFileService FileService
+
+@model BugTrackerMVC.Models.Project
 
 @{
     ViewData["Title"] = "Restore";
@@ -24,12 +29,6 @@
             @Html.DeTag(Model.Description!)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.StartDate)
         </dt>
         <dd class = "col-sm-10">
@@ -45,7 +44,7 @@
             @Html.DisplayNameFor(model => model.ImageFileData)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFileData)
+            <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(Model.ImageFileData!, Model.ImageFileType!, (int)DefaultImage.ProjectImage)" />
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ImageFileType)
@@ -69,13 +68,13 @@
             @Html.DisplayNameFor(model => model.ProjectPriority)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProjectPriority!.Id)
+            @Html.DisplayFor(model => model.ProjectPriority!.Name)
         </dd>
     </dl>
     
     <form asp-action="Restore" method="post">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Restore" class="btn btn-success" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="AllProjects">Back to List</a>
     </form>
 </div>

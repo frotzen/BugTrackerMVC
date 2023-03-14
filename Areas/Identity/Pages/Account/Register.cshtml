@@ -29,6 +29,26 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <div class="mb-3">
+                            <label asp-for="Input.FirstName" class="form-label"></label>
+                            <input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true" />
+                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Input.LastName" class="form-label"></label>
+                            <input asp-for="Input.LastName" class="form-control" autocomplete="lastname" aria-required="true" />
+                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Input.CompanyName" class="form-label"></label>
+                            <input asp-for="Input.CompanyName" class="form-control" autocomplete="lastname" aria-required="true" />
+                            <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Input.CompanyDescription" class="form-label"></label>
+                            <input asp-for="Input.CompanyDescription" class="form-control" autocomplete="lastname" aria-required="true" />
+                            <span asp-validation-for="Input.CompanyDescription" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
                             <label asp-for="Input.Email" class="form-label"></label>
                             <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
