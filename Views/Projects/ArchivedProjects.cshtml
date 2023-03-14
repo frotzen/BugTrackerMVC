@@ -69,7 +69,12 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     @{
-                        bool isProjectPM = (await ProjectService.GetProjectManagerAsync(item.Id)).Id == btUser.Id;
+                        bool isProjectPM = false;
+                        BTUser thisPM = await ProjectService.GetProjectManagerAsync(item.Id);
+                        if(thisPM != null)
+                        {
+                            isProjectPM = (thisPM.Id == btUser.Id);                               
+                        }
                     }
                     @if(User.IsInRole(nameof(BTRoles.Admin)) || isProjectPM)
                     {
