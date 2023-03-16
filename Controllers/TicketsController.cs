@@ -504,7 +504,7 @@ namespace BugTrackerMVC.Controllers
         }
 
 
-        // POST: Tickets/ArchiveConfirmed/5
+        // POST: Tickets/ArchiveConfirmed/5 (Archive)
         [HttpPost, ActionName("Archive")]
         [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
@@ -546,7 +546,7 @@ namespace BugTrackerMVC.Controllers
         }
 
 
-        // POST: Tickets/RestoreConfirmed/5
+        // POST: Tickets/RestoreConfirmed/5 (Restore)
         [HttpPost, ActionName("Restore")]
         [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]

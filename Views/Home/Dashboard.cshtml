@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using BugTrackerMVC.Services.Interfaces
+@using BugTrackerMVC.Enums
 
 @inject UserManager<BTUser> UserManager
 @inject IBTRolesService RolesService
@@ -11,6 +12,10 @@
     BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
+<!-- CSS for tables -->
+<!-- Styles 
+
+-->
 <h1>Dashboard</h1>
 <!-- User Info -->
 <a href="javascript:void(0);"></a>
