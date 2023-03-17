@@ -207,6 +207,16 @@ namespace BugTrackerMVC.Services
                 throw;
             }
         }
+
+        public async Task<List<Project>> GetAllProjectsByPriorityAsync(int companyId, string priorityName)
+        {
+            List<Project> projects = await GetAllProjectsByCompanyIdAsync(companyId);
+            int priorityId = (await _context.ProjectPriorities
+                                           .FirstOrDefaultAsync(p => p.Name == priorityName))!
+                                           .Id;
+            return projects.Where(p => p.ProjectPriorityId == priorityId).ToList();
+        }
+
         public async Task<List<ProjectPriority>> GetProjectPrioritiesAsync()
         {
             return await _context.ProjectPriorities.ToListAsync();
