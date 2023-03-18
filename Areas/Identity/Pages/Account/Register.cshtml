@@ -5,157 +5,97 @@
 }
 
 <!-- Content -->
-<div class="container-xxl">
-    <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">            
-            <h1>@ViewData["Title"]</h1>
-            <!-- Register Card -->
-            <div class="card">
-                <div class="card-body">
-                    <!-- Logo -->
-                    <div class="app-brand justify-content-center">
-                        <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
-                            <span class="app-brand-logo demo">
-                                <img src="/img/p_aardvark_rf_100x48.png">
-                            </span>
-                            <span class="app-brand-text demo text-body fw-bolder">Aardvark</span>
-                        </a>
-                    </div>
-                    <!-- /Logo -->
-                    <h4 class="mb-2">Welcome to AardvarkMVC</h4>
-                    <p class="mb-4">Create a new account.</p>
+<div class="authentication-wrapper authentication-basic container-p-y">
+    <div class="authentication-inner">
 
-                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" class="mb-3" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                        <div class="mb-3">
-                            <label asp-for="Input.FirstName" class="form-label"></label>
-                            <input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true" />
-                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Input.LastName" class="form-label"></label>
-                            <input asp-for="Input.LastName" class="form-control" autocomplete="lastname" aria-required="true" />
-                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Input.CompanyName" class="form-label"></label>
-                            <input asp-for="Input.CompanyName" class="form-control" autocomplete="lastname" aria-required="true" />
-                            <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Input.CompanyDescription" class="form-label"></label>
-                            <input asp-for="Input.CompanyDescription" class="form-control" autocomplete="lastname" aria-required="true" />
-                            <span asp-validation-for="Input.CompanyDescription" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Input.Email" class="form-label"></label>
-                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3 form-password-toggle">
-                            <label asp-for="Input.Password" class="form-label"></label>
-                            <div class="input-group input-group-merge">
-                                <input asp-for="Input.Password" class="form-control" id="password" autocomplete="new-password" aria-required="true" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"/>
-                                <span asp-validation-for="Input.Password" class="text-danger"></span>
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                            </div>
-                        </div>
-                        <div class="mb-3 form-password-toggle">
-                            <label asp-for="Input.ConfirmPassword" class="form-label"></label>
-                            <div class="input-group input-group-merge">
-                                <input asp-for="Input.ConfirmPassword" class="form-control" id="password" autocomplete="new-password" aria-required="true" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
-                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                            </div>                            
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
-                                <label class="form-check-label" for="terms-conditions">
-                                    I agree to
-                                    <a href="javascript:void(0);">privacy policy & terms</a>
-                                </label>
-                            </div>
-                        </div>
-
-                        <button id="registerSubmit" type="submit" class="btn btn-primary d-grid w-100">Sign up</button>
-                    </form>
-
-                    <p class="text-center">
-                        <span>Already have an account?</span>
-                        <a asp-area="Identity" asp-page="/Account/Login">
-                            <span>Sign in instead</span>
-                        </a>
-                    </p>
+        <h1>@ViewData["Title"]</h1>
+        <!-- Register Card -->
+        <div class="card">
+            <div class="card-body">
+                <!-- Logo -->
+                <div class="app-brand justify-content-center">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
+                        <span class="app-brand-logo demo">
+                            <img src="/img/p_aardvark_rf_100x48.png">
+                        </span>
+                        <span class="app-brand-text demo text-body fw-bolder">Aardvark</span>
+                    </a>
                 </div>
+                <!-- /Logo -->
+                <h4 class="mb-2">Welcome to AardvarkMVC</h4>
+                <p class="mb-4">Create a new account.</p>
+
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" class="mb-3" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.FirstName" class="form-label"></label>
+                        <input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true" />
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.LastName" class="form-label"></label>
+                        <input asp-for="Input.LastName" class="form-control" autocomplete="lastname" aria-required="true" />
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.CompanyName" class="form-label"></label>
+                        <input asp-for="Input.CompanyName" class="form-control" autocomplete="lastname" aria-required="true" />
+                        <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.CompanyDescription" class="form-label"></label>
+                        <input asp-for="Input.CompanyDescription" class="form-control" autocomplete="lastname" aria-required="true" />
+                        <span asp-validation-for="Input.CompanyDescription" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3 form-password-toggle">
+                        <label asp-for="Input.Password" class="form-label"></label>
+                        <div class="input-group input-group-merge">
+                            <input asp-for="Input.Password" class="form-control" id="password" autocomplete="new-password" aria-required="true" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-password-toggle">
+                        <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                        <div class="input-group input-group-merge">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" id="password" autocomplete="new-password" aria-required="true" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
+                            <label class="form-check-label" for="terms-conditions">
+                                I agree to
+                                <a href="javascript:void(0);">privacy policy & terms</a>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="registerSubmit" type="submit" class="btn btn-primary d-grid w-100">Sign up</button>
+                </form>
+
+                <p class="text-center">
+                    <span>Already have an account?</span>
+                    <a asp-area="Identity" asp-page="/Account/Login">
+                        <span>Sign in instead</span>
+                    </a>
+                </p>
             </div>
-            <!-- Register Card -->
         </div>
+        <!-- Register Card -->
     </div>
 </div>
+
 <!-- / Content -->
-
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
-@*
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Email"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.Password"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.ConfirmPassword"></label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 mt-4 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
-    </div>
-</div>
-*@

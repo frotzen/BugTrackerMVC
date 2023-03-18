@@ -1,22 +1,28 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using BugTrackerMVC.Enums
+@using BugTrackerMVC.Services.Interfaces
+
 @inject SignInManager<BTUser> SignInManager
+@inject UserManager<BTUser> UserManager
+@inject IBTCompanyService CompanyService
+@inject IBTRolesService RolesService
+
+@{
+    BTUser btUser = await UserManager.GetUserAsync(User);
+    List<BTUser> members = (await CompanyService.GetMembersAsync(btUser.CompanyId));
+}
 
 <!DOCTYPE html>
-<html
-  lang="en"
-  class="light-style layout-menu-fixed"
-  dir="ltr"
-  data-theme="theme-default"
-  data-assets-path="/assets/"
-  data-template="vertical-menu-template-free"
->
-  <head>
+<html lang="en"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="/assets/"
+      data-template="vertical-menu-template-free">
+<head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-    />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <title>AardvarkMVC</title>
 
@@ -28,10 +34,8 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet" />
 
     <!-- Icons. Uncomment required icon fonts -->
     <link rel="stylesheet"
@@ -57,270 +61,282 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="/assets/js/config.js"></script>
-  </head>
+</head>
 
-  <body>
+<body>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
-      <div class="layout-container">
-        <!-- Menu -->
+        <div class="layout-container">
+            <!-- Menu -->
 
-        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-          <div class="app-brand demo ps-2">
-            <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link">
-              <span class="app-brand-logo demo">
-               <img class="img-fluid" src="/img/p_aardvark_rf_50x24.png"/>
-              </span>
-              <span class="app-brand-text demo menu-text fw-bolder ms-2">AardvarkMVC</span>
-            </a>
-
-            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-              <i class="bx bx-chevron-left bx-sm align-middle"></i>
-            </a>
-          </div>
-
-          <div class="menu-inner-shadow"></div>
-          <ul class="menu-inner py-1">
-
-            <!-- Layouts -->
-            @if (SignInManager.IsSignedIn(User))
-            {
-                <!-- Dashboard -->
-                <li class="menu-item @Html.ActiveClass("Home", "Dashboard")">
-                    <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                        <div data-i18n="Analytics">Dashboard</div>
-                    </a>
-                </li>
-                <li class="menu-item @Html.ActiveClass("Companies,Invites", "ManageUserRoles,Create", "active open")">
-                    <a asp-area="" asp-controller="Companies" asp-action="Index" class="menu-link menu-toggle">
-                        <i class="menu-icon tf-icons bx bx-buildings"></i>
-                        <div data-i18n="Companies">Companies</div>
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo ps-2">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link">
+                        <span class="app-brand-logo demo">
+                            <img class="img-fluid" src="/img/p_aardvark_rf_50x24.png" />
+                        </span>
+                        <span class="app-brand-text demo menu-text fw-bolder ms-2">AardvarkMVC</span>
                     </a>
 
-                    <ul class="menu-sub">
-                        <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles")">
-                            <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="menu-link">
-                                <div data-i18n="Manage Roles">Manage Roles</div>
-                            </a>
-                        </li>
-                    </ul>
-                    <ul class="menu-sub">
-                        <li class="menu-item @Html.ActiveClass("Invites", "Create")">
-                            <a asp-area="" asp-controller="Invites" asp-action="Create" class="menu-link">
-                                <div data-i18n="Company Invite">Company Invite</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- Actions -->
-                <li class="menu-header small text-uppercase">
-                    <span class="menu-header-text">Actions</span>
-                </li>
-                <!-- Projects -->
-                <li class="menu-item @Html.ActiveClass("Projects", "Create,MyProjects,AllProjects,UnassignedProjects,ArchivedProjects", "active open")">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <i class="menu-icon tf-icons bx bx-folder"></i>
-                        <div data-i18n="Projects">Projects</div>
+                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
                     </a>
-                    <ul class="menu-sub">
-                        @if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
-                        {
-                            <li class="menu-item @Html.ActiveClass("Projects", "Create")">
-                                <a asp-area="" asp-controller="Projects" asp-action="Create" class="menu-link">
-                                    <div data-i18n="New Project">New Project</div>
-                                </a>
-                            </li>
-                        }
-                        @if (!User.IsInRole(nameof(BTRoles.Admin)))
-                        {
-                            <li class="menu-item @Html.ActiveClass("Projects", "MyProjects")">
-                                <a asp-area="" asp-controller="Projects" asp-action="MyProjects" class="menu-link">
-                                    <div data-i18n="My Projects">My Projects</div>
-                                </a>
-                            </li>
-                        }
-                        <li class="menu-item @Html.ActiveClass("Projects", "AllProjects")">
-                            <a asp-area="" asp-controller="Projects" asp-action="AllProjects" class="menu-link">
-                                <div data-i18n="All Projects">All Projects</div>
-                            </a>
-                        </li>
-                        @if (User.IsInRole(nameof(BTRoles.Admin)))
-                        {
-                            <li class="menu-item @Html.ActiveClass("Projects", "UnassignedProjects")">
-                                <a asp-area="" asp-controller="Projects" asp-action="UnassignedProjects" class="menu-link">
-                                    <div data-i18n="Unassigned Projects">Unassigned Projects</div>
-                                </a>
-                            </li>
-                        }                                
-                        <li class="menu-item @Html.ActiveClass("Projects", "ArchivedProjects")">
-                            <a asp-area="" asp-controller="Projects" asp-action="ArchivedProjects" class="menu-link">
-                                <div data-i18n="Archived Projects">Archived Projects</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- Tickets -->
-                <li class="menu-item @Html.ActiveClass("Tickets", "Create,MyTickets,AllTickets,UnassignedTickets,ArchivedTickets", "active open")">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <i class="menu-icon tf-icons bx bx-notepad"></i>
-                        <div data-i18n="Tickets">Tickets</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item @Html.ActiveClass("Tickets", "Create")">
-                            <a asp-area="" asp-controller="Tickets" asp-action="Create" class="menu-link">
-                                <div data-i18n="New Ticket">New Ticket</div>
-                            </a>
-                        </li>
-                        @if (!User.IsInRole(nameof(BTRoles.Admin)))
-                        {
-                            <li class="menu-item @Html.ActiveClass("Tickets", "MyTickets")">
-                                <a asp-area="" asp-controller="Tickets" asp-action="MyTickets" class="menu-link">
-                                    <div data-i18n="My Tickets">My Tickets</div>
-                                </a>
-                            </li>
-                        }
-                        <li class="menu-item @Html.ActiveClass("Tickets", "AllTickets")">
-                            <a asp-area="" asp-controller="Tickets" asp-action="AllTickets" class="menu-link">
-                                <div data-i18n="All Tickets">All Tickets</div>
-                            </a>
-                        </li>
-                        @if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
-                        {
-                            <li class="menu-item @Html.ActiveClass("Tickets", "UnassignedTickets")">
-                                <a asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets" class="menu-link">
-                                    <div data-i18n="Unnassigned Tickets">Unnassigned Tickets</div>
-                                </a>
-                            </li>
-                        }
-                        <li class="menu-item @Html.ActiveClass("Tickets", "ArchivedTickets")">
-                            <a asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets" class="menu-link">
-                                <div data-i18n="Archived Tickets">Archived Tickets</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- Information -->
-                <li class="menu-header small text-uppercase"><span class="menu-header-text">Information</span></li>
-                <!-- Notifications -->
-                <li class="menu-item @Html.ActiveClass("Notifications", "Index")">
-                    <a asp-area="" asp-controller="Notifications" asp-action="Index" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-notification"></i>
-                        <div data-i18n="Basic">Notifications</div>
-                    </a>
-                </li>
-            }
-            else
-            {
-                <li class="menu-item">
-                    <a asp-area="Identity" asp-page="/Account/Login" class="menu-link">
-                        <span class="fs-4">Log In</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a asp-area="Identity" asp-page="/Account/Register" class="menu-link">
-                        <span class="fs-4">Register</span>
-                    </a>
-                </li>
-            }
-          </ul>
-        </aside>
-        <!-- / Menu -->
-
-        <!-- Layout container -->
-        <div class="layout-page">
-          <!-- Navbar -->
-          <nav
-            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-            id="layout-navbar"
-          >
-            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                <i class="bx bx-menu bx-sm"></i>
-              </a>
-            </div>
-
-            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-              <!-- Search -->
-              @*
-              <div class="navbar-nav align-items-center">
-                <div class="nav-item d-flex align-items-center">
-                  <i class="bx bx-search fs-4 lh-0"></i>
-                  <input
-                    type="text"
-                    class="form-control border-0 shadow-none"
-                    placeholder="Search..."
-                    aria-label="Search..."
-                  />
                 </div>
-              </div>
+
+                <div class="menu-inner-shadow"></div>
+                <ul class="menu-inner py-1">
+
+                    <!-- Layouts -->
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <!-- Dashboard -->
+                        <li class="menu-item @Html.ActiveClass("Home", "Dashboard")">
+                            <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                                <div data-i18n="Analytics">Dashboard</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @Html.ActiveClass("Companies,Invites", "ManageUserRoles,Create", "active open")">
+                            <a asp-area="" asp-controller="Companies" asp-action="Index" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-buildings"></i>
+                                <div data-i18n="Companies">Companies</div>
+                            </a>
+
+                            <ul class="menu-sub">
+                                <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles")">
+                                    <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="menu-link">
+                                        <div data-i18n="Manage Roles">Manage Roles</div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="menu-sub">
+                                <li class="menu-item @Html.ActiveClass("Invites", "Create")">
+                                    <a asp-area="" asp-controller="Invites" asp-action="Create" class="menu-link">
+                                        <div data-i18n="Company Invite">Company Invite</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Actions -->
+                        <li class="menu-header small text-uppercase">
+                            <span class="menu-header-text">Actions</span>
+                        </li>
+                        <!-- Projects -->
+                        <li class="menu-item @Html.ActiveClass("Projects", "Create,MyProjects,AllProjects,UnassignedProjects,ArchivedProjects", "active open")">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-folder"></i>
+                                <div data-i18n="Projects">Projects</div>
+                            </a>
+                            <ul class="menu-sub">
+                                @if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
+                                {
+                                    <li class="menu-item @Html.ActiveClass("Projects", "Create")">
+                                        <a asp-area="" asp-controller="Projects" asp-action="Create" class="menu-link">
+                                            <div data-i18n="New Project">New Project</div>
+                                        </a>
+                                    </li>
+                                }
+                                @if (!User.IsInRole(nameof(BTRoles.Admin)))
+                                {
+                                    <li class="menu-item @Html.ActiveClass("Projects", "MyProjects")">
+                                        <a asp-area="" asp-controller="Projects" asp-action="MyProjects" class="menu-link">
+                                            <div data-i18n="My Projects">My Projects</div>
+                                        </a>
+                                    </li>
+                                }
+                                <li class="menu-item @Html.ActiveClass("Projects", "AllProjects")">
+                                    <a asp-area="" asp-controller="Projects" asp-action="AllProjects" class="menu-link">
+                                        <div data-i18n="All Projects">All Projects</div>
+                                    </a>
+                                </li>
+                                @if (User.IsInRole(nameof(BTRoles.Admin)))
+                                {
+                                    <li class="menu-item @Html.ActiveClass("Projects", "UnassignedProjects")">
+                                        <a asp-area="" asp-controller="Projects" asp-action="UnassignedProjects" class="menu-link">
+                                            <div data-i18n="Unassigned Projects">Unassigned Projects</div>
+                                        </a>
+                                    </li>
+                                }
+                                <li class="menu-item @Html.ActiveClass("Projects", "ArchivedProjects")">
+                                    <a asp-area="" asp-controller="Projects" asp-action="ArchivedProjects" class="menu-link">
+                                        <div data-i18n="Archived Projects">Archived Projects</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Tickets -->
+                        <li class="menu-item @Html.ActiveClass("Tickets", "Create,MyTickets,AllTickets,UnassignedTickets,ArchivedTickets", "active open")">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-notepad"></i>
+                                <div data-i18n="Tickets">Tickets</div>
+                            </a>
+                            <ul class="menu-sub">
+                                <li class="menu-item @Html.ActiveClass("Tickets", "Create")">
+                                    <a asp-area="" asp-controller="Tickets" asp-action="Create" class="menu-link">
+                                        <div data-i18n="New Ticket">New Ticket</div>
+                                    </a>
+                                </li>
+                                @if (!User.IsInRole(nameof(BTRoles.Admin)))
+                                {
+                                    <li class="menu-item @Html.ActiveClass("Tickets", "MyTickets")">
+                                        <a asp-area="" asp-controller="Tickets" asp-action="MyTickets" class="menu-link">
+                                            <div data-i18n="My Tickets">My Tickets</div>
+                                        </a>
+                                    </li>
+                                }
+                                <li class="menu-item @Html.ActiveClass("Tickets", "AllTickets")">
+                                    <a asp-area="" asp-controller="Tickets" asp-action="AllTickets" class="menu-link">
+                                        <div data-i18n="All Tickets">All Tickets</div>
+                                    </a>
+                                </li>
+                                @if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
+                                {
+                                    <li class="menu-item @Html.ActiveClass("Tickets", "UnassignedTickets")">
+                                        <a asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets" class="menu-link">
+                                            <div data-i18n="Unnassigned Tickets">Unnassigned Tickets</div>
+                                        </a>
+                                    </li>
+                                }
+                                <li class="menu-item @Html.ActiveClass("Tickets", "ArchivedTickets")">
+                                    <a asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets" class="menu-link">
+                                        <div data-i18n="Archived Tickets">Archived Tickets</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Information -->
+                        <li class="menu-header small text-uppercase"><span class="menu-header-text">Information</span></li>
+                        <!-- Notifications -->
+                        <li class="menu-item @Html.ActiveClass("Notifications", "Index")">
+                            <a asp-area="" asp-controller="Notifications" asp-action="Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-notification"></i>
+                                <div data-i18n="Basic">Notifications</div>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="menu-item">
+                            <a asp-area="Identity" asp-page="/Account/Login" class="menu-link">
+                                <span class="fs-4">Log In</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a asp-area="Identity" asp-page="/Account/Register" class="menu-link">
+                                <span class="fs-4">Register</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </aside>
+            <!-- / Menu -->
+            <!-- Layout container -->
+            <div class="layout-page">
+                <!-- Navbar -->
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                     id="layout-navbar">
+                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                            <i class="bx bx-menu bx-sm"></i>
+                        </a>
+                    </div>
+
+                    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                        <!-- Search -->
+                        @*
+                        <div class="navbar-nav align-items-center">
+                        <div class="nav-item d-flex align-items-center">
+                        <i class="bx bx-search fs-4 lh-0"></i>
+                        <input
+                        type="text"
+                        class="form-control border-0 shadow-none"
+                        placeholder="Search..."
+                        aria-label="Search..."
+                        />
+                        </div>
+                        </div>
                         *@
-              <!-- /Search -->
+                        <!-- /Search -->
+                        
+                        <ul class="navbar-nav flex-row align-items-center ms-auto">
+                            <!-- Place this tag where you want the button to render. -->
+                            <li class="nav-item lh-1 me-3">
+                                <div class="col">
+                                    <button type="button" style="border: none;background-color: none;cursor: pointer;"
+                                            class="btn"
+                                            data-bs-toggle="popover"
+                                            data-bs-offset="0,14"
+                                            data-bs-placement="bottom"
+                                            data-bs-html="true"
+                                    data-bs-content="@{
+                                                        foreach(BTUser member in members)
+                                                        {
+                                                            <p>
+                                                                <span>@member.FullName</span>  /  
+                                                                <span>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</span>
+                                                            </p>
+                                                        }
+                                                      }"
+                                    title="Members">
+                                        <i class="bx bxs-group bx-md"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="nav-item lh-1 me-3">
+                                <a class="github-button"
+                                   href="https://github.com/themeselection/sneat-html-admin-template-free"
+                                   data-icon="octicon-star"
+                                   data-size="large"
+                                   data-show-count="true"
+                                   aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
+                            </li>
 
-              <ul class="navbar-nav flex-row align-items-center ms-auto">
-                <!-- Place this tag where you want the button to render. -->
-                <li class="nav-item lh-1 me-3">
-                  <a
-                    class="github-button"
-                    href="https://github.com/themeselection/sneat-html-admin-template-free"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
-                    >Star</a
-                  >
-                </li>
+                            <!-- User -->
+                            <partial name="_LoginPartial" />
+                            <!--/ User -->
+                        </ul>
+                    </div>
+                </nav>
 
-                <!-- User -->
-                <partial name="_LoginPartial" />                
-                <!--/ User -->
-              </ul>
+                <!-- / Navbar -->
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    <!-- Content -->
+                    @RenderBody()
+                    <!-- / Content -->
+                    <!-- Footer -->
+                    <footer class="content-footer footer bg-footer-theme">
+                        <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                            <div class="mb-2 mb-md-0">
+                                ©
+                                <script>
+                                    document.write(new Date().getFullYear());
+                                </script>
+                                <img src="~/img/EB_Logo.png" height="20" /> Elwin Beall
+                            </div>
+                            <div class="mb-2 mb-md-0">
+                                Sneat theme by <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+                            </div>
+                            <div class="mb-2 mb-md-0">
+                                <a href="https://www.linkedin.com/in/elwin-beall/" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-linkedin bx-sm bx-tada-hover"></i></a>
+                                <a href="https://twitter.com/elwinbeall" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-twitter bx-sm bx-tada-hover"></i></a>
+                                <a href="https://github.com/frotzen" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-github bx-sm bx-tada-hover"></i></a>
+                            </div>
+                        </div>
+                    </footer>
+                    <!-- / Footer -->
+
+                    <div class="content-backdrop fade"></div>
+                </div>
+                <!-- Content wrapper -->
             </div>
-          </nav>
-
-          <!-- / Navbar -->
-
-          <!-- Content wrapper -->
-          <div class="content-wrapper">
-            <!-- Content -->
-            @RenderBody()
-            <!-- / Content -->
-
-            <!-- Footer -->
-            <footer class="content-footer footer bg-footer-theme">
-              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                <div class="mb-2 mb-md-0">
-                  ©
-                  <script>
-                    document.write(new Date().getFullYear());
-                  </script>
-                  <img src="~/img/EB_Logo.png" height="20" /> Elwin Beall
-                </div>
-                <div class="mb-2 mb-md-0">
-                    Sneat theme by <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>                  
-                </div>
-                <div class="mb-2 mb-md-0">
-                    <a href="https://www.linkedin.com/in/elwin-beall/" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-linkedin bx-sm bx-tada-hover"></i></a>
-                    <a href="https://twitter.com/elwinbeall" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-twitter bx-sm bx-tada-hover"></i></a>
-                    <a href="https://github.com/frotzen" target="_blank" class="footer-link fw-bolder me-4"><i class="bx bxl-github bx-sm bx-tada-hover"></i></a>
-                </div>
-              </div>
-            </footer>
-            <!-- / Footer -->
-
-            <div class="content-backdrop fade"></div>
-          </div>
-          <!-- Content wrapper -->
+            <!-- / Layout page -->
         </div>
-        <!-- / Layout page -->
-      </div>
 
-      <!-- Overlay -->
-      <div class="layout-overlay layout-menu-toggle"></div>
+        <!-- Overlay -->
+        <div class="layout-overlay layout-menu-toggle"></div>
     </div>
     <!-- / Layout wrapper -->
-
-    
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="/assets/vendor/libs/jquery/jquery.js"></script>
@@ -329,7 +345,6 @@
     <script src="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="/assets/vendor/js/menu.js"></script>
     <!-- endbuild -->
-
     <!-- Vendors JS -->
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.2/datatables.min.js"></script>
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -338,9 +353,10 @@
     <script src="/assets/js/main.js"></script>
 
     <!-- Page JS -->
+    <script src="../assets/js/ui-popover.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-  </body>
+</body>
 </html>

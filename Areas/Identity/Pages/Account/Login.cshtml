@@ -1,88 +1,84 @@
 ﻿@page
 @model LoginModel
-
 @{
     ViewData["Title"] = "Log in";
 }
 
 <!-- Content -->
+<div class="authentication-wrapper authentication-basic container-p-y">
+    <div class="authentication-inner">
 
+        <h1>@ViewData["Title"]</h1>
+        <!-- Login Card-->
+        <div class="card">
+            <div class="card-body">
+                <!-- Logo -->
+                <div class="app-brand justify-content-center">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
+                        <span class="app-brand-logo demo">
+                            <img src="/img/p_aardvark_rf_100x48.png">
+                        </span>
+                        <span class="app-brand-text demo text-body fw-bolder">Aardvark</span>
+                    </a>
+                </div>
+                <!-- /Logo -->
+                <h4 class="mb-2">Welcome to AardvarkMVC</h4>
+                <p class="mb-4">Login locally.</p>
 
-    <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">
-
-            <h1>@ViewData["Title"]</h1>
-
-            <!-- Register -->
-            <div class="card">
-                <div class="card-body">
-                    <!-- Logo -->
-                    <div class="app-brand justify-content-center">
-                        <a asp-area="" asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
-                            <span class="app-brand-logo demo">
-                                <img src="/img/p_aardvark_rf_100x48.png">
-                            </span>
-                            <span class="app-brand-text demo text-body fw-bolder">Aardvark</span>
-                        </a>
+                <form id="account" asp-route-returnUrl="@Model.ReturnUrl" class="mb-3" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
-                    <!-- /Logo -->
-                    <h4 class="mb-2">Welcome to AardvarkMVC</h4>
-                    <p class="mb-4">Login locally.</p>
+                    <div class="mb-3 form-password-toggle">
+                        <label asp-for="Input.Password" class="form-label"></label>
+                        <div class="input-group input-group-merge">
+                            <input asp-for="Input.Password" class="form-control" id="password" autocomplete="new-password" aria-required="true" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-primary d-grid w-100" id="login-submit" type="submit">Log in</button>
+                    </div>
+                </form>
 
-                    <form id="account" asp-route-returnUrl="@Model.ReturnUrl" class="mb-3" method="post">
-                        <div class="mb-3">
-                            <label asp-for="Input.Email" class="form-label"></label>
-                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3 form-password-toggle">
-                            <label asp-for="Input.Password" class="form-label"></label>
-                            <div class="input-group input-group-merge">
-                                <input asp-for="Input.Password" class="form-control" id="password" autocomplete="new-password" aria-required="true" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"/>
-                                <span asp-validation-for="Input.Password" class="text-danger"></span>
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <button class="btn btn-primary d-grid w-100" id="login-submit" type="submit">Log in</button>
+                <p class="align-content-center">
+                    Testing our platform?
+                    <form class="" id="account" method="post">
+                        <div class="btn-group dropend justify-content-center">
+                            <button type="button"
+                                    class="btn btn-primary dropdown-toggle"
+                                    id="dropdownMenuOffset"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                    data-bs-offset="-50,20">
+                                Use a Demo login
+                            </button>
+                            <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuOffset">
+                                <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoAdminEmail">Demo Admin</button></li>
+                                <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoPMEmail">Demo PM</button></li>
+                                <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoDevEmail">Demo Developer</button></li>
+                                <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoSubEmail">Demo Submitter</button></li>
+                            </ul>
                         </div>
                     </form>
-
-                    <p class="align-content-center">
-                        Testing our platform?
-                        <form class="" id="account" method="post">
-                            <div class="btn-group dropend justify-content-center">
-                                <button type="button"
-                                        class="btn btn-primary dropdown-toggle"
-                                        id="dropdownMenuOffset"
-                                        data-bs-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false"
-                                        data-bs-offset="-50,20">
-                                    Use a Demo login
-                                </button>
-                                <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuOffset">
-                                    <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoAdminEmail">Demo Admin</button></li>
-                                    <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoPMEmail">Demo PM</button></li>
-                                    <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoDevEmail">Demo Developer</button></li>
-                                    <li><button type="submit" class="btn btn-primary mt-1 mb-1" name="demoEmail" value="DemoSubEmail">Demo Submitter</button></li>
-                                </ul>
-                            </div>
-                        </form>
+                </p>
+                <div>
+                    <p>
+                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
                     </p>
-                    <div>
-                        <p>
-                            <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                        </p>
-                        <p>
-                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                        </p>
-                    </div>
+                    <p>
+                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                    </p>
                 </div>
             </div>
-            <!-- /Register -->
         </div>
+        <!-- /Login Card-->
     </div>
+</div>
 
 
 <!-- / Content -->
