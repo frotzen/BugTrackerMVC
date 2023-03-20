@@ -8,115 +8,119 @@
 
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted">@ViewContext.RouteData.Values["controller"]!.ToString()</span> / @ViewBag.Title</h4>
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <form asp-action="Edit" id="form" asp-controller="Tickets" method="post" onsubmit="handleSubmit()">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="SubmitterUserId" />
-                <input type="hidden" asp-for="ProjectId" />
-                <input type="hidden" asp-for="Created" />
-                <input type="hidden" asp-for="Updated" />
-                <input type="hidden" asp-for="Description" id="textBox" />
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-xl-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form asp-action="Edit" id="form" asp-controller="Tickets" method="post" onsubmit="handleSubmit()">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="SubmitterUserId" />
+                        <input type="hidden" asp-for="ProjectId" />
+                        <input type="hidden" asp-for="Created" />
+                        <input type="hidden" asp-for="Updated" />
+                        <input type="hidden" asp-for="Description" id="textBox" />
 
-                <div class="form-group mb-3">
-                    <label asp-for="Title" class="control-label">Title</label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="control-label">Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
 
-                <div class="form-group mb-3 rounded bg-white" id="editor">
-                    @Html.Raw(Model.Description)
-                    <span asp-validation-for="Description" class="text-danger"></span>
+                        <div class="form-group mb-3 rounded bg-white" id="editor">
+                            @Html.Raw(Model.Description)
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        @*
+                        <div class="form-group">
+                        <span>ProjectName: <strong>@ViewData["ProjectName"]</strong></span>
+                        </div>
+                        <input asp-for="ProjectId" type="hidden" />
+                        <br />
+                        <div class="form-group">
+                        <span>Created: <strong>@Model.Created</strong></span><br />
+                        <span>Last Upadted: <strong>@Model.Updated</strong></span>
+                        </div>
+                        <br />
+
+                        <div class="form-group">
+                        <label asp-for="Created" class="control-label"></label>
+                        <input asp-for="Created" class="form-control" />
+                        <span asp-validation-for="Created" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                        <label asp-for="Updated" class="control-label"></label>
+                        <input asp-for="Updated" class="form-control" />
+                        <span asp-validation-for="Updated" class="text-danger"></span>
+                        </div>*@
+                        <div class="mb-3">
+                            <div class="form-group form-check d-inline">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" asp-for="Archived" /> @Html.DisplayNameFor(model => model.Archived)
+                                </label>
+                            </div>
+                            <span>&nbsp;&nbsp;</span>
+                            <div class="form-group form-check d-inline">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" asp-for="ArchivedByProject" /> @Html.DisplayNameFor(model => model.ArchivedByProject)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="TicketTypeId" class="control-label">Ticket Type</label>
+                            <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
+                            <span asp-validation-for="TicketTypeId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="TicketStatusId" class="control-label">Ticket Status</label>
+                            <select asp-for="TicketStatusId" class="form-control" asp-items="ViewBag.TicketStatusId"></select>
+                            <span asp-validation-for="TicketStatusId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="TicketPriorityId" class="control-label">Ticket Priority</label>
+                            <select asp-for="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId"></select>
+                            <span asp-validation-for="TicketPriorityId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="DeveloperUserId" class="control-label">Developer</label>
+                            <select asp-for="DeveloperUserId" class="form-control" asp-items="ViewBag.DeveloperUserId"></select>
+                            <span asp-validation-for="DeveloperUserId" class="text-danger"></span>
+                        </div>
+                        @*
+                        <div>
+                        <p>Submitted by <strong>@Model.SubmitterUser</strong></p>
+                        </div>
+                        *@
+                        @*<div class="form-group">
+                        <label asp-for="SubmitterUserId" class="control-label"></label>
+                        <select asp-for="SubmitterUserId" class="form-control" asp-items="ViewBag.SubmitterUserId"></select>
+                        <span asp-validation-for="SubmitterUserId" class="text-danger"></span>
+                        </div>*@
+                        <div class="form-group mb-3">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    </form>
                 </div>
-                @*
-                <div class="form-group">
-                    <span>ProjectName: <strong>@ViewData["ProjectName"]</strong></span>
-                </div>
-                 <input asp-for="ProjectId" type="hidden" />
-                <br />
-                <div class="form-group">
-                    <span>Created: <strong>@Model.Created</strong></span><br />
-                    <span>Last Upadted: <strong>@Model.Updated</strong></span>
-                </div>
-                <br />
-            
-                <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                <label asp-for="Updated" class="control-label"></label>
-                <input asp-for="Updated" class="form-control" />
-                <span asp-validation-for="Updated" class="text-danger"></span>
-                </div>*@
-                <div class="mb-3">
-                    <div class="form-group form-check d-inline">
-                        <label class="form-check-label">
-                            <input class="form-check-input" asp-for="Archived" /> @Html.DisplayNameFor(model => model.Archived)
-                        </label>
-                    </div>
-                    <span>&nbsp;&nbsp;</span>
-                    <div class="form-group form-check d-inline">
-                        <label class="form-check-label">
-                            <input class="form-check-input" asp-for="ArchivedByProject" /> @Html.DisplayNameFor(model => model.ArchivedByProject)
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <label asp-for="TicketTypeId" class="control-label">Ticket Type</label>
-                    <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"></select>
-                    <span asp-validation-for="TicketTypeId" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3">
-                    <label asp-for="TicketStatusId" class="control-label">Ticket Status</label>
-                    <select asp-for="TicketStatusId" class="form-control" asp-items="ViewBag.TicketStatusId"></select>
-                    <span asp-validation-for="TicketStatusId" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3">
-                    <label asp-for="TicketPriorityId" class="control-label">Ticket Priority</label>
-                    <select asp-for="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId"></select>
-                    <span asp-validation-for="TicketPriorityId" class="text-danger"></span>
-                </div>            
-                <div class="form-group mb-3">
-                    <label asp-for="DeveloperUserId" class="control-label">Developer</label>
-                    <select asp-for="DeveloperUserId" class="form-control" asp-items="ViewBag.DeveloperUserId"></select>
-                    <span asp-validation-for="DeveloperUserId" class="text-danger"></span>
-                </div>
-                @*
-                <div>
-                    <p>Submitted by <strong>@Model.SubmitterUser</strong></p>
-                </div>
-                *@
-                @*<div class="form-group">
-                <label asp-for="SubmitterUserId" class="control-label"></label>
-                <select asp-for="SubmitterUserId" class="form-control" asp-items="ViewBag.SubmitterUserId"></select>
-                <span asp-validation-for="SubmitterUserId" class="text-danger"></span>
-                </div>*@
-                <div class="form-group mb-3">
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                </div>
-            </form>
+            </div>
+
+            <div>
+                <a asp-action="AllTickets">Back to List</a>
+            </div>
         </div>
-    </div>
-
-    <div>
-        <a asp-action="AllTickets">Back to List</a>
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        <script>
+            let quill = new Quill('#editor', {
+                theme: 'snow'
+            });
+            function handleSubmit() {
+                console.info('handleSubmit() called');
+                document.getElementById('textBox').value = quill.root.innerHTML;
+            };
+        </script>
     }
-    <script>
-        let quill = new Quill('#editor', {
-        theme: 'snow'
-        });
-        function handleSubmit(){
-            console.info('handleSubmit() called');
-            document.getElementById('textBox').value = quill.root.innerHTML;
-        };
-    </script>
-}

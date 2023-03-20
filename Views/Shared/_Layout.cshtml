@@ -8,8 +8,12 @@
 @inject IBTRolesService RolesService
 
 @{
-    BTUser btUser = await UserManager.GetUserAsync(User);
-    List<BTUser> members = (await CompanyService.GetMembersAsync(btUser.CompanyId));
+    List<BTUser> members = new();
+    if (SignInManager.IsSignedIn(User))
+    {
+        BTUser btUser = await UserManager.GetUserAsync(User);
+        members = (await CompanyService.GetMembersAsync(btUser.CompanyId));
+    }
 }
 
 <!DOCTYPE html>
@@ -260,28 +264,31 @@
                         
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- Place this tag where you want the button to render. -->
-                            <li class="nav-item lh-1 me-3">
-                                <div class="col">
-                                    <button type="button" style="border: none;background-color: none;cursor: pointer;"
-                                            class="btn"
-                                            data-bs-toggle="popover"
-                                            data-bs-offset="0,14"
-                                            data-bs-placement="bottom"
-                                            data-bs-html="true"
-                                    data-bs-content="@{
-                                                        foreach(BTUser member in members)
-                                                        {
-                                                            <p>
-                                                                <span>@member.FullName</span>  /  
-                                                                <span>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</span>
-                                                            </p>
-                                                        }
-                                                      }"
-                                    title="Members">
-                                        <i class="bx bxs-group bx-md"></i>
-                                    </button>
-                                </div>
-                            </li>
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <li class="nav-item lh-1 me-3">
+                                    <div class="col">
+                                        <button type="button" style="border: none;background-color: none;cursor: pointer;"
+                                        class="btn"
+                                        data-bs-toggle="popover"
+                                        data-bs-offset="0,14"
+                                        data-bs-placement="bottom"
+                                        data-bs-html="true"
+                                        data-bs-content="@{
+                                                foreach (BTUser member in members)
+                                                {
+                                                    <p>
+                                                        <span>@member.FullName</span>  /  
+                                                        <span>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</span>
+                                                    </p>                                                
+                                                }
+                                            }"
+                                        title="Members">
+                                            <i class="bx bxs-group bx-md"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                            }
                             <li class="nav-item lh-1 me-3">
                                 <a class="github-button"
                                    href="https://github.com/themeselection/sneat-html-admin-template-free"
