@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @using BugTrackerMVC.Enums
 @using BugTrackerMVC.Services.Interfaces
 
@@ -6,6 +7,7 @@
 @inject UserManager<BTUser> UserManager
 @inject IBTCompanyService CompanyService
 @inject IBTRolesService RolesService
+@inject IBTNotificationService NotificationService
 
 @{
     List<BTUser> members = new();
@@ -18,15 +20,15 @@
 
 <!DOCTYPE html>
 <html lang="en"
-class="light-style layout-menu-fixed"
-dir="ltr"
-data-theme="theme-default"
-data-assets-path="/assets/"
-data-template="vertical-menu-template-free">
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="/assets/"
+      data-template="vertical-menu-template-free">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <title>AardvarkMVC</title>
 
@@ -39,11 +41,11 @@ data-template="vertical-menu-template-free">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-    rel="stylesheet" />
+          rel="stylesheet" />
 
     <!-- Icons. Uncomment required icon fonts -->
     <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
+          href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
     <link rel="stylesheet" href="/assets/vendor/fonts/boxicons.css" />
 
     <!-- Core CSS -->
@@ -88,12 +90,12 @@ data-template="vertical-menu-template-free">
                 </div>
                 <!-- User Info -->
                 @if (SignInManager.IsSignedIn(User))
-                {                    
+                {
                     BTUser btUser = await UserManager.GetUserAsync(User);
                     string companyName = (await CompanyService.GetCompanyInfoAsync(btUser.CompanyId)).Name!;
                     <div class="text-center">
                         <p>
-                            <span class="text-muted" style="font-size:medium;">@companyName</span><br/>
+                            <span class="text-muted" style="font-size:medium;">@companyName</span><br />
                             <span class="fw-bold" style="font-size:small;">@btUser.FullName</span>
                         </p>
                         <hr class="ms-3 me-3">
@@ -113,27 +115,27 @@ data-template="vertical-menu-template-free">
                         </li>
                         @if (User.IsInRole(nameof(BTRoles.Admin)))
                         {
-                        <li class="menu-item @Html.ActiveClass("Companies,Invites", "ManageUserRoles,Create", "active open")">
-                            <a asp-area="" asp-controller="Companies" asp-action="Index" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-buildings"></i>
-                                <div data-i18n="Company">Company Admin</div>
-                            </a>
+                            <li class="menu-item @Html.ActiveClass("Companies,Invites", "ManageUserRoles,Create", "active open")">
+                                <a asp-area="" asp-controller="Companies" asp-action="Index" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-buildings"></i>
+                                    <div data-i18n="Company">Company Admin</div>
+                                </a>
 
-                            <ul class="menu-sub">
-                                <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles")">
-                                    <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="menu-link">
-                                        <div data-i18n="Manage Roles">Manage Roles</div>
-                                    </a>
-                                </li>
-                            </ul>
-                            <ul class="menu-sub">
-                                <li class="menu-item @Html.ActiveClass("Invites", "Create")">
-                                    <a asp-area="" asp-controller="Invites" asp-action="Create" class="menu-link">
-                                        <div data-i18n="Company Invite">Company Invite</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                                <ul class="menu-sub">
+                                    <li class="menu-item @Html.ActiveClass("Companies", "ManageUserRoles")">
+                                        <a asp-area="" asp-controller="Companies" asp-action="ManageUserRoles" class="menu-link">
+                                            <div data-i18n="Manage Roles">Manage Roles</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <ul class="menu-sub">
+                                    <li class="menu-item @Html.ActiveClass("Invites", "Create")">
+                                        <a asp-area="" asp-controller="Invites" asp-action="Create" class="menu-link">
+                                            <div data-i18n="Company Invite">Company Invite</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         }
                         <!-- Actions -->
                         <li class="menu-header small text-uppercase">
@@ -275,7 +277,7 @@ data-template="vertical-menu-template-free">
                         </div>
                         *@
                         <!-- /Search -->
-                        
+
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- Place this tag where you want the button to render. -->
                             @if (SignInManager.IsSignedIn(User))
@@ -283,34 +285,49 @@ data-template="vertical-menu-template-free">
                                 <li class="nav-item lh-1 me-3">
                                     <div class="col">
                                         <button type="button" style="border: none;background-color: none;cursor: pointer;"
-                                        class="btn"
-                                        data-bs-toggle="popover"
-                                        data-bs-offset="0,14"
-                                        data-bs-placement="bottom"
-                                        data-bs-html="true"
-                                        data-bs-content="@{
-                                                foreach (BTUser member in members)
-                                                {
-                                                    <p>
-                                                        <span>@member.FullName</span>  /  
-                                                        <span>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</span>
-                                                    </p>                                                
-                                                }
-                                            }"
-                                        title="Members">
-                                            <i class="bx bxs-group bx-md"></i>
-                                        </button>
+                                                class="btn"
+                                                data-bs-toggle="popover"
+                                                data-bs-offset="0,14"
+                                                data-bs-placement="bottom"
+                                                data-bs-html="true"
+                                                data-bs-content="@{
+                                            foreach (BTUser member in members)
+                                            {
+                                                                <p>
+                                                                    <span>@member.FullName</span>  /
+                                                                    <span>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</span>
+                                                                </p>
+                                            }
+                                        }"
+                                            title="Members">
+                                                <i class="bx bxs-group bx-md"></i>
+                                            </button>
                                     </div>
                                 </li>
                             }
-                            <li class="nav-item lh-1 me-3">
-                                <a class="github-button"
-                                   href="https://github.com/themeselection/sneat-html-admin-template-free"
-                                   data-icon="octicon-star"
-                                   data-size="large"
-                                   data-show-count="true"
-                                   aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
-                            </li>
+                            <!-- Notification -->
+                            <!--*** Move body of this to Notification Service *(SOLID)* GetUnreadNotifications() -->
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <li class="nav-item me-3 me-xl-1">
+                                    <a asp-action="Index" asp-controller="Notifications" class="nav-link" aria-expanded="false">
+                                        <i class="bx bx-bell bx-sm"></i>
+                                        @{
+                                            int notifications = 0;
+                                            string userId = (await UserManager.GetUserAsync(User)).Id;
+                                            notifications = ((await (NotificationService.GetNotificationsByUserIdAsync(userId)))
+                                            .Where(n => n.HasBeenViewed == false)).Count();
+                                        }
+                                        @if (notifications > 0)
+                                        {
+                                            <span class="badge bg-danger rounded-pill badge-notifications">
+                                                @notifications
+                                            </span>
+                                        }
+                                    </a>
+                                </li>
+                            }
+                            <!--/ Notification -->
 
                             <!-- User -->
                             <partial name="_LoginPartial" />
@@ -318,8 +335,8 @@ data-template="vertical-menu-template-free">
                         </ul>
                     </div>
                 </nav>
-
                 <!-- / Navbar -->
+
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->

@@ -9,24 +9,24 @@
 
     <div class="card m-1 p-2">
         <div class="card-body">
-            <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                <table class="table table-hover" id="table_id">
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm" id="table_id">
                     <thead>
                         <tr>
                             <th>
                                 @Html.DisplayNameFor(model => model.Title)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.Message)
+                                From
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.Created)
+                                Date
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.HasBeenViewed)
+                                Viewed
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.NotificationType)
+                                Type
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.Ticket)
@@ -34,24 +34,18 @@
                             <th>
                                 @Html.DisplayNameFor(model => model.Project)
                             </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Sender)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Recipient)
-                            </th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
-                        {
-                            <tr>
+                        {          
+                            <tr class=@(!item.HasBeenViewed? "fw-bold" : "")>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Title)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Message)
+                                    @Html.DisplayFor(modelItem => item.Sender.FullName)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Created)
@@ -63,23 +57,16 @@
                                     @Html.DisplayFor(modelItem => item.NotificationType.Name)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Ticket.Description)
+                                    @Html.DisplayFor(modelItem => item.Ticket.Title)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Project.Name)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Sender.FullName)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Recipient.FullName)
-                                </td>
-                                <td>
-                                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                                 </td>
-                            </tr>
+                            </tr>                           
                         }
                     </tbody>
                 </table>

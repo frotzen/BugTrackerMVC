@@ -9,9 +9,11 @@ using BugTrackerMVC.Data;
 using BugTrackerMVC.Models;
 using Microsoft.AspNetCore.Identity;
 using BugTrackerMVC.Helper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTrackerMVC.Controllers
 {
+    [Authorize]
     public class NotificationsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -50,17 +52,23 @@ namespace BugTrackerMVC.Controllers
                 return NotFound();
             }
 
+            notification.HasBeenViewed = true;
+
+            // Add this to Notificaton service
+            _context.Update(notification);
+            await _context.SaveChangesAsync();
+
             return View(notification);
         }
 
         // GET: Notifications/Create
         public IActionResult Create()
         {
-            ViewData["NotificationTypeId"] = new SelectList(_context.Set<NotificationType>(), "Id", "Id");
-            ViewData["ProjectId"] = new SelectList(_context.Set<Project>(), "Id", "Description");
-            ViewData["RecipientId"] = new SelectList(_context.Set<BTUser>(), "Id", "Id");
-            ViewData["SenderId"] = new SelectList(_context.Set<BTUser>(), "Id", "Id");
-            ViewData["TicketId"] = new SelectList(_context.Set<Ticket>(), "Id", "Description");
+            ViewData["NotificationTypeId"] = new SelectList(_context.Set<NotificationType>(), "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(_context.Set<Project>(), "Id", "Name");
+            ViewData["RecipientId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName");
+            ViewData["SenderId"] = new SelectList(_context.Set<BTUser>(), "Id", "FullName");
+            ViewData["TicketId"] = new SelectList(_context.Set<Ticket>(), "Id", "Title");
             return View();
         }
 
@@ -123,6 +131,7 @@ namespace BugTrackerMVC.Controllers
             {
                 try
                 {
+                    notification.Created = PostgresDate.Format(DateTime.Now);
                     _context.Update(notification);
                     await _context.SaveChangesAsync();
                 }
