@@ -16,77 +16,79 @@
 <div class="container-xxl flex-grow-1 container-p-y mb-5">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted">@ViewContext.RouteData.Values["controller"]!.ToString()</span> / @ViewBag.Title</h4>
 
-    @*<p>
-    <a asp-action="Create">Create New</a>
-    </p>*@
-
-    <table class="table mb-5" id="table_id">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.StartDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EndDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ImageFileData)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ProjectPriority)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DeTag(item.Description!)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-                <td>
-                    <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectPriority!.Id)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    @{
-                        bool isProjectPM = false;
-                        BTUser thisPM = await ProjectService.GetProjectManagerAsync(item.Id);
-                        if(thisPM != null)
+    <div class="card m-1 p-2">
+        <div class="card-body">
+            <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                <table class="table table-hover" id="table_id">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.StartDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EndDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ImageFileData)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ProjectPriority)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
                         {
-                            isProjectPM = (thisPM.Id == btUser.Id);                               
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DeTag(item.Description!)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.StartDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EndDate)
+                                </td>
+                                <td>
+                                    <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProjectPriority!.Id)
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                    @{
+                                        bool isProjectPM = false;
+                                        BTUser thisPM = await ProjectService.GetProjectManagerAsync(item.Id);
+                                        if (thisPM != null)
+                                        {
+                                            isProjectPM = (thisPM.Id == btUser.Id);
+                                        }
+                                    }
+                                    @if (User.IsInRole(nameof(BTRoles.Admin)) || isProjectPM)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                        <span>|</span>
+                                        <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                                    }
+                                </td>
+                            </tr>
                         }
-                    }
-                    @if(User.IsInRole(nameof(BTRoles.Admin)) || isProjectPM)
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        <span>|</span>
-                        <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
-                    }                        
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

@@ -129,12 +129,12 @@ namespace BugTrackerMVC.Controllers
 					invite.InviterId = _userManager.GetUserId(User);
 					invite.IsValid = true;
 
-					// Add Invite service method for "AddNewInviteAsync"
+					// Invite service method for "AddNewInviteAsync"
 					await _inviteService.AddNewInviteAsync(invite);
 
 					return RedirectToAction("Index", "Home");
 
-                    // TODO: Possibly use SWAL message
+                    // Could use a Sweet Alert message here...
 
                 }
 				catch (Exception)

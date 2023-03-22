@@ -20,7 +20,7 @@
 	<h4 class="fw-bold py-3 mb-2"><span class="text-muted">@ViewContext.RouteData.Values["controller"]!.ToString()</span> / @ViewBag.Title</h4>
 	<div class="row gy-2">
 		<div class="col-md-12 col">
-			<div class="row col-cols-2 mt-5 bg-secondary">
+			<div class="row col-cols-2 mt-3">
 				<div class="card col m-1 p-2">
 					<div class="card-body">
 						@*Title of Ticket*@
@@ -59,15 +59,15 @@
 					<div class="card-body">
 						<ul class="list-unstyled">
 							@*Ticket date*@
-							<li><strong>Date Entered:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.Created)</</span></li>
+							<li class="mb-1"><strong>Date Entered:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.Created)</</span></li>
 							@*Project end date*@
-							<li><strong>Deadline:</strong> <span class="">@Html.DisplayFor(model => model.Project!.EndDate)</</span></li>
+							<li class="mb-1"><strong>Deadline:</strong> <span class="">@Html.DisplayFor(model => model.Project!.EndDate)</</span></li>
 							@*Ticket type*@
-							<li><strong>Type:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.TicketType!.Name)</span></li>
+							<li class="mb-1"><strong>Type:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.TicketType!.Name)</span></li>
 							@*Ticket priority*@
-							<li><strong>Priority:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.TicketPriority!.Name)</span></li>
+							<li class="mb-1"><strong>Priority:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.TicketPriority!.Name)</span></li>
 							@*Ticket status*@
-							<li><strong>Status:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.TicketStatus!.Name)</span></li>
+							<li class="mb-1"><strong>Status:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.TicketStatus!.Name)</span></li>
 						</ul>
 					</div>
 				</div>
@@ -75,7 +75,7 @@
 		</div>
 		<div class="col-md-8 col col-cols-2 mt-5 ">
 			<div class="col">
-				<div class="bg-secondary">
+				<div class="">
 					<div class="card m-1 p-2">
 						<div class="card-header">
 							<h2>Comments</h2>
@@ -124,13 +124,13 @@
 							</form>
 							<hr />
 							<h6>Comments</h6>
-							<ul class="right_chat list-unstyled mb-0">
+							<ul class="right_chat list-unstyled mb-1">
 								@*Loop to show comments made for the Ticket*@
 								@foreach(TicketComment comment in Model.TicketComments!)
 								{
 									<li>
-										<div class="card">
-										@comment.Created: &nbsp;@comment.User.FullName<br>
+										<div class="card mb-1">
+											<span class="fw-bold">@comment.Created:&nbsp;&nbsp;@comment.User.FullName</span>
 										@comment.Comment
 										</div>
 									</li>
@@ -143,7 +143,7 @@
 				</div>
 			</div>
 			<div class="col">
-				<div class="bg-secondary">
+				<div class="">
 					<div class="card m-1 p-2">
 						<div class="card-header">
 							<h2>Attachments</h2>
@@ -205,13 +205,13 @@
 			</div>
 		</div>
 		<div class="col-md-4 col mt-5 ">
-			<div class="bg-dark">
+			<div class="">
 				<div class="card m-1 p-2">
 					<div class="card-header">
 						<h2>History</h2>
 						<hr />
 					</div>
-					<div class="card-body" style="overflow-y:auto;height:1000px;background-color:antiquewhite">
+					<div class="card-body" style="overflow-y:auto;height:1000px;">
 						@*Loop to show the history entries for the Ticket*@
 						@foreach (TicketHistory history in (await HistoryService.GetProjectTicketsHistoriesAsync(Model.Project.Id, Model.Project.CompanyId)).Where(i => i.TicketId == Model.Ticket.Id).OrderByDescending(x => x.Created))
 						{

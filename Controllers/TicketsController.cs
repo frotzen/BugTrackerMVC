@@ -99,18 +99,7 @@ namespace BugTrackerMVC.Controllers
             string userId = (await _userManager.GetUserAsync(User)).Id;
             List<Ticket> tickets = new();
 
-            if (User.IsInRole(nameof(BTRoles.Admin)) || User.IsInRole(nameof(BTRoles.ProjectManager)))
-            {
-                tickets = await _ticketService.GetAllTicketsByCompanyIdAsync(companyId);
-            }
-            else if (User.IsInRole(nameof(BTRoles.Developer)))
-            {
-                tickets = await _ticketService.GetAllTicketsByDeveloperIdAsync(userId);
-            }
-            else
-            {
-                tickets = await _ticketService.GetTicketsByUserIdAsync(userId, companyId);
-            }
+            tickets = await _ticketService.GetTicketsByUserIdAsync(userId, companyId);
 
             return View(tickets);
         }

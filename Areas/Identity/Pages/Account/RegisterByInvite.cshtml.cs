@@ -154,7 +154,7 @@ namespace BugTrackerMVC.Areas.Identity.Pages.Account
             //Use "id" to find the invite
             Invite invite = await _inviteService.GetInviteAsync(id, companyId);
 
-            //Load InputModel with the Invite information
+            //Assign InputModel the Invite properties
             Input.Email = invite.InviteeEmail;
             Input.FirstName = invite.InviteeFirstName;
             Input.LastName = invite.InviteeLastName;
@@ -217,7 +217,7 @@ namespace BugTrackerMVC.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
+            // If we got this far, something failed, redisplay Page
             return Page();
         }
 

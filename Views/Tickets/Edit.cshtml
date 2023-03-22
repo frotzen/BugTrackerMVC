@@ -31,28 +31,6 @@
                             @Html.Raw(Model.Description)
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
-                        @*
-                        <div class="form-group">
-                        <span>ProjectName: <strong>@ViewData["ProjectName"]</strong></span>
-                        </div>
-                        <input asp-for="ProjectId" type="hidden" />
-                        <br />
-                        <div class="form-group">
-                        <span>Created: <strong>@Model.Created</strong></span><br />
-                        <span>Last Upadted: <strong>@Model.Updated</strong></span>
-                        </div>
-                        <br />
-
-                        <div class="form-group">
-                        <label asp-for="Created" class="control-label"></label>
-                        <input asp-for="Created" class="form-control" />
-                        <span asp-validation-for="Created" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                        <label asp-for="Updated" class="control-label"></label>
-                        <input asp-for="Updated" class="form-control" />
-                        <span asp-validation-for="Updated" class="text-danger"></span>
-                        </div>*@
                         <div class="mb-3">
                             <div class="form-group form-check d-inline">
                                 <label class="form-check-label">
@@ -86,41 +64,31 @@
                             <select asp-for="DeveloperUserId" class="form-control" asp-items="ViewBag.DeveloperUserId"></select>
                             <span asp-validation-for="DeveloperUserId" class="text-danger"></span>
                         </div>
-                        @*
-                        <div>
-                        <p>Submitted by <strong>@Model.SubmitterUser</strong></p>
-                        </div>
-                        *@
-                        @*<div class="form-group">
-                        <label asp-for="SubmitterUserId" class="control-label"></label>
-                        <select asp-for="SubmitterUserId" class="form-control" asp-items="ViewBag.SubmitterUserId"></select>
-                        <span asp-validation-for="SubmitterUserId" class="text-danger"></span>
-                        </div>*@
-                        <div class="form-group mb-3">
-                            <input type="submit" value="Save" class="btn btn-primary" />
+                        <div class="form-group row justify-content-end mb-0">
+                            <div class="col-md-8 pl-md-2">                                
+                                <input type="hidden" asp-for="Id" />
+                                <input type="submit" value="Save" class="btn btn-primary me-2" />
+                                <a asp-action="AllTickets" type="button" class="btn btn-secondary">Cancel</a>                                
+                            </div>
                         </div>
                     </form>
                 </div>
-            </div>
-
-            <div>
-                <a asp-action="AllTickets">Back to List</a>
             </div>
         </div>
     </div>
 </div>
 
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        }
-        <script>
-            let quill = new Quill('#editor', {
-                theme: 'snow'
-            });
-            function handleSubmit() {
-                console.info('handleSubmit() called');
-                document.getElementById('textBox').value = quill.root.innerHTML;
-            };
-        </script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        let quill = new Quill('#editor', {
+            theme: 'snow'
+        });
+        function handleSubmit() {
+            console.info('handleSubmit() called');
+            document.getElementById('textBox').value = quill.root.innerHTML;
+        };
+    </script>
+}

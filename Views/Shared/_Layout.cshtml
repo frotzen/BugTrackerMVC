@@ -18,15 +18,15 @@
 
 <!DOCTYPE html>
 <html lang="en"
-      class="light-style layout-menu-fixed"
-      dir="ltr"
-      data-theme="theme-default"
-      data-assets-path="/assets/"
-      data-template="vertical-menu-template-free">
+class="light-style layout-menu-fixed"
+dir="ltr"
+data-theme="theme-default"
+data-assets-path="/assets/"
+data-template="vertical-menu-template-free">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <title>AardvarkMVC</title>
 
@@ -39,11 +39,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-          rel="stylesheet" />
+    rel="stylesheet" />
 
     <!-- Icons. Uncomment required icon fonts -->
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
+    href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
     <link rel="stylesheet" href="/assets/vendor/fonts/boxicons.css" />
 
     <!-- Core CSS -->
@@ -86,10 +86,21 @@
                         <i class="bx bx-chevron-left bx-sm align-middle"></i>
                     </a>
                 </div>
-
+                <!-- User Info -->
+                @if (SignInManager.IsSignedIn(User))
+                {                    
+                    BTUser btUser = await UserManager.GetUserAsync(User);
+                    string companyName = (await CompanyService.GetCompanyInfoAsync(btUser.CompanyId)).Name!;
+                    <div class="text-center">
+                        <p>
+                            <span class="text-muted" style="font-size:medium;">@companyName</span><br/>
+                            <span class="fw-bold" style="font-size:small;">@btUser.FullName</span>
+                        </p>
+                        <hr class="ms-3 me-3">
+                    </div>
+                }
                 <div class="menu-inner-shadow"></div>
                 <ul class="menu-inner py-1">
-
                     <!-- Layouts -->
                     @if (SignInManager.IsSignedIn(User))
                     {
@@ -100,10 +111,12 @@
                                 <div data-i18n="Analytics">Dashboard</div>
                             </a>
                         </li>
+                        @if (User.IsInRole(nameof(BTRoles.Admin)))
+                        {
                         <li class="menu-item @Html.ActiveClass("Companies,Invites", "ManageUserRoles,Create", "active open")">
                             <a asp-area="" asp-controller="Companies" asp-action="Index" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-buildings"></i>
-                                <div data-i18n="Companies">Companies</div>
+                                <div data-i18n="Company">Company Admin</div>
                             </a>
 
                             <ul class="menu-sub">
@@ -121,6 +134,7 @@
                                 </li>
                             </ul>
                         </li>
+                        }
                         <!-- Actions -->
                         <li class="menu-header small text-uppercase">
                             <span class="menu-header-text">Actions</span>
