@@ -35,11 +35,20 @@
             <div class="row mt-2">
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <a asp-action="AllProjects" asp-controller="Projects" style="text-decoration:none">
-                        <div class="card text-center bg-info">
+                        <div class="card bg-secondary">
                             <div class="card-body">
-                                <div class="p-15 text-dark">
-                                    <h3>@Model.Projects!.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</h3>
-                                    <span>Active Projects</span>
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <div class="content-left text-white">
+                                        <span>Projects</span>
+                                        <div class="d-flex align-items-end mt-2">
+                                            <h4 class="mb-0 me-2 text-dark">@Model.Projects!.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</h4>
+                                            @* Could put percentage here *@
+                                        </div>
+                                        <small>Active</small>
+                                    </div>
+                                    <span class="badge bg-label-dark rounded p-2">
+                                        <i class="bx bxs-folder-open bx-sm"></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -47,46 +56,68 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <a asp-action="AllTickets" asp-controller="Tickets" style="text-decoration:none">
-                        <div class="card text-center bg-secondary">
+                        <div class="card">
                             <div class="card-body">
-                                <div class="p-15 text-light">
-
-                                    <h3>@Model.Tickets!.Count()</h3>
-                                    <span>Total Tickets</span>
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <div class="content-left">
+                                        <span>Tickets</span>
+                                        <div class="d-flex align-items-end mt-2">
+                                            <h4 class="mb-0 me-2">@Model.Tickets!.Count()</h4>
+                                        </div>
+                                        <small>Total</small>
+                                    </div>
+                                    <span class="badge bg-label-primary rounded p-2">
+                                        <i class="bx bxs-notepad bx-sm"></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card text-center bg-warning">
+                    <div class="card bg-warning">
                         <div class="card-body">
-                            <div class="p-15 text-dark">
-                                <h3>@Model.Tickets!.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</h3>
-                                <span>Unassigned Tickets</span>
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="content-left text-dark">
+                                    <span>Tickets</span>
+                                    <div class="d-flex align-items-end mt-2">
+                                        <h4 class="mb-0 me-2">@Model.Tickets!.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</h4>
+                                    </div>
+                                    <small>Unassigned</small>
+                                </div>
+                                <span class="badge bg-label-dark rounded p-2">
+                                    <i class="bx bx-clipboard bx-sm"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card text-center bg-dark">
+                    <div class="card bg-dark">
                         <div class="card-body">
-                            <div class="p-15 text-light">
-                                <h3>
-                                    @(
-                                        Model.Projects!.Count()
-                                        + Model.Tickets!.Count()
-                                        + Model.Members!.Count()
-                                        )
-                                </h3>
-                                <span>Total Data</span>
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="content-left text-light">
+                                    <span>Data</span>
+                                    <div class="d-flex align-items-end mt-2">
+                                        <h4 class="mb-0 me-2">
+                                            @(
+                                                Model.Projects!.Count()
+                                                + Model.Tickets!.Count()
+                                                + Model.Members!.Count()
+                                                )
+                                        </h4>
+                                    </div>
+                                    <small>Totals</small>
+                                </div>
+                                <span class="badge bg-label-primary rounded p-2">
+                                    <i class="bx bx-folder-plus bx-sm"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- /Info Pills -->
-
             <!-- Charts -->
             <div class="row gy-2">
                 <div class="col-md-12 col">
@@ -269,23 +300,23 @@
                 </div>
                 @*
                 <div class="col-md-2 ">
-                    <div class="">
-                        <div class="card m-1 p-2">
-                            <div class="card-header">
-                                <h2>Members</h2>
-                                <hr />
-                            </div>
-                            <div class="card-body" style="overflow-y:auto;height:600px">
-                                @foreach (BTUser member in Model.Members!)
-                                {
-                                    <div class="">
-                                        <span style="font-weight:bold">@member.FullName</span>
-                                        <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                <div class="">
+                <div class="card m-1 p-2">
+                <div class="card-header">
+                <h2>Members</h2>
+                <hr />
+                </div>
+                <div class="card-body" style="overflow-y:auto;height:600px">
+                @foreach (BTUser member in Model.Members!)
+                {
+                <div class="">
+                <span style="font-weight:bold">@member.FullName</span>
+                <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
+                </div>
+                }
+                </div>
+                </div>
+                </div>
                 </div>*@
             </div>
         </div>
@@ -371,16 +402,16 @@
         var morrisDonutData = [{
             label: "Low",
             value: @Model.Tickets!.Where(t=>t.TicketPriority!.Name == nameof(BTTicketPriorities.Low)).Count()
-                    }, {
+                                                }, {
             label: "Medium",
             value: @Model.Tickets!.Where(t=>t.TicketPriority!.Name == nameof(BTTicketPriorities.Medium)).Count()
-                    }, {
+                                                }, {
             label: "High",
             value: @Model.Tickets!.Where(t=>t.TicketPriority!.Name == nameof(BTTicketPriorities.High)).Count()
-                    }, {
+                                                }, {
             label: "Urgent",
             value: @Model.Tickets!.Where(t=>t.TicketPriority!.Name == nameof(BTTicketPriorities.Urgent)).Count()
-                    }];
+                                                }];
 
         /*
         Morris: Donut
@@ -425,7 +456,7 @@
         @Model.Tickets!.Where(t=> t.TicketStatus!.Name ==nameof(BTTicketStatuses.New)).Count(),
         @Model.Tickets!.Where(t=> t.TicketStatus!.Name ==nameof(BTTicketStatuses.Resolved)).Count(),
         @Model.Tickets!.Where(t=> t.TicketStatus!.Name ==nameof(BTTicketStatuses.Testing)).Count()
-                                ],
+                                                            ],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -565,4 +596,4 @@
             $('#table_id').DataTable();
         });
     </script>
-}
+    }

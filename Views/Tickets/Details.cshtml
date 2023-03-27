@@ -59,9 +59,9 @@
 					<div class="card-body">
 						<ul class="list-unstyled">
 							@*Ticket date*@
-							<li class="mb-1"><strong>Date Entered:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.Created)</</span></li>
+							<li class="mb-1"><strong>Date Entered:</strong> <span class="">@Model.Ticket!.Created.ToString("MM/dd/yyyy hh:mm tt")</</span></li>
 							@*Project end date*@
-							<li class="mb-1"><strong>Deadline:</strong> <span class="">@Html.DisplayFor(model => model.Project!.EndDate)</</span></li>
+							<li class="mb-1"><strong>Deadline:</strong> <span class="">@Model.Project!.EndDate.ToString("MM/dd/yyyy hh:mm tt")</</span></li>
 							@*Ticket type*@
 							<li class="mb-1"><strong>Type:</strong> <span class="">@Html.DisplayFor(model => model.Ticket!.TicketType!.Name)</span></li>
 							@*Ticket priority*@
@@ -130,7 +130,7 @@
 								{
 									<li>
 										<div class="card mb-1">
-											<span class="fw-bold">@comment.Created:&nbsp;&nbsp;@comment.User.FullName</span>
+											<span class="fw-bold">@comment.Created.ToString("MM/dd/yyyy hh:mm tt"):&nbsp;&nbsp;@comment.User.FullName</span>
 										@comment.Comment
 										</div>
 									</li>
@@ -216,7 +216,7 @@
 						@foreach (TicketHistory history in (await HistoryService.GetProjectTicketsHistoriesAsync(Model.Project.Id, Model.Project.CompanyId)).Where(i => i.TicketId == Model.Ticket.Id).OrderByDescending(x => x.Created))
 						{
 							<div class="card">
-								<span>@history.Created</span>
+								<span>@history.Created.ToString("MM/dd/yyyy hh:mm tt")</span>
 								@if (history.Description!.Contains("New Ticket Created"))
 								{
 									<div class="card-body"><strong>@history.User.FullName</strong> created this ticket.</div>

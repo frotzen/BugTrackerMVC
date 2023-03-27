@@ -58,10 +58,10 @@
                                     @Html.DeTag(item.Description!)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.StartDate)
+                                    @item.StartDate.ToString("MM/dd/yyyy hh:mm tt")
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.EndDate)
+                                    @item.EndDate.ToString("MM/dd/yyyy hh:mm tt")
                                 </td>
                                 <td>
                                     <img style="max-width:50px" src="@FileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" />
